@@ -5,8 +5,7 @@ package org.ice1000.devkt
 import com.bulenkov.darcula.DarculaLaf
 import java.awt.BorderLayout
 import java.awt.Font
-import java.awt.event.FocusAdapter
-import java.awt.event.FocusEvent
+import java.awt.event.*
 import javax.imageio.ImageIO
 import javax.swing.*
 
@@ -51,6 +50,8 @@ object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 }
 
 object `{-# LANGUAGE DevKt #-}` : JFrame("Dev Kt") {
+	val globalSettings = GlobalSettings
+
 	init {
 		layout = BorderLayout()
 		setLocation(100, 100)
@@ -58,11 +59,13 @@ object `{-# LANGUAGE DevKt #-}` : JFrame("Dev Kt") {
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 		add(ui.mainPanel)
 		pack()
-		GlobalSettings.load()
+		globalSettings.load()
 		addFocusListener(object : FocusAdapter() {
-			override fun focusLost(e: FocusEvent?) {
-				GlobalSettings.save()
-			}
+			override fun focusLost(e: FocusEvent?) = globalSettings.save()
+		})
+		addWindowListener(object : WindowAdapter() {
+			override fun windowDeactivated(e: WindowEvent?) = globalSettings.save()
+			override fun windowClosing(e: WindowEvent?) = globalSettings.save()
 		})
 		defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 		isVisible = true

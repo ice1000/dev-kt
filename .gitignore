@@ -5,3 +5,4 @@ out/
 build
 pinpoint_piggy
 res/font/*.ttf
+config.properties

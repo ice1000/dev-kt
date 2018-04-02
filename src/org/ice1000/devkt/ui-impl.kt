@@ -15,7 +15,7 @@ fun JFrame.TODO() {
  * @author ice1000
  * @since v0.0.1
  */
-class UIImpl(private val frame: JFrame) : UI() {
+class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val undoManager = UndoManager()
 	private lateinit var undoMenuItem: JMenuItem
 	private lateinit var redoMenuItem: JMenuItem
@@ -78,11 +78,7 @@ class UIImpl(private val frame: JFrame) : UI() {
 			separator
 			item("Exit") {
 				icon = AllIcons.EXIT
-				onAction {
-					frame.dispose()
-					// TODO check saving
-					System.exit(0)
-				}
+				onAction { exit() }
 			}
 		}
 		menuBar.subMenu("Edit") {
@@ -140,6 +136,13 @@ class UIImpl(private val frame: JFrame) : UI() {
 				if (e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_Z) redo()
 			}
 		})
+	}
+
+	private fun exit() {
+		frame.dispose()
+		frame.globalSettings.save()
+		// TODO check saving
+		System.exit(0)
 	}
 
 	private fun updateUndoMenuItems() {
