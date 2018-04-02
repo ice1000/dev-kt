@@ -27,13 +27,55 @@ class UIImpl(private val frame: JFrame) : UI() {
 		}
 		menuBar.subMenu("File") {
 			mnemonic = KeyEvent.VK_F
+			subMenu("New") {
+				item("Executable File") {
+					icon = Icons.KOTLIN_FILE
+					onAction { frame.TODO() }
+				}
+				item("Script") {
+					icon = Icons.KOTLIN_FILE
+					onAction { frame.TODO() }
+				}
+				item("Android Activity") {
+					icon = Icons.KOTLIN_ANDROID
+					onAction { frame.TODO() }
+				}
+				item("KotlinJS File") {
+					icon = Icons.KOTLIN_JS
+					onAction { frame.TODO() }
+				}
+				item("Multiplatform (Common)") {
+					icon = Icons.KOTLIN_MP
+					onAction { frame.TODO() }
+				}
+				item("Multiplatform (Implementation)") {
+					icon = Icons.KOTLIN_MP
+					onAction { frame.TODO() }
+				}
+			}
 			item("Open") {
+				icon = Icons.OPEN
 				onAction { frame.TODO() }
 			}
+			item("Open Recent") {
+				onAction { frame.TODO() }
+			}
+			separator
+			item("Settings") {
+				icon = Icons.SETTINGS
+				onAction { frame.TODO() }
+			}
+			separator
 			item("Save") {
+				icon = Icons.SAVE
+				onAction { frame.TODO() }
+			}
+			item("Sync") {
+				icon = Icons.SYNCHRONIZE
 				onAction { frame.TODO() }
 			}
 			item("Exit") {
+				icon = Icons.EXIT
 				onAction {
 					frame.dispose()
 					// TODO check saving
@@ -45,22 +87,35 @@ class UIImpl(private val frame: JFrame) : UI() {
 			mnemonic = KeyEvent.VK_E
 			item("Undo") {
 				undoMenuItem = this
-				onAction { undoManager.undo() }
-			}
-			item("Redo") {
-				redoMenuItem = this
-				onAction { undoManager.redo() }
-			}
-		}
-		menuBar.subMenu("Build") {
-			mnemonic = KeyEvent.VK_R
-			item("Run") {
-				undoMenuItem = this
+				icon = Icons.UNDO
 				onAction { undo() }
 			}
 			item("Redo") {
 				redoMenuItem = this
+				icon = Icons.REDO
 				onAction { redo() }
+			}
+			separator
+			item("Cut") { onAction { cut() } }
+			item("Copy") { onAction { copy() } }
+			item("Paste") { onAction { paste() } }
+			item("Select All") { onAction { selectAll() } }
+		}
+		menuBar.subMenu("Build") {
+			mnemonic = KeyEvent.VK_R
+			item("Build As Jar") {
+				onAction { frame.TODO() }
+			}
+			item("Build To...") {
+				onAction { frame.TODO() }
+			}
+			subMenu("Run As") {
+				item("Executable Jar") {
+					onAction { frame.TODO() }
+				}
+				item("Kotlin Script") {
+					onAction { frame.TODO() }
+				}
 			}
 		}
 		updateUndoMenuItems()
@@ -84,4 +139,9 @@ class UIImpl(private val frame: JFrame) : UI() {
 	private fun redo() {
 		if (undoManager.canRedo()) undoManager.redo()
 	}
+
+	private fun selectAll() = editor.selectAll()
+	private fun cut() = editor.cut()
+	private fun copy() = editor.copy()
+	private fun paste() = editor.paste()
 }
