@@ -8,7 +8,7 @@ import javax.swing.undo.UndoManager
 
 fun JFrame.TODO() {
 	JOptionPane.showMessageDialog(this, "This feature is TODO.",
-			"Unfinished", 1, Icons.KOTLIN)
+			"Unfinished", 1, AllIcons.KOTLIN)
 }
 
 /**
@@ -29,32 +29,32 @@ class UIImpl(private val frame: JFrame) : UI() {
 			mnemonic = KeyEvent.VK_F
 			subMenu("New") {
 				item("Executable File") {
-					icon = Icons.KOTLIN_FILE
+					icon = AllIcons.KOTLIN_FILE
 					onAction { frame.TODO() }
 				}
 				item("Script") {
-					icon = Icons.KOTLIN_FILE
+					icon = AllIcons.KOTLIN_FILE
 					onAction { frame.TODO() }
 				}
 				item("Android Activity") {
-					icon = Icons.KOTLIN_ANDROID
+					icon = AllIcons.KOTLIN_ANDROID
 					onAction { frame.TODO() }
 				}
 				item("KotlinJS File") {
-					icon = Icons.KOTLIN_JS
+					icon = AllIcons.KOTLIN_JS
 					onAction { frame.TODO() }
 				}
 				item("Multiplatform (Common)") {
-					icon = Icons.KOTLIN_MP
+					icon = AllIcons.KOTLIN_MP
 					onAction { frame.TODO() }
 				}
 				item("Multiplatform (Implementation)") {
-					icon = Icons.KOTLIN_MP
+					icon = AllIcons.KOTLIN_MP
 					onAction { frame.TODO() }
 				}
 			}
 			item("Open") {
-				icon = Icons.OPEN
+				icon = AllIcons.OPEN
 				onAction { frame.TODO() }
 			}
 			item("Open Recent") {
@@ -62,21 +62,21 @@ class UIImpl(private val frame: JFrame) : UI() {
 			}
 			separator
 			item("Settings") {
-				icon = Icons.SETTINGS
+				icon = AllIcons.SETTINGS
 				onAction { frame.TODO() }
 			}
 			separator
 			item("Save") {
-				icon = Icons.SAVE
+				icon = AllIcons.SAVE
 				onAction { frame.TODO() }
 			}
 			item("Sync") {
-				icon = Icons.SYNCHRONIZE
+				icon = AllIcons.SYNCHRONIZE
 				onAction { frame.TODO() }
 			}
 			separator
 			item("Exit") {
-				icon = Icons.EXIT
+				icon = AllIcons.EXIT
 				onAction {
 					frame.dispose()
 					// TODO check saving
@@ -88,25 +88,25 @@ class UIImpl(private val frame: JFrame) : UI() {
 			mnemonic = KeyEvent.VK_E
 			item("Undo") {
 				undoMenuItem = this
-				icon = Icons.UNDO
+				icon = AllIcons.UNDO
 				onAction { undo() }
 			}
 			item("Redo") {
 				redoMenuItem = this
-				icon = Icons.REDO
+				icon = AllIcons.REDO
 				onAction { redo() }
 			}
 			separator
 			item("Cut") {
-				icon = Icons.CUT
+				icon = AllIcons.CUT
 				onAction { cut() }
 			}
 			item("Copy") {
 				onAction { copy() }
-				icon = Icons.COPY
+				icon = AllIcons.COPY
 			}
 			item("Paste") {
-				icon = Icons.PASTE
+				icon = AllIcons.PASTE
 				onAction { paste() }
 			}
 			item("Select All") { onAction { selectAll() } }
@@ -114,20 +114,20 @@ class UIImpl(private val frame: JFrame) : UI() {
 		menuBar.subMenu("Build") {
 			mnemonic = KeyEvent.VK_R
 			item("Build As Jar") {
-				icon = Icons.COMPILE
+				icon = AllIcons.COMPILE
 				onAction { frame.TODO() }
 			}
 			item("Build To...") {
 				onAction { frame.TODO() }
 			}
 			subMenu("Run As") {
-				icon = Icons.EXECUTE
+				icon = AllIcons.EXECUTE
 				item("Executable Jar") {
-					icon = Icons.JAR
+					icon = AllIcons.JAR
 					onAction { frame.TODO() }
 				}
 				item("Kotlin Script") {
-					icon = Icons.KOTLIN_FILE
+					icon = AllIcons.KOTLIN_FILE
 					onAction { frame.TODO() }
 				}
 			}

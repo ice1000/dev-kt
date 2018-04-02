@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
  * @since v0.0.1
  * @author ice1000
  */
-public interface Icons {
+public interface AllIcons {
 	// Kotlin related
 	@NotNull Icon KOTLIN = IconLoader.getIcon("/icon/kotlin.png");
 	@NotNull Icon KOTLIN_JS = IconLoader.getIcon("/icon/kotlin_js.png");
