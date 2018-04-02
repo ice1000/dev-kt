@@ -1,6 +1,7 @@
 package org.ice1000.devkt
 
 import charlie.gensokyo.*
+import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.awt.Color
 import java.awt.event.KeyAdapter
@@ -23,37 +24,43 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private lateinit var undoMenuItem: JMenuItem
 	private lateinit var redoMenuItem: JMenuItem
 
-	init {
-		frame.jMenuBar = menuBar
+	private inner class KtDocument : DefaultStyledDocument() {
 		val cont = StyleContext.getDefaultStyleContext()
 		val attr = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.ORANGE)
 		val attrGreen = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.GREEN)
 		val attrBlack = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.LIGHT_GRAY)
-		editor.document = object : DefaultStyledDocument() {
-			init {
-				addUndoableEditListener {
-					undoManager.addEdit(it.edit)
-					updateUndoMenuItems()
-				}
-			}
 
-			override fun insertString(offs: Int, str: String, a: AttributeSet) {
-				super.insertString(offs, str, a)
-				val tokens = Kotlin.lex(editor.text)
-				for ((tokenStart, tokenEnd, tokenType) in tokens) when (tokenType) {
-					KtTokens.OPEN_QUOTE,
-					KtTokens.CLOSING_QUOTE,
-					KtTokens.REGULAR_STRING_PART,
-					KtTokens.CHARACTER_LITERAL -> highlight(tokenStart, tokenEnd, attrGreen)
-					KtTokens.FUN_KEYWORD -> highlight(tokenStart, tokenEnd, attr)
-					else -> highlight(tokenStart, tokenEnd, attrBlack)
-				}
-			}
-
-			private fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
-				setCharacterAttributes(tokenStart, tokenEnd - tokenStart, attributeSet, false)
+		init {
+			addUndoableEditListener {
+				undoManager.addEdit(it.edit)
+				updateUndoMenuItems()
 			}
 		}
+
+		private val stringTokens = TokenSet.create(
+				KtTokens.OPEN_QUOTE,
+				KtTokens.CLOSING_QUOTE,
+				KtTokens.REGULAR_STRING_PART,
+				KtTokens.CHARACTER_LITERAL)
+
+		override fun insertString(offs: Int, str: String, a: AttributeSet) {
+			super.insertString(offs, str, a)
+			val tokens = Kotlin.lex(editor.text)
+			for ((tokenStart, tokenEnd, tokenType) in tokens) when  {
+				stringTokens.contains(tokenType) -> highlight(tokenStart, tokenEnd, attrGreen)
+				KtTokens.KEYWORDS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attr)
+				else -> highlight(tokenStart, tokenEnd, attrBlack)
+			}
+		}
+
+		private fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
+			setCharacterAttributes(tokenStart, tokenEnd - tokenStart, attributeSet, false)
+		}
+	}
+
+	init {
+		frame.jMenuBar = menuBar
+		editor.document = KtDocument()
 		menuBar.subMenu("File") {
 			mnemonic = KeyEvent.VK_F
 			subMenu("New") {
