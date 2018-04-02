@@ -4,4 +4,4 @@ out/
 .gradle
 build
 pinpoint_piggy
-lib/font/
+res/font/*.ttf

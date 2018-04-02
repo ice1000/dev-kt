@@ -52,6 +52,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame("Dev Kt") {
 		layout = BorderLayout()
 		setLocation(100, 100)
 		val ui = UIImpl(this)
+		iconImage = Icons.iconToImage(Icons.KOTLIN_BIG)
 		add(ui.mainPanel)
 		pack()
 		defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE

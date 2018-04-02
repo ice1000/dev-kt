@@ -7,8 +7,6 @@ import javax.swing.*;
  */
 public abstract class UI {
 	protected JPanel mainPanel;
-	protected JMenu fileMenu;
 	protected JMenuBar menuBar;
 	protected JTextPane editor;
-	protected JMenu editMenu;
 }

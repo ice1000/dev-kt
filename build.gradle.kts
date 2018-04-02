@@ -47,7 +47,7 @@ plugins {
 	java
 	application
 	id("org.jetbrains.intellij") version "0.3.1"
-	id("de.undercouch.download") version "3.4.2"
+	// id("de.undercouch.download") version "3.4.2"
 	kotlin("jvm") version "1.2.31"
 }
 
@@ -128,11 +128,13 @@ java.sourceSets {
 repositories {
 	mavenCentral()
 	jcenter()
+	maven("https://jitpack.io")
 }
 
 dependencies {
 	compile(kotlin("stdlib-jdk8", kotlinVersion))
 	compile(kotlin("compiler-embeddable", kotlinVersion))
+	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.0-SNAPSHOT")
 	compile(files(Paths.get("lib", "darcula.jar")))
 	testCompile("junit", "junit", "4.12")
 	testCompile(kotlin("test-junit", kotlinVersion))
