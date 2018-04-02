@@ -46,9 +46,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
 			val tokens = Kotlin.lex(editor.text)
-			for ((tokenStart, tokenEnd, tokenType) in tokens) when  {
+			for ((tokenStart, tokenEnd, tokenType) in tokens) when {
 				stringTokens.contains(tokenType) -> highlight(tokenStart, tokenEnd, attrGreen)
-				KtTokens.KEYWORDS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attr)
+				KtTokens.KEYWORDS.contains(tokenType) or
+						KtTokens.VISIBILITY_MODIFIERS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attr)
 				else -> highlight(tokenStart, tokenEnd, attrBlack)
 			}
 		}
