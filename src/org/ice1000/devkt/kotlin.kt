@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
+/**
+ * @author ice1000
+ * @since v0.0.1
+ */
 object Kotlin {
 	private val psiFileFactory: PsiFileFactory
 

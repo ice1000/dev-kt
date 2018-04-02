@@ -13,6 +13,7 @@ fun JFrame.TODO() {
 
 /**
  * @author ice1000
+ * @since v0.0.1
  */
 class UIImpl(private val frame: JFrame) : UI() {
 	private val undoManager = UndoManager()
