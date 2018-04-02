@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # This is just a reference for installing sarasa gothic font
 # you may download it manually
