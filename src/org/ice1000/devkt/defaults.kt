@@ -5,6 +5,7 @@ package org.ice1000.devkt
 import com.bulenkov.darcula.DarculaLaf
 import java.awt.BorderLayout
 import java.awt.Font
+import javax.imageio.ImageIO
 import javax.swing.*
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
@@ -52,7 +53,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame("Dev Kt") {
 		layout = BorderLayout()
 		setLocation(100, 100)
 		val ui = UIImpl(this)
-		iconImage = AllIcons.iconToImage(AllIcons.KOTLIN_BIG)
+		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 		add(ui.mainPanel)
 		pack()
 		defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
