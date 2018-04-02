@@ -1,9 +1,12 @@
 package org.ice1000.devkt
 
 import charlie.gensokyo.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import java.awt.Color
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.*
+import javax.swing.text.*
 import javax.swing.undo.UndoManager
 
 fun JFrame.TODO() {
@@ -22,9 +25,34 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	init {
 		frame.jMenuBar = menuBar
-		editor.document.addUndoableEditListener {
-			undoManager.addEdit(it.edit)
-			updateUndoMenuItems()
+		val cont = StyleContext.getDefaultStyleContext()
+		val attr = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.ORANGE)
+		val attrGreen = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.GREEN)
+		val attrBlack = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.LIGHT_GRAY)
+		editor.document = object : DefaultStyledDocument() {
+			init {
+				addUndoableEditListener {
+					undoManager.addEdit(it.edit)
+					updateUndoMenuItems()
+				}
+			}
+
+			override fun insertString(offs: Int, str: String, a: AttributeSet) {
+				super.insertString(offs, str, a)
+				val tokens = Kotlin.lex(editor.text)
+				for ((tokenStart, tokenEnd, tokenType) in tokens) when (tokenType) {
+					KtTokens.OPEN_QUOTE,
+					KtTokens.CLOSING_QUOTE,
+					KtTokens.REGULAR_STRING_PART,
+					KtTokens.CHARACTER_LITERAL -> highlight(tokenStart, tokenEnd, attrGreen)
+					KtTokens.FUN_KEYWORD -> highlight(tokenStart, tokenEnd, attr)
+					else -> highlight(tokenStart, tokenEnd, attrBlack)
+				}
+			}
+
+			private fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
+				setCharacterAttributes(tokenStart, tokenEnd - tokenStart, attributeSet, false)
+			}
 		}
 		menuBar.subMenu("File") {
 			mnemonic = KeyEvent.VK_F

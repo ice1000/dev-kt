@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.lexer.KotlinLexer
 
 /**
  * @author ice1000
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
  */
 object Kotlin {
 	private val psiFileFactory: PsiFileFactory
+	private val lexer: KotlinLexer
 
 	init {
 		val compilerConfiguration = CompilerConfiguration()
@@ -32,8 +34,19 @@ object Kotlin {
 			}
 		}
 		psiFileFactory = PsiFileFactory.getInstance(project)
+		lexer = KotlinLexer()
 	}
 
 	fun parse(text: String) = psiFileFactory
 			.createFileFromText(KotlinLanguage.INSTANCE, text)
+
+	// TODO incremental
+	fun lex(text: String) = lexer.run {
+		start(text)
+		generateSequence {
+			Triple(tokenStart, tokenEnd, tokenType)
+					.also { advance() }
+					.takeIf { tokenType != null }
+		}
+	}
 }
