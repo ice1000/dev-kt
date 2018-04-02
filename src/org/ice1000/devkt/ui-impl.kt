@@ -74,6 +74,7 @@ class UIImpl(private val frame: JFrame) : UI() {
 				icon = Icons.SYNCHRONIZE
 				onAction { frame.TODO() }
 			}
+			separator
 			item("Exit") {
 				icon = Icons.EXIT
 				onAction {
@@ -96,24 +97,37 @@ class UIImpl(private val frame: JFrame) : UI() {
 				onAction { redo() }
 			}
 			separator
-			item("Cut") { onAction { cut() } }
-			item("Copy") { onAction { copy() } }
-			item("Paste") { onAction { paste() } }
+			item("Cut") {
+				icon = Icons.CUT
+				onAction { cut() }
+			}
+			item("Copy") {
+				onAction { copy() }
+				icon = Icons.COPY
+			}
+			item("Paste") {
+				icon = Icons.PASTE
+				onAction { paste() }
+			}
 			item("Select All") { onAction { selectAll() } }
 		}
 		menuBar.subMenu("Build") {
 			mnemonic = KeyEvent.VK_R
 			item("Build As Jar") {
+				icon = Icons.COMPILE
 				onAction { frame.TODO() }
 			}
 			item("Build To...") {
 				onAction { frame.TODO() }
 			}
 			subMenu("Run As") {
+				icon = Icons.EXECUTE
 				item("Executable Jar") {
+					icon = Icons.JAR
 					onAction { frame.TODO() }
 				}
 				item("Kotlin Script") {
+					icon = Icons.KOTLIN_FILE
 					onAction { frame.TODO() }
 				}
 			}

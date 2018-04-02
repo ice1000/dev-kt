@@ -35,6 +35,7 @@ public interface Icons {
 	@NotNull Icon UNDO = IconLoader.getIcon("/icon/undo.png");
 	@NotNull Icon REDO = IconLoader.getIcon("/icon/redo.png");
 	@NotNull Icon SYNCHRONIZE = IconLoader.getIcon("/icon/synchronizeFS.png");
+	@NotNull Icon JAR = IconLoader.getIcon("/icon/archive.png");
 
 	static @NotNull Image iconToImage(@NotNull final Icon icon) {
 		if (icon instanceof ImageIcon) return ((ImageIcon) icon).getImage();
