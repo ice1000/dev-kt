@@ -2,6 +2,8 @@
 
 package org.ice1000.devkt
 
+import org.ice1000.devkt.lie.macCapable
+
 /**
  * @author ice1000
  */
@@ -9,5 +11,6 @@ package org.ice1000.devkt
 fun devKt(vararg args: String) {
 	`{-# LANGUAGE DarculaLookAndFeel #-}`
 	`{-# LANGUAGE SarasaGothicFont #-}`
+	if (macCapable) `{-# LANGUAGE MacSpecific #-}`
 	`{-# LANGUAGE DevKt #-}`
 }

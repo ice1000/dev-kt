@@ -4,8 +4,10 @@ package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.lie.MacSpecific
 import org.ice1000.devkt.ui.UIImpl
-import java.awt.*
+import java.awt.BorderLayout
+import java.awt.Font
 import java.awt.event.*
 import javax.imageio.ImageIO
 import javax.swing.*
@@ -18,7 +20,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		}
 
 	private var gothicFont: Font
-		get() = UIManager.getFont("Menu.font")
+		get() = UIManager.getFont("Panel.font")
 		set(value) {
 			UIManager.put("Menu.font", value)
 			UIManager.put("MenuBar.font", value)
@@ -45,9 +47,6 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 
 object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 	init {
-		if (SystemInfo.isMac) {
-			system["apple.laf.useScreenMenuBar"] = true
-		}
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
@@ -56,16 +55,14 @@ object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	const val defaultTitle = "Dev Kt"
 	val globalSettings = GlobalSettings()
+	val ui: UIImpl
 
 	init {
-		if (SystemInfo.isMac) {
-			MacApplicationListener(this)
-		}
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()
 		setLocation(100, 100)
-		val ui = UIImpl(this)
+		ui = UIImpl(this)
 		// TODO replace with my own icon
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 		add(ui.mainPanel)
@@ -81,3 +78,5 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 		isVisible = true
 	}
 }
+
+object `{-# LANGUAGE MacSpecific #-}` : MacSpecific()
