@@ -3,6 +3,7 @@ package org.ice1000.devkt.ui
 import org.ice1000.devkt.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.com.intellij.ui.DocumentAdapter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
@@ -11,7 +12,9 @@ import java.awt.event.KeyEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
-import javax.swing.text.*
+import javax.swing.event.DocumentEvent
+import javax.swing.text.AttributeSet
+import javax.swing.text.DefaultStyledDocument
 import javax.swing.undo.UndoManager
 
 
@@ -27,9 +30,11 @@ fun JFrame.TODO() {
 class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	val settings = frame.globalSettings
 	private val undoManager = UndoManager()
+	private var edited = false
 	var currentFile: File? = null
 	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
+	internal lateinit var showInFilesMenuItem: JMenuItem
 
 	private inner class KtDocument : DefaultStyledDocument() {
 		private val colorScheme = ColorScheme(settings)
@@ -37,8 +42,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		init {
 			addUndoableEditListener {
 				undoManager.addEdit(it.edit)
+				edited = true
 				updateUndoMenuItems()
 			}
+			addDocumentListener(object : DocumentAdapter() {
+				override fun textChanged(event: DocumentEvent?) {
+					reparse()
+				}
+			})
 			resetProperties()
 		}
 
@@ -53,13 +64,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
-			reparse()
 			resetProperties()
-		}
-
-		override fun remove(offs: Int, len: Int) {
-			super.remove(offs, len)
-			reparse()
 		}
 
 		private fun reparse() {
@@ -101,6 +106,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Z) undo()
+				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_S) save()
+				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Y) sync()
 				if (e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_Z) redo()
 			}
 		})
@@ -111,15 +118,24 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun save() {
-		val file = currentFile ?: JFileChooser().apply { }.selectedFile ?: run { noFileSelected(); return }
+		val file = currentFile ?: JFileChooser(settings.recentFiles.firstOrNull()?.parentFile).apply {
+			showSaveDialog(mainPanel)
+		}.selectedFile ?: run { noFileSelected(); return }
+		currentFile = file
+		if (!file.exists()) file.createNewFile()
+		settings.recentFiles.add(file)
 		file.writeText(editor.text)
 	}
 
+	fun createNewFile(templateName: String) {
+		currentFile = null
+		frame.TODO()
+	}
+
 	fun open() {
-		JFileChooser().apply {
+		JFileChooser(currentFile?.parentFile).apply {
 			// dialogTitle = "Choose a Kotlin file"
 			fileFilter = kotlinFileFilter
-			currentFile?.let { currentDirectory = it.parentFile }
 			showOpenDialog(mainPanel)
 		}.selectedFile?.let {
 			loadFile(it)
@@ -139,6 +155,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			editor.text = it.readText()
 			settings.lastOpenedFile = path
 		}
+		updateShowInFilesMenuItem()
 	}
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
@@ -192,12 +209,26 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		redoMenuItem.isEnabled = undoManager.canRedo()
 	}
 
+	fun updateShowInFilesMenuItem() {
+		showInFilesMenuItem.isEnabled = currentFile != null
+	}
+
+	fun showInFiles() {
+		currentFile?.let(::open)
+	}
+
 	fun undo() {
-		if (undoManager.canUndo()) undoManager.undo()
+		if (undoManager.canUndo()) {
+			undoManager.undo()
+			edited = true
+		}
 	}
 
 	fun redo() {
-		if (undoManager.canRedo()) undoManager.redo()
+		if (undoManager.canRedo()) {
+			undoManager.redo()
+			edited = true
+		}
 	}
 
 	fun selectAll() = editor.selectAll()

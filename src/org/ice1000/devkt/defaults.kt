@@ -3,6 +3,7 @@
 package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
+import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.*
 import java.awt.event.*
@@ -51,7 +52,7 @@ object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 
 object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	const val defaultTitle = "Dev Kt"
-	val globalSettings = GlobalSettings
+	val globalSettings = GlobalSettings()
 
 	init {
 		layout = BorderLayout()

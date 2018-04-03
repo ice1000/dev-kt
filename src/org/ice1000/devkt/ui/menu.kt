@@ -48,6 +48,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = AllIcons.OPEN
 			onAction { open() }
 		}
+		item("Show in Files") {
+			showInFilesMenuItem = this
+			onAction { showInFiles() }
+		}
 		subMenu("Open Recent") {
 			settings.recentFiles.forEach { recent ->
 				val presentableFile = currentFile?.let { current -> recent.relativeTo(current.parentFile) }
@@ -95,8 +99,8 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { cut() }
 		}
 		item("Copy") {
-			onAction { copy() }
 			icon = AllIcons.COPY
+			onAction { copy() }
 		}
 		item("Paste") {
 			icon = AllIcons.PASTE

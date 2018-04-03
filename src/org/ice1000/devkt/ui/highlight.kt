@@ -1,11 +1,11 @@
 @file:Suppress("HasPlatformType")
 
-package org.ice1000.devkt
+package org.ice1000.devkt.ui
 
+import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`
+import org.ice1000.devkt.config.GlobalSettings
 import sun.font.FontDesignMetrics
-import sun.swing.SwingUtilities2
 import java.awt.Color
-import javax.swing.JTextPane
 import javax.swing.text.*
 
 class ColorScheme(settings: GlobalSettings) {
@@ -30,7 +30,7 @@ class ColorScheme(settings: GlobalSettings) {
 
 /**
  * See https://stackoverflow.com/a/33557782/7083401
- * Modified
+ * Modified a little
  */
 fun createTabSizeAttributes(tabSize: Int): SimpleAttributeSet {
 	val spaceSize = FontDesignMetrics.getMetrics(`{-# LANGUAGE SarasaGothicFont #-}`.monoFont).charWidth(' ')
