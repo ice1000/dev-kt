@@ -1,3 +1,6 @@
+/**
+ * Copied from the tests in Kotlin compiler
+ */
 package org.ice1000.devkt
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult

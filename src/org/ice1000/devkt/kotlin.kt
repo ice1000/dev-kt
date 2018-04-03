@@ -40,13 +40,6 @@ object Kotlin {
 		environment = KotlinCoreEnvironment.createForProduction(Disposable {},
 				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 		val project = environment.project
-		val extensionPoint = "org.jetbrains.kotlin.com.intellij.treeCopyHandler"
-		val extensionClassName = TreeCopyHandler::class.java.name.orEmpty()
-		for (area in arrayOf(getArea(project), getArea(null))) {
-			if (!area.hasExtensionPoint(extensionPoint)) {
-				area.registerExtensionPoint(extensionPoint, extensionClassName, ExtensionPoint.Kind.INTERFACE)
-			}
-		}
 		psiFileFactory = PsiFileFactory.getInstance(project)
 		val parserDef = KotlinParserDefinition.instance
 		lexer = parserDef.createLexer(project) as KotlinLexer

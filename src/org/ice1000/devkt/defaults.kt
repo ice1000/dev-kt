@@ -3,6 +3,7 @@
 package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
+import org.ice1000.devkt.ui.UIImpl
 import java.awt.BorderLayout
 import java.awt.Font
 import java.awt.event.*
@@ -49,11 +50,13 @@ object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 	}
 }
 
-object `{-# LANGUAGE DevKt #-}` : JFrame("Dev Kt") {
+object `{-# LANGUAGE DevKt #-}` : JFrame() {
+	const val defaultTitle = "Dev Kt"
 	val globalSettings = GlobalSettings
 
 	init {
 		layout = BorderLayout()
+		title = defaultTitle
 		setLocation(100, 100)
 		val ui = UIImpl(this)
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
