@@ -29,6 +29,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		val attr = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.ORANGE)
 		val attrGreen = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.GREEN)
 		val attrBlack = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.LIGHT_GRAY)
+		val attrBlack2 = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.GRAY)
 
 		init {
 			addUndoableEditListener {
@@ -48,6 +49,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			val tokens = Kotlin.lex(editor.text)
 			for ((tokenStart, tokenEnd, tokenType) in tokens) when {
 				stringTokens.contains(tokenType) -> highlight(tokenStart, tokenEnd, attrGreen)
+				KtTokens.COMMENTS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attrBlack2)
 				KtTokens.KEYWORDS.contains(tokenType) or
 						KtTokens.VISIBILITY_MODIFIERS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attr)
 				else -> highlight(tokenStart, tokenEnd, attrBlack)
