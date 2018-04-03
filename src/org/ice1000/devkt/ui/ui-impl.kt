@@ -155,7 +155,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			currentFile = null
 			edited = true
 			editor.text = javaClass
-					.getResourceAsStream("/template/$templateName.kt")
+					.getResourceAsStream("/template/$templateName")
 					.reader()
 					.readText()
 		}

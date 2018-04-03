@@ -21,11 +21,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		subMenu("New") {
 			item("Executable File") {
 				icon = AllIcons.KOTLIN_FILE
-				onAction { createNewFile("file") }
+				onAction { createNewFile("file.kt") }
 			}
 			item("Script") {
 				icon = AllIcons.KOTLIN_FILE
-				onAction { frame.TODO() }
+				onAction { createNewFile("script.kts") }
 			}
 			item("Android Activity") {
 				icon = AllIcons.KOTLIN_ANDROID
