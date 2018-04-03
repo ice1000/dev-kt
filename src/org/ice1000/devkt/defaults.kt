@@ -59,7 +59,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 
 	init {
 		if (SystemInfo.isMac) {
-			MacApplicationListner(this)
+			MacApplicationListener(this)
 		}
 		layout = BorderLayout()
 		title = defaultTitle

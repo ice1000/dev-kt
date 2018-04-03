@@ -22,7 +22,7 @@ object system {
 	}
 }
 
-class MacApplicationListner(private val devKt: `{-# LANGUAGE DevKt #-}`) : AboutHandler, PreferencesHandler, QuitHandler {
+class MacApplicationListener(private val devKt: `{-# LANGUAGE DevKt #-}`) : AboutHandler, PreferencesHandler, QuitHandler {
 	private val app: Application = com.apple.eawt.Application.getApplication()
 
 	init {
