@@ -50,6 +50,11 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 
 object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 	init {
+		macCapable {
+			// if System is Mac, make sure set this property before setLookAndFeel
+			System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
+			`{-# LANGUAGE MacSpecific #-}`
+		}
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
@@ -61,9 +66,6 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	val ui: UIImpl
 
 	init {
-		macCapable {
-			System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
-		}
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()
