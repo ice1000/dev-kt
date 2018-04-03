@@ -38,6 +38,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	private inner class KtDocument : DefaultStyledDocument() {
 		private val colorScheme = ColorScheme(settings)
+		private val stringTokens = TokenSet.create(
+				KtTokens.OPEN_QUOTE,
+				KtTokens.CLOSING_QUOTE,
+				KtTokens.REGULAR_STRING_PART)
 
 		init {
 			addUndoableEditListener {
@@ -45,11 +49,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				edited = true
 				updateUndoMenuItems()
 			}
-			addDocumentListener(object : DocumentAdapter() {
-				override fun textChanged(event: DocumentEvent?) {
-					reparse()
-				}
-			})
 			resetProperties()
 		}
 
@@ -57,14 +56,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			setParagraphAttributes(0, length, colorScheme.tabSize, false)
 		}
 
-		private val stringTokens = TokenSet.create(
-				KtTokens.OPEN_QUOTE,
-				KtTokens.CLOSING_QUOTE,
-				KtTokens.REGULAR_STRING_PART)
-
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
+			reparse()
 			resetProperties()
+		}
+
+		override fun remove(offs: Int, len: Int) {
+			super.remove(offs, len)
+			reparse()
 		}
 
 		private fun reparse() {
@@ -102,7 +102,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		editor.document = KtDocument()
 		updateUndoMenuItems()
 		val lastOpenedFile = File(settings.lastOpenedFile)
-		if (lastOpenedFile.canRead()) loadFile(lastOpenedFile)
+		if (lastOpenedFile.canRead()) {
+			edited = false
+			loadFile(lastOpenedFile)
+		}
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Z) undo()
@@ -125,11 +128,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		if (!file.exists()) file.createNewFile()
 		settings.recentFiles.add(file)
 		file.writeText(editor.text)
+		edited = false
 	}
 
 	fun createNewFile(templateName: String) {
-		currentFile = null
-		frame.TODO()
+		if (!makeSureLeaveCurrentFile()) {
+			currentFile = null
+			frame.TODO()
+		}
 	}
 
 	fun open() {
@@ -148,7 +154,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun loadFile(it: File) {
-		if (it.canRead() and !checkFileSaved()) {
+		if (it.canRead() and !makeSureLeaveCurrentFile()) {
+			edited = false
 			currentFile = it
 			val path = it.absolutePath.orEmpty()
 			frame.title = "$path - ${`{-# LANGUAGE DevKt #-}`.defaultTitle}"
@@ -179,10 +186,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		Kotlin.parse(editor.text)?.let(Kotlin::compile)
 	}
 
-	private fun checkFileSaved(): Boolean {
-		frame.TODO()
-		return false
-	}
+	private fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=
+			JOptionPane.showConfirmDialog(
+					mainPanel,
+					"${currentFile?.name ?: "Current file"} unsaved, leave?",
+					UIManager.getString("OptionPane.titleText"),
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					AllIcons.KOTLIN)
 
 	fun buildAndRun() {
 		buildAsClasses()
@@ -199,9 +210,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun exit() {
-		frame.dispose()
 		settings.save()
-		if (!checkFileSaved()) System.exit(0)
+		if (!makeSureLeaveCurrentFile()) {
+			frame.dispose()
+			System.exit(0)
+		}
 	}
 
 	fun updateUndoMenuItems() {

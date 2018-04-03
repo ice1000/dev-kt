@@ -32,6 +32,7 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [ ] Text style customization
 	+ [ ] Font customization
 	+ [ ] Keymap customization
+	+ [ ] Internationalization
 + File operations
 	+ [X] Create new file when no files are opened
 	+ [X] Save and sync
