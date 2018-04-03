@@ -77,8 +77,8 @@ class GlobalSettings {
 
 	fun save() {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
-		properties[::useTab.name] = useTab
-		properties[::tabSize.name] = tabSize
+		properties[::useTab.name] = useTab.toString()
+		properties[::tabSize.name] = tabSize.toString()
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
 		properties.store(configFile.outputStream(), null)
 	}

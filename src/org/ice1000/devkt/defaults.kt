@@ -69,12 +69,11 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()
-		bounds = globalSettings.windowBounds
 		ui = UIImpl(this)
 		// TODO replace with my own icon
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 		add(ui.mainPanel)
-		pack()
+		bounds = globalSettings.windowBounds
 		addFocusListener(object : FocusAdapter() {
 			override fun focusLost(e: FocusEvent?) = globalSettings.save()
 		})
