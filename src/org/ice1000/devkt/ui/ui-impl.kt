@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Kotlin
+import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*
@@ -183,8 +184,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		})
 	}
 
-	fun setting() {
-		TODO()
+	fun settings() {
+		frame.TODO()
 	}
 
 	fun sync() {

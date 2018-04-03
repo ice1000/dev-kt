@@ -24,7 +24,7 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	}
 
 	override fun handlePreferences(event: AppEvent.PreferencesEvent) =
-			`{-# LANGUAGE DevKt #-}`.ui.setting()
+			`{-# LANGUAGE DevKt #-}`.ui.settings()
 
 	override fun handleAbout(event: AppEvent.AboutEvent) = Unit
 
