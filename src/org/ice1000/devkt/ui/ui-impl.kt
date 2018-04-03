@@ -11,9 +11,9 @@ import java.awt.event.KeyEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
-import javax.swing.text.AttributeSet
-import javax.swing.text.DefaultStyledDocument
+import javax.swing.text.*
 import javax.swing.undo.UndoManager
+
 
 fun JFrame.TODO() {
 	JOptionPane.showMessageDialog(this, "This feature is TODO.",
@@ -31,12 +31,19 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 
-	private inner class KtDocument(private val colorScheme: ColorScheme) : DefaultStyledDocument() {
+	private inner class KtDocument : DefaultStyledDocument() {
+		private val colorScheme = ColorScheme(settings)
+
 		init {
 			addUndoableEditListener {
 				undoManager.addEdit(it.edit)
 				updateUndoMenuItems()
 			}
+			resetProperties()
+		}
+
+		fun resetProperties() {
+			setParagraphAttributes(0, length, colorScheme.tabSize, false)
 		}
 
 		private val stringTokens = TokenSet.create(
@@ -47,6 +54,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
 			reparse()
+			resetProperties()
 		}
 
 		override fun remove(offs: Int, len: Int) {
@@ -66,6 +74,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			DOC_COMMENT -> colorScheme.docComments
 			SEMICOLON -> colorScheme.semicolon
 			COLON -> colorScheme.colon
+			COMMA -> colorScheme.comma
 			INTEGER_LITERAL, FLOAT_LITERAL -> colorScheme.numbers
 			LPAR, RPAR -> colorScheme.parentheses
 			LBRACE, RBRACE -> colorScheme.braces
@@ -84,11 +93,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	init {
 		frame.jMenuBar = menuBar
-		editor.document = KtDocument(ColorScheme(settings))
 		mainMenu(menuBar, frame)
+		editor.document = KtDocument()
+		updateUndoMenuItems()
 		val lastOpenedFile = File(settings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) loadFile(lastOpenedFile)
-		updateUndoMenuItems()
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Z) undo()

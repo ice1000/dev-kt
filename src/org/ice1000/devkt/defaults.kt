@@ -11,13 +11,13 @@ import javax.imageio.ImageIO
 import javax.swing.*
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
-	private var monoFont: Font?
+	var monoFont: Font
 		get() = UIManager.getFont("TextPane.font")
 		set(value) {
 			UIManager.put("TextPane.font", value)
 		}
 
-	private var gothicFont: Font?
+	private var gothicFont: Font
 		get() = UIManager.getFont("Menu.font")
 		set(value) {
 			UIManager.put("Menu.font", value)
