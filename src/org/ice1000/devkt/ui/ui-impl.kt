@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -214,7 +213,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		Kotlin.parse(editor.text)?.let(Kotlin::compile)
 	}
 
-	private fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=
+	fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=
 			JOptionPane.showConfirmDialog(
 					mainPanel,
 					"${currentFile?.name ?: "Current file"} unsaved, leave?",
