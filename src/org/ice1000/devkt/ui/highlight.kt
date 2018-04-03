@@ -8,25 +8,24 @@ import sun.font.FontDesignMetrics
 import java.awt.Color
 import javax.swing.text.*
 
-class ColorScheme(settings: GlobalSettings) {
-	private val cont = StyleContext.getDefaultStyleContext()
-	val keywords = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.keywordsColor))
-	val string = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.stringColor))
-	val templateEntries = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.templateEntriesColor))
-	val charLiteral = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.charLiteralColor))
-	val lineComments = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.lineCommentsColor))
-	val blockComments = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.blockCommentsColor))
-	val docComments = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.docCommentsColor))
-	val operators = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.operatorsColor))
-	val parentheses = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.parenthesesColor))
-	val braces = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.bracesColor))
-	val brackets = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.bracketsColor))
-	val semicolon = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.semicolonColor))
-	val numbers = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.numbersColor))
-	val identifiers = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.identifiersColor))
-	val annotations = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.annotationsColor))
-	val colon = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.colonColor))
-	val comma = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.decode(settings.commaColor))
+class ColorScheme(settings: GlobalSettings, context: AbstractDocument.AttributeContext = StyleContext.getDefaultStyleContext()) {
+	val keywords = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.keywordsColor))
+	val string = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.stringColor))
+	val templateEntries = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.templateEntriesColor))
+	val charLiteral = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.charLiteralColor))
+	val lineComments = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.lineCommentsColor))
+	val blockComments = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.blockCommentsColor))
+	val docComments = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.docCommentsColor))
+	val operators = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.operatorsColor))
+	val parentheses = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.parenthesesColor))
+	val braces = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.bracesColor))
+	val brackets = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.bracketsColor))
+	val semicolon = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.semicolonColor))
+	val numbers = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.numbersColor))
+	val identifiers = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.identifiersColor))
+	val annotations = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.annotationsColor))
+	val colon = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colonColor))
+	val comma = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.commaColor))
 	val tabSize = createTabSizeAttributes(settings.tabSize)
 }
 

@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
-import java.awt.Image
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
-import javax.swing.text.AttributeSet
-import javax.swing.text.DefaultStyledDocument
+import javax.swing.event.DocumentEvent
+import javax.swing.text.*
 import javax.swing.undo.UndoManager
 
 
@@ -79,7 +78,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val document: KtDocument
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
-		private val colorScheme = ColorScheme(settings)
+		private val colorScheme = ColorScheme(settings, attributeContext)
 		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
 				OPEN_QUOTE,
@@ -158,11 +157,37 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			else -> null
 		}
 
+		override fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet) =
+				highlight(tokenStart, tokenLength, attributeSet, false)
+
 		/**
 		 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
 		 */
-		override fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet) {
-			setCharacterAttributes(tokenStart, tokenLength, attributeSet, false)
+		fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet, replace: Boolean) {
+			if (tokenLength == 0) return
+			try {
+				writeLock()
+				val changes = DefaultDocumentEvent(tokenStart, tokenLength, DocumentEvent.EventType.CHANGE)
+				buffer.change(tokenStart, tokenLength, changes)
+				val sCopy = attributeSet.copyAttributes()
+				// TODO improve efficiency
+				var lastEnd: Int
+				var pos = tokenStart
+				while (pos < tokenStart + tokenLength) {
+					val run = getCharacterElement(pos)
+					lastEnd = run.endOffset
+					if (pos == lastEnd) break
+					val attr = run.attributes as MutableAttributeSet
+					changes.addEdit(AttributeUndoableEdit(run, sCopy, replace))
+					if (replace) attr.removeAttributes(attr)
+					attr.addAttributes(attributeSet)
+					pos = lastEnd
+				}
+				changes.end()
+				fireChangedUpdate(changes)
+			} finally {
+				writeUnlock()
+			}
 		}
 	}
 
@@ -192,6 +217,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun settings() {
 		frame.TODO()
+		reloadSettings()
 	}
 
 	fun sync() {

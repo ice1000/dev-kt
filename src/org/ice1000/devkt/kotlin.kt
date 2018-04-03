@@ -49,8 +49,8 @@ object Kotlin {
 			.createFileFromText(KotlinLanguage.INSTANCE, text) as? KtFile
 
 	fun compile(ktFile: KtFile) {
-		val file = File("./aaa")
-		if (!file.exists()) file.mkdirs()
+		val file = File("./build-cache")
+		if (!file.isDirectory) file.mkdirs()
 		compileFileTo(ktFile, environment, file)
 	}
 

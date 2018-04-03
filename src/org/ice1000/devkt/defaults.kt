@@ -2,13 +2,16 @@
 
 package org.ice1000.devkt
 
+import charlie.gensokyo.doNothingOnClose
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.Font
 import java.awt.event.*
+import javax.imageio.ImageIO
 import javax.swing.*
+
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
 	var monoFont: Font
@@ -16,6 +19,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		set(value) {
 			UIManager.put("TextPane.font", value)
 		}
+
 
 	private var gothicFont: Font
 		get() = UIManager.getFont("Panel.font")
@@ -44,6 +48,8 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 }
 
 object `{-# LANGUAGE DarculaLookAndFeel #-}` {
+	val icon = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
+
 	init {
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
@@ -57,12 +63,15 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	init {
 		globalSettings.load()
 		ui = UIImpl(this)
-		iconImage = MacSpecific.icon
+		iconImage = `{-# LANGUAGE DarculaLookAndFeel #-}`.icon
 		add(ui.mainPanel)
 		addWindowListener(object : WindowAdapter() {
 			override fun windowDeactivated(e: WindowEvent?) = globalSettings.save()
-			override fun windowClosing(e: WindowEvent?) = globalSettings.save()
 			override fun windowLostFocus(e: WindowEvent?) = globalSettings.save()
+			override fun windowClosing(e: WindowEvent?) {
+				globalSettings.save()
+				ui.exit()
+			}
 		})
 		addComponentListener(object : ComponentAdapter() {
 			override fun componentMoved(e: ComponentEvent?) {
@@ -74,7 +83,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 				globalSettings.windowBounds = bounds
 			}
 		})
-		defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+		doNothingOnClose
 		isVisible = true
 		with(ui) {
 			postInit()
