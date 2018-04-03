@@ -3,8 +3,12 @@ package org.ice1000.devkt.lie
 import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
+import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
 
-val macCapable = SystemInfo.isMac and SystemInfo.isAppleJvm
+val macCapable = SystemInfo.isMac
+operator fun Boolean.invoke(block: () -> Unit) {
+	if (this) block()
+}
 
 @Suppress("LeakingThis")
 abstract class MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
@@ -16,9 +20,11 @@ abstract class MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		app.setAboutHandler(this)
 	}
 
-	override fun handlePreferences(event: AppEvent.PreferencesEvent) = Unit
+	override fun handlePreferences(event: AppEvent.PreferencesEvent) =
+			`{-# LANGUAGE DevKt #-}`.ui.setting()
+
 	override fun handleAbout(event: AppEvent.AboutEvent) = Unit
-	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) {
-		// `{-# LANGUAGE DevKt #-}`.ui.makeSureLeaveCurrentFile()
-	}
+
+	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) =
+			`{-# LANGUAGE DevKt #-}`.ui.exit()
 }

@@ -183,6 +183,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		})
 	}
 
+	fun setting() {
+		TODO()
+	}
+
 	fun sync() {
 		currentFile?.let(::loadFile)
 	}

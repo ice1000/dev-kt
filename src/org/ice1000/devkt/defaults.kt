@@ -3,8 +3,11 @@
 package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
+import com.intellij.openapi.util.SystemInfo
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
+import org.ice1000.devkt.lie.invoke
+import org.ice1000.devkt.lie.macCapable
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.BorderLayout
 import java.awt.Font
@@ -58,6 +61,9 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	val ui: UIImpl
 
 	init {
+		macCapable {
+			System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
+		}
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()
