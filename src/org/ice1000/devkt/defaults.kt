@@ -3,6 +3,7 @@
 package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.*
