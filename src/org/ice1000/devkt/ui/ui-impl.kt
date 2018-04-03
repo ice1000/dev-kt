@@ -30,13 +30,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val undoManager = UndoManager()
 	private var edited = false
 		set(value) {
+			val change = field != value
 			field = value
-			refreshTitle()
+			if (change) refreshTitle()
 		}
 	var currentFile: File? = null
 		set(value) {
+			val change = field != value
 			field = value
-			refreshTitle()
+			if (change) refreshTitle()
 		}
 
 	private fun refreshTitle() {
