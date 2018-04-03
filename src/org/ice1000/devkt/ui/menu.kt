@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
 import org.ice1000.devkt.AllIcons
+import org.ice1000.devkt.SystemInfo
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.JFrame
@@ -76,9 +77,13 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { sync() }
 		}
 		separator
-		item("Exit") {
-			icon = AllIcons.EXIT
-			onAction { exit() }
+		if (SystemInfo.isMac) {
+
+		} else {
+			item("Exit") {
+				icon = AllIcons.EXIT
+				onAction { exit() }
+			}
 		}
 	}
 	menuBar.subMenu("Edit") {

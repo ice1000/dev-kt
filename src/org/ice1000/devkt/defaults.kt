@@ -45,6 +45,9 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 
 object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 	init {
+		if (SystemInfo.isMac) {
+			system["apple.laf.useScreenMenuBar"] = true
+		}
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
