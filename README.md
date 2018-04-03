@@ -43,6 +43,8 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [X] Lexer based highlights
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
+	+ [X] Semantic-based highlights
+		+ [ ] Highlight in daemon
 	+ [ ] Highlight selected token
 	+ [ ] Auto indent
 		+ [ ] Smart indent

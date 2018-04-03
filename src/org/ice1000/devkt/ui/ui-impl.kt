@@ -3,8 +3,7 @@ package org.ice1000.devkt.ui
 import org.ice1000.devkt.*
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
+import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -30,10 +29,10 @@ fun JFrame.TODO() {
 interface AnnotationHolder {
 	val text: String
 	fun resetTabSize()
-	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
+	fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet)
 
 	fun highlight(range: TextRange, attributeSet: AttributeSet) =
-			highlight(range.startOffset, range.endOffset, attributeSet)
+			highlight(range.startOffset, range.length, attributeSet)
 
 	fun highlight(astNode: ASTNode, attributeSet: AttributeSet) =
 			highlight(astNode.textRange, attributeSet)
@@ -120,13 +119,17 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		private fun reparse() {
-			val ktFile = Kotlin.parse(text) ?: return lex()
+			// val time = System.currentTimeMillis()
+			lex()
+			// val time2 = System.currentTimeMillis()
+			val ktFile = Kotlin.parse(text) ?: return
+			// val time3 = System.currentTimeMillis()
 			SyntaxTraverser.psiTraverser(ktFile).forEach { psi ->
-				val astNode = psi.node
-				val attr = attributesOf(astNode.elementType)
-						?: return@forEach annotator.annotate(psi, this, colorScheme)
-				setCharacterAttributes(astNode.startOffset, astNode.textLength, attr, false)
+				if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 			}
+			// val time4 = System.currentTimeMillis()
+			// benchmark
+			// println("${time2 - time}, ${time3 - time2}, ${time4 - time3}, ${System.currentTimeMillis() - time4}")
 		}
 
 		/**
@@ -147,7 +150,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			BLOCK_COMMENT, SHEBANG_COMMENT -> colorScheme.blockComments
 			in stringTokens -> colorScheme.string
 			in stringTemplateTokens -> colorScheme.templateEntries
-			in KEYWORDS, in SOFT_KEYWORDS -> colorScheme.keywords
+			in KEYWORDS -> colorScheme.keywords
 			in OPERATIONS -> colorScheme.operators
 			else -> null
 		}
@@ -155,8 +158,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		/**
 		 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
 		 */
-		override fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
-			setCharacterAttributes(tokenStart, tokenEnd - tokenStart, attributeSet, false)
+		override fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet) {
+			setCharacterAttributes(tokenStart, tokenLength, attributeSet, false)
 		}
 	}
 
