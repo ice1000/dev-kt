@@ -11,6 +11,7 @@ public abstract class UI {
 	private JPanel mainPanel;
 	protected JMenuBar menuBar;
 	protected JTextPane editor;
+	protected JToolBar toolbar;
 
 	public @NotNull JPanel getMainPanel() {
 		return mainPanel;

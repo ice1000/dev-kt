@@ -1,10 +1,12 @@
 package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.*
+import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -86,10 +88,17 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			reparse()
 		}
 
-		private fun reparse() {
+		private fun lex() {
 			val tokens = Kotlin.lex(editor.text)
 			for ((start, end, text, type) in tokens)
 				highlight(start, end, attributesOf(type))
+		}
+
+		private fun reparse() {
+			val ktFile = Kotlin.parse(editor.text) ?: return lex()
+			SyntaxTraverser.astTraverser(ktFile.node).forEach {
+				setCharacterAttributes(it.startOffset, it.textLength, attributesOf(it.elementType), false)
+			}
 		}
 
 		private fun attributesOf(type: IElementType) = when (type) {
@@ -105,6 +114,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			LBRACKET, RBRACKET -> colorScheme.brackets
 			in stringTokens -> colorScheme.string
 			in COMMENTS -> colorScheme.blockComments
+			in SOFT_KEYWORDS,
 			in KEYWORDS -> colorScheme.keywords
 			in OPERATIONS -> colorScheme.operators
 			else -> colorScheme.others

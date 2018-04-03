@@ -29,7 +29,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 			item("Android Activity") {
 				icon = AllIcons.KOTLIN_ANDROID
-				onAction { frame.TODO() }
+				onAction { createNewFile("activity.kt") }
 			}
 			item("KotlinJS File") {
 				icon = AllIcons.KOTLIN_JS
