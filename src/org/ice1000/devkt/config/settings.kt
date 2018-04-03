@@ -27,6 +27,7 @@ class GlobalSettings {
 
 	var keywordsColor: String by properties
 	var stringColor: String by properties
+	var templateEntriesColor: String by properties
 	var charLiteralColor: String by properties
 	var lineCommentsColor: String by properties
 	var blockCommentsColor: String by properties
@@ -37,7 +38,8 @@ class GlobalSettings {
 	var bracketsColor: String by properties
 	var semicolonColor: String by properties
 	var numbersColor: String by properties
-	var othersColor: String by properties
+	var identifiersColor: String by properties
+	var annotationsColor: String by properties
 	var colonColor: String by properties
 	var commaColor: String by properties
 
@@ -50,6 +52,7 @@ class GlobalSettings {
 
 		if (!properties.containsKey(::keywordsColor.name)) keywordsColor = "#CC7832"
 		if (!properties.containsKey(::stringColor.name)) stringColor = "#6A8759"
+		if (!properties.containsKey(::templateEntriesColor.name)) templateEntriesColor = "#CC7832"
 		if (!properties.containsKey(::charLiteralColor.name)) charLiteralColor = "#6A8759"
 		if (!properties.containsKey(::lineCommentsColor.name)) lineCommentsColor = "#808080"
 		if (!properties.containsKey(::blockCommentsColor.name)) blockCommentsColor = "#808080"
@@ -60,7 +63,8 @@ class GlobalSettings {
 		if (!properties.containsKey(::bracketsColor.name)) bracketsColor = "#A9B7C6"
 		if (!properties.containsKey(::semicolonColor.name)) semicolonColor = "#CC7832"
 		if (!properties.containsKey(::numbersColor.name)) numbersColor = "#6897BB"
-		if (!properties.containsKey(::othersColor.name)) othersColor = "#A9B7C6"
+		if (!properties.containsKey(::identifiersColor.name)) identifiersColor = "#A9B7C6"
+		if (!properties.containsKey(::annotationsColor.name)) annotationsColor = "#BBB529"
 		if (!properties.containsKey(::colonColor.name)) colonColor = "#A9B7C6"
 		if (!properties.containsKey(::commaColor.name)) commaColor = "#CC7832"
 		properties[::recentFiles.name]?.run {

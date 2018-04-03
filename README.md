@@ -46,6 +46,7 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [ ] Highlight selected token
 	+ [ ] Auto indent
 		+ [ ] Smart indent
+		+ [ ] Indent with spaces
 + [ ] Build and execution
 	+ [ ] Build as class files
 	+ [ ] Build as jar
@@ -54,5 +55,5 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [ ] Run as jar
 	+ [ ] Run as kotlin script
 + Others
-	+ [ ] Build-in documentation
 	+ [X] Open alternative editors' download page in browser
+	+ [ ] Built-in documentation
