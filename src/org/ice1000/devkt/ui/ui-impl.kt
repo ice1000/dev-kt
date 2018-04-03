@@ -23,12 +23,9 @@ fun JFrame.TODO() {
  * @since v0.0.1
  */
 class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
+	private val settings = frame.globalSettings
 	private val undoManager = UndoManager()
 	private var file: File? = null
-		set(value) {
-			field = value
-			frame.title = "${value?.absolutePath.orEmpty()}${`{-# LANGUAGE DevKt #-}`.defaultTitle}"
-		}
 	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 
@@ -48,6 +45,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
+			reparse()
+		}
+
+		override fun remove(offs: Int, len: Int) {
+			super.remove(offs, len)
+			reparse()
+		}
+
+		private fun reparse() {
 			val tokens = Kotlin.lex(editor.text)
 			for ((start, end, text, type) in tokens) when {
 				stringTokens.contains(type) -> highlight(start, end, STRING)
@@ -66,6 +72,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		frame.jMenuBar = menuBar
 		editor.document = KtDocument()
 		mainMenu(menuBar, frame)
+		val lastOpenedFile = File(settings.lastOpenedFile)
+		if (lastOpenedFile.canRead()) loadFile(lastOpenedFile)
 		updateUndoMenuItems()
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
@@ -79,7 +87,21 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		JFileChooser().apply {
 			// dialogTitle = "Choose a Kotlin file"
 			fileFilter = kotlinFileFilter
-		}.showOpenDialog(mainPanel)
+			file?.let { currentDirectory = it.parentFile }
+			showOpenDialog(mainPanel)
+		}.selectedFile?.let {
+			loadFile(it)
+		} ?: JOptionPane.showMessageDialog(mainPanel, "No file selected")
+	}
+
+	private fun loadFile(it: File) {
+		if (it.canRead() and !checkFileSaved()) {
+			file = it
+			val path = it.absolutePath.orEmpty()
+			frame.title = "$path - ${`{-# LANGUAGE DevKt #-}`.defaultTitle}"
+			editor.text = it.readText()
+			settings.lastOpenedFile = path
+		}
 	}
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
@@ -87,7 +109,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 
-	fun browse(url: String) = try {
+	private fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
@@ -95,6 +117,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun buildAsClasses() {
 		Kotlin.parse(editor.text)?.let(Kotlin::compile)
+	}
+
+	private fun checkFileSaved(): Boolean {
+		frame.TODO()
+		return false
 	}
 
 	fun buildAndRun() {
@@ -113,9 +140,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun exit() {
 		frame.dispose()
-		GlobalSettings.save()
-		// TODO check saving
-		System.exit(0)
+		settings.save()
+		if (!checkFileSaved()) System.exit(0)
 	}
 
 	fun updateUndoMenuItems() {

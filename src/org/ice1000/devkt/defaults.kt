@@ -57,12 +57,12 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	init {
 		layout = BorderLayout()
 		title = defaultTitle
+		globalSettings.load()
 		setLocation(100, 100)
 		val ui = UIImpl(this)
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 		add(ui.mainPanel)
 		pack()
-		globalSettings.load()
 		addFocusListener(object : FocusAdapter() {
 			override fun focusLost(e: FocusEvent?) = globalSettings.save()
 		})

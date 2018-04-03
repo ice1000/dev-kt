@@ -11,6 +11,7 @@ object GlobalSettings {
 	private val configFile = File("config.properties").absoluteFile
 	private val properties = Properties()
 	private var useTabImpl: String by properties
+	var lastOpenedFile: String by properties
 	var useTab: Boolean
 		get() = useTabImpl == "1"
 		set(value) {
@@ -21,6 +22,7 @@ object GlobalSettings {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
 		if (!properties.containsKey(::useTabImpl.name)) useTabImpl = "1"
+		if (!properties.containsKey(::lastOpenedFile.name)) lastOpenedFile = ""
 	}
 
 	fun save() {

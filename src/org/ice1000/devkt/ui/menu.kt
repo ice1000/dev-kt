@@ -156,7 +156,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 val kotlinFileFilter = object : FileFilter() {
 	override fun accept(input: File?) = when {
 		input == null -> false
-		input.isDirectory -> false
+		input.isDirectory -> true
 		else -> {
 			val fileName = input.path.toLowerCase()
 			fileName.endsWith(".kt") || fileName.endsWith(".kts")
