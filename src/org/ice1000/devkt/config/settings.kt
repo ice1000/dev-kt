@@ -10,19 +10,10 @@ import java.util.*
 class GlobalSettings {
 	private val configFile = File("config.properties").absoluteFile
 	private val properties = Properties()
-	private var useTabImpl: String by properties
-	private var tabSizeImpl: String by properties
 	var lastOpenedFile: String by properties
-	var tabSize: Int
-		get() = tabSizeImpl.toInt()
-		set(value) {
-			tabSizeImpl = value.toString()
-		}
-	var useTab: Boolean
-		get() = useTabImpl == "1"
-		set(value) {
-			useTabImpl = if (value) "1" else ""
-		}
+	var tabSize: Int = 2
+	var windowBounds: Pair<Int, Int> = 800 to 600
+	var useTab: Boolean = true
 	var recentFiles = hashSetOf<File>()
 
 	var keywordsColor: String by properties
@@ -46,8 +37,6 @@ class GlobalSettings {
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
-		if (!properties.containsKey(::useTabImpl.name)) useTabImpl = "1"
-		if (!properties.containsKey(::tabSizeImpl.name)) tabSizeImpl = "3"
 		if (!properties.containsKey(::lastOpenedFile.name)) lastOpenedFile = ""
 
 		if (!properties.containsKey(::keywordsColor.name)) keywordsColor = "#CC7832"
@@ -67,6 +56,11 @@ class GlobalSettings {
 		if (!properties.containsKey(::annotationsColor.name)) annotationsColor = "#BBB529"
 		if (!properties.containsKey(::colonColor.name)) colonColor = "#A9B7C6"
 		if (!properties.containsKey(::commaColor.name)) commaColor = "#CC7832"
+		properties[::windowBounds.name]?.toString()?.split(',', limit = 2)?.let { (width, height) ->
+			width.toIntOrNull()?.let { w -> height.toIntOrNull()?.let(w::to) }?.let { windowBounds = it }
+		}
+		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
+		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::recentFiles.name]?.run {
 			toString()
 					.split(File.pathSeparatorChar)
@@ -76,6 +70,8 @@ class GlobalSettings {
 
 	fun save() {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
+		properties[::useTab.name] = useTab
+		properties[::tabSize.name] = tabSize
 		properties.store(configFile.outputStream(), null)
 	}
 }

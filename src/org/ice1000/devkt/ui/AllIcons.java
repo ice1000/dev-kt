@@ -1,4 +1,4 @@
-package org.ice1000.devkt;
+package org.ice1000.devkt.ui;
 
 import com.bulenkov.iconloader.IconLoader;
 import org.jetbrains.annotations.NotNull;

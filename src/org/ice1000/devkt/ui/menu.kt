@@ -2,7 +2,6 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
 import com.bulenkov.iconloader.util.SystemInfo
-import org.ice1000.devkt.AllIcons
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.JFrame
