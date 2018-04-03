@@ -58,6 +58,9 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	val globalSettings = GlobalSettings()
 
 	init {
+		if (SystemInfo.isMac) {
+			MacApplicationListner(this)
+		}
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()

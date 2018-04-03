@@ -63,7 +63,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 		}
 		separator
-		item("Settings") {
+		if (!SystemInfo.isMac) item("Settings") {
 			icon = AllIcons.SETTINGS
 			onAction { frame.TODO() }
 		}
@@ -77,9 +77,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { sync() }
 		}
 		separator
-		if (SystemInfo.isMac) {
-
-		} else {
+		if (!SystemInfo.isMac) {
 			item("Exit") {
 				icon = AllIcons.EXIT
 				onAction { exit() }
