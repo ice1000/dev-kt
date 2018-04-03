@@ -2,6 +2,7 @@ import de.undercouch.gradle.tasks.download.Download
 import groovy.lang.Closure
 import org.gradle.api.internal.HasConvention
 import org.gradle.internal.deployment.RunApplication
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.*
@@ -52,6 +53,8 @@ plugins {
 }
 
 application {
+	if (SystemInfo.isMac)
+		applicationDefaultJvmArgs = arrayListOf("-Xdock:name=Dev-Kt")
 	mainClassName = "org.ice1000.devkt.Main"
 }
 

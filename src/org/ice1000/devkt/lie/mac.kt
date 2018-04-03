@@ -4,6 +4,12 @@ import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.ui.AllIcons.KOTLIN_BIG_ICON
+import java.awt.GraphicsEnvironment
+import java.awt.Image
+import java.awt.Transparency
+import javax.swing.Icon
+import javax.swing.ImageIcon
 
 inline fun mac(block: () -> Unit) {
 	if (SystemInfo.isMac) block()
@@ -21,6 +27,7 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		app.setPreferencesHandler(this)
 		app.setQuitHandler(this)
 		app.setAboutHandler(this)
+		app.dockIconImage = KOTLIN_BIG_ICON.let(::toImage)
 	}
 
 	override fun handlePreferences(event: AppEvent.PreferencesEvent) =
@@ -30,4 +37,29 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 
 	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) =
 			`{-# LANGUAGE DevKt #-}`.ui.exit()
+
+
+	/**
+	 * we could only implements it to convert a Icon to a Image
+	 * Don't ask why we didn't use the API.
+	 * I'm too stupid.
+	 *
+	 * @param icon built-in icons [org.ice1000.devkt.ui.AllIcons]
+	 */
+	private fun toImage(icon: Icon): Image {
+		return if (icon is ImageIcon) {
+			icon.image
+		} else {
+			GraphicsEnvironment
+					.getLocalGraphicsEnvironment()
+					.defaultScreenDevice
+					.defaultConfiguration
+					.createCompatibleImage(icon.iconWidth, icon.iconHeight, Transparency.TRANSLUCENT).apply img@{
+						this@img.createGraphics().apply {
+							icon.paintIcon(null, this, 0, 0)
+							dispose()
+						}
+					}
+		}
+	}
 }
