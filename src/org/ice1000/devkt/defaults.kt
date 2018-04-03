@@ -3,11 +3,8 @@
 package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
-import com.intellij.openapi.util.SystemInfo
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
-import org.ice1000.devkt.lie.invoke
-import org.ice1000.devkt.lie.macCapable
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.BorderLayout
 import java.awt.Font
@@ -50,11 +47,6 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 
 object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 	init {
-		macCapable {
-			// if System is Mac, make sure set this property before setLookAndFeel
-			System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
-			`{-# LANGUAGE MacSpecific #-}`
-		}
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
@@ -96,4 +88,4 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	}
 }
 
-object `{-# LANGUAGE MacSpecific #-}` : MacSpecific()
+typealias `{-# LANGUAGE MacSpecific #-}` = MacSpecific

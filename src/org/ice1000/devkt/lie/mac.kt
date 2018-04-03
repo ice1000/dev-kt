@@ -5,13 +5,16 @@ import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
 
-val macCapable = SystemInfo.isMac
-operator fun Boolean.invoke(block: () -> Unit) {
-	if (this) block()
+inline fun mac(block: () -> Unit) {
+	if (SystemInfo.isMac) block()
 }
 
-@Suppress("LeakingThis")
-abstract class MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
+object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
+	init {
+		// if System is Mac, make sure set this property before setLookAndFeel
+		System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
+	}
+
 	private val app: Application = getApplication()
 
 	init {
