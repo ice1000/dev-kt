@@ -33,7 +33,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 			item("KotlinJS File") {
 				icon = AllIcons.KOTLIN_JS
-				onAction { frame.TODO() }
+				onAction { createNewFile("js.kt") }
 			}
 			item("Multiplatform (Common)") {
 				icon = AllIcons.KOTLIN_MP

@@ -204,6 +204,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		if (lastOpenedFile.canRead()) {
 			edited = false
 			loadFile(lastOpenedFile)
+			edited = false // TODO replace with direct text operation
 		}
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
