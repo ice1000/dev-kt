@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.parsing.KotlinParser
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 
 /**
  * @author ice1000
@@ -34,7 +36,8 @@ object Kotlin {
 			}
 		}
 		psiFileFactory = PsiFileFactory.getInstance(project)
-		lexer = KotlinLexer()
+		val parserDef = KotlinParserDefinition.instance
+		lexer = parserDef.createLexer(project) as KotlinLexer
 	}
 
 	fun parse(text: String) = psiFileFactory
