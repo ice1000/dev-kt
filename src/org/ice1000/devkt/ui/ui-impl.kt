@@ -83,6 +83,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
+	fun clion() = browse("https://www.jetbrains.com/clion/download/")
 	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 

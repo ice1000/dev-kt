@@ -137,6 +137,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 				icon = AllIcons.IDEA
 				onAction { idea() }
 			}
+			item("CLion") {
+				icon = AllIcons.CLION
+				onAction { clion() }
+			}
 			item("Eclipse") {
 				icon = AllIcons.ECLIPSE
 				onAction { eclipse() }
