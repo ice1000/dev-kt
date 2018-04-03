@@ -3,7 +3,6 @@ package org.ice1000.devkt
 import charlie.gensokyo.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
-import java.awt.Color
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import javax.swing.*
@@ -25,12 +24,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private lateinit var redoMenuItem: JMenuItem
 
 	private inner class KtDocument : DefaultStyledDocument() {
-		val cont = StyleContext.getDefaultStyleContext()
-		val attr = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.ORANGE)
-		val attrGreen = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.GREEN)
-		val attrBlack = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.LIGHT_GRAY)
-		val attrBlack2 = cont.addAttribute(cont.emptySet, StyleConstants.Foreground, Color.GRAY)
-
 		init {
 			addUndoableEditListener {
 				undoManager.addEdit(it.edit)
@@ -47,12 +40,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
 			val tokens = Kotlin.lex(editor.text)
-			for ((tokenStart, tokenEnd, tokenType) in tokens) when {
-				stringTokens.contains(tokenType) -> highlight(tokenStart, tokenEnd, attrGreen)
-				KtTokens.COMMENTS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attrBlack2)
-				KtTokens.KEYWORDS.contains(tokenType) or
-						KtTokens.VISIBILITY_MODIFIERS.contains(tokenType) -> highlight(tokenStart, tokenEnd, attr)
-				else -> highlight(tokenStart, tokenEnd, attrBlack)
+			for ((start, end, text, type) in tokens) when {
+				stringTokens.contains(type) -> highlight(start, end, STRING)
+				KtTokens.COMMENTS.contains(type) -> highlight(start, end, COMMENTS)
+				KtTokens.KEYWORDS.contains(type) -> highlight(start, end, KEYWORDS)
+				else -> highlight(start, end, OTHERS)
 			}
 		}
 
@@ -147,13 +139,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			item("Select All") { onAction { selectAll() } }
 		}
 		menuBar.subMenu("Build") {
-			mnemonic = KeyEvent.VK_R
-			item("Build As Jar") {
+			mnemonic = KeyEvent.VK_B
+			subMenu("Build As") {
 				icon = AllIcons.COMPILE
-				onAction { frame.TODO() }
+				item("Jar") { onAction { buildAsJar() } }
+				item("Classes") { onAction { buildAsClasses() } }
 			}
-			item("Build To...") {
-				onAction { frame.TODO() }
+			item("Build And Run") {
+				icon = AllIcons.EXECUTE
+				onAction { buildAndRun() }
 			}
 			subMenu("Run As") {
 				icon = AllIcons.EXECUTE
@@ -161,9 +155,24 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 					icon = AllIcons.JAR
 					onAction { frame.TODO() }
 				}
+				item("Classes") {
+					icon = AllIcons.CLASS
+					onAction { frame.TODO() }
+				}
 				item("Kotlin Script") {
 					icon = AllIcons.KOTLIN_FILE
 					onAction { frame.TODO() }
+				}
+			}
+		}
+		menuBar.subMenu("Help") {
+			mnemonic = KeyEvent.VK_H
+			subMenu("Alternatives") {
+				item("IntelliJ IDEA") {
+					icon = AllIcons.IDEA
+				}
+				item("Eclipse") {
+					icon = AllIcons.ECLIPSE
 				}
 			}
 		}
@@ -174,6 +183,22 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				if (e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_Z) redo()
 			}
 		})
+	}
+
+	private fun buildAsClasses() {
+		Kotlin.parse(editor.text)?.let(Kotlin::compile)
+	}
+
+	private fun buildAndRun() {
+		frame.TODO()
+	}
+
+	private fun justRun() {
+		frame.TODO()
+	}
+
+	private fun buildAsJar() {
+		frame.TODO()
 	}
 
 	private fun exit() {

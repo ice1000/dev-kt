@@ -19,11 +19,13 @@ public interface AllIcons {
 	@NotNull Icon KOTLIN_FILE = IconLoader.getIcon("/icon/kotlin_file.png");
 	@NotNull Icon KOTLIN_ANDROID = IconLoader.getIcon("/icon/kotlin_activity.png");
 
+	// Project related
 	@NotNull Icon OPEN = IconLoader.getIcon("/icon/menu-open.png");
 	@NotNull Icon CUT = IconLoader.getIcon("/icon/menu-cut_dark.png");
 	@NotNull Icon COPY = IconLoader.getIcon("/icon/copy_dark.png");
 	@NotNull Icon PASTE = IconLoader.getIcon("/icon/menu-paste.png");
 	@NotNull Icon COMPILE = IconLoader.getIcon("/icon/compile_dark.png");
+	@NotNull Icon CLASS = IconLoader.getIcon("/icon/javaClass.png");
 	@NotNull Icon EXECUTE = IconLoader.getIcon("/icon/execute.png");
 	@NotNull Icon SETTINGS = IconLoader.getIcon("/icon/Gear.png");
 	@NotNull Icon DUMP = IconLoader.getIcon("/icon/dump_dark.png");
@@ -33,4 +35,8 @@ public interface AllIcons {
 	@NotNull Icon REDO = IconLoader.getIcon("/icon/redo.png");
 	@NotNull Icon SYNCHRONIZE = IconLoader.getIcon("/icon/synchronizeFS.png");
 	@NotNull Icon JAR = IconLoader.getIcon("/icon/archive.png");
+
+	// Providers
+	@NotNull Icon ECLIPSE = IconLoader.getIcon("/icon/eclipse_dark.png");
+	@NotNull Icon IDEA = IconLoader.getIcon("/icon/icon_small_dark.png");
 }
