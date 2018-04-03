@@ -21,7 +21,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		subMenu("New") {
 			item("Executable File") {
 				icon = AllIcons.KOTLIN_FILE
-				onAction { frame.TODO() }
+				onAction { createNewFile("file") }
 			}
 			item("Script") {
 				icon = AllIcons.KOTLIN_FILE
@@ -69,6 +69,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		separator
 		item("Save") {
 			icon = AllIcons.SAVE
+			saveMenuItem = this
 			onAction { save() }
 		}
 		item("Sync") {

@@ -3,7 +3,6 @@ package org.ice1000.devkt.ui
 import org.ice1000.devkt.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.com.intellij.ui.DocumentAdapter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
@@ -12,7 +11,6 @@ import java.awt.event.KeyEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
-import javax.swing.event.DocumentEvent
 import javax.swing.text.AttributeSet
 import javax.swing.text.DefaultStyledDocument
 import javax.swing.undo.UndoManager
@@ -31,8 +29,27 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	val settings = frame.globalSettings
 	private val undoManager = UndoManager()
 	private var edited = false
+		set(value) {
+			field = value
+			refreshTitle()
+		}
 	var currentFile: File? = null
+		set(value) {
+			field = value
+			refreshTitle()
+		}
+
+	private fun refreshTitle() {
+		frame.title = buildString {
+			if (edited) append("*")
+			append(currentFile?.absolutePath ?: "Untitled")
+			append(" - ")
+			append(frame.defaultTitle)
+		}
+	}
+
 	internal lateinit var undoMenuItem: JMenuItem
+	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 
@@ -123,7 +140,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun save() {
 		val file = currentFile ?: JFileChooser(settings.recentFiles.firstOrNull()?.parentFile).apply {
 			showSaveDialog(mainPanel)
-		}.selectedFile ?: run { noFileSelected(); return }
+		}.selectedFile ?: return
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
 		settings.recentFiles.add(file)
@@ -134,7 +151,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun createNewFile(templateName: String) {
 		if (!makeSureLeaveCurrentFile()) {
 			currentFile = null
-			frame.TODO()
+			edited = true
+			editor.text = javaClass
+					.getResourceAsStream("/template/$templateName.kt")
+					.reader()
+					.readText()
 		}
 	}
 
@@ -146,20 +167,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}.selectedFile?.let {
 			loadFile(it)
 			settings.recentFiles.add(it)
-		} ?: noFileSelected()
-	}
-
-	private fun noFileSelected() {
-		JOptionPane.showMessageDialog(mainPanel, "No file selected")
+		}
 	}
 
 	fun loadFile(it: File) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
-			edited = false
 			currentFile = it
 			val path = it.absolutePath.orEmpty()
-			frame.title = "$path - ${`{-# LANGUAGE DevKt #-}`.defaultTitle}"
 			editor.text = it.readText()
+			edited = false
 			settings.lastOpenedFile = path
 		}
 		updateShowInFilesMenuItem()
@@ -220,6 +236,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun updateUndoMenuItems() {
 		undoMenuItem.isEnabled = undoManager.canUndo()
 		redoMenuItem.isEnabled = undoManager.canRedo()
+		saveMenuItem.isEnabled = edited
 	}
 
 	fun updateShowInFilesMenuItem() {
