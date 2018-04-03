@@ -1,5 +1,6 @@
 package org.ice1000.devkt.config
 
+import java.awt.Rectangle
 import java.io.File
 import java.util.*
 
@@ -12,7 +13,7 @@ class GlobalSettings {
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
-	var windowBounds: Pair<Int, Int> = 800 to 600
+	var windowBounds = Rectangle(200, 100, 800, 600)
 	var useTab: Boolean = true
 	var recentFiles = hashSetOf<File>()
 
@@ -56,9 +57,15 @@ class GlobalSettings {
 		if (!properties.containsKey(::annotationsColor.name)) annotationsColor = "#BBB529"
 		if (!properties.containsKey(::colonColor.name)) colonColor = "#A9B7C6"
 		if (!properties.containsKey(::commaColor.name)) commaColor = "#CC7832"
-		properties[::windowBounds.name]?.toString()?.split(',', limit = 2)?.let { (width, height) ->
-			width.toIntOrNull()?.let { w -> height.toIntOrNull()?.let(w::to) }?.let { windowBounds = it }
-		}
+		properties[::windowBounds.name]
+				?.toString()
+				?.split(',', limit = 4)
+				?.also { (x, y, width, height) ->
+					x.toIntOrNull()?.let { windowBounds.x = it }
+					y.toIntOrNull()?.let { windowBounds.y = it }
+					width.toIntOrNull()?.let { windowBounds.width = it }
+					height.toIntOrNull()?.let { windowBounds.height = it }
+				}
 		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::recentFiles.name]?.run {
@@ -72,6 +79,7 @@ class GlobalSettings {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
 		properties[::useTab.name] = useTab
 		properties[::tabSize.name] = tabSize
+		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
 		properties.store(configFile.outputStream(), null)
 	}
 }

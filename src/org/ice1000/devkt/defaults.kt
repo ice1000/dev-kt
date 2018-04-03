@@ -69,7 +69,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()
-		setLocation(100, 100)
+		bounds = globalSettings.windowBounds
 		ui = UIImpl(this)
 		// TODO replace with my own icon
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
@@ -81,6 +81,16 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 		addWindowListener(object : WindowAdapter() {
 			override fun windowDeactivated(e: WindowEvent?) = globalSettings.save()
 			override fun windowClosing(e: WindowEvent?) = globalSettings.save()
+		})
+		addComponentListener(object : ComponentAdapter() {
+			override fun componentMoved(e: ComponentEvent?) {
+				globalSettings.windowBounds = bounds
+			}
+
+			override fun componentResized(e: ComponentEvent?) {
+				super.componentResized(e)
+				globalSettings.windowBounds = bounds
+			}
 		})
 		defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 		isVisible = true
