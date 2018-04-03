@@ -1,8 +1,10 @@
 package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.*
+import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -29,7 +31,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 
-	private inner class KtDocument : DefaultStyledDocument() {
+	private inner class KtDocument(private val colorScheme: ColorScheme) : DefaultStyledDocument() {
 		init {
 			addUndoableEditListener {
 				undoManager.addEdit(it.edit)
@@ -40,8 +42,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		private val stringTokens = TokenSet.create(
 				KtTokens.OPEN_QUOTE,
 				KtTokens.CLOSING_QUOTE,
-				KtTokens.REGULAR_STRING_PART,
-				KtTokens.CHARACTER_LITERAL)
+				KtTokens.REGULAR_STRING_PART)
 
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
@@ -55,12 +56,25 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		private fun reparse() {
 			val tokens = Kotlin.lex(editor.text)
-			for ((start, end, text, type) in tokens) when {
-				stringTokens.contains(type) -> highlight(start, end, STRING)
-				KtTokens.COMMENTS.contains(type) -> highlight(start, end, COMMENTS)
-				KtTokens.KEYWORDS.contains(type) -> highlight(start, end, KEYWORDS)
-				else -> highlight(start, end, OTHERS)
-			}
+			for ((start, end, text, type) in tokens)
+				highlight(start, end, attributesOf(type))
+		}
+
+		private fun attributesOf(type: IElementType) = when (type) {
+			CHARACTER_LITERAL -> colorScheme.charLiteral
+			EOL_COMMENT -> colorScheme.lineComments
+			DOC_COMMENT -> colorScheme.docComments
+			SEMICOLON -> colorScheme.semicolon
+			COLON -> colorScheme.colon
+			INTEGER_LITERAL, FLOAT_LITERAL -> colorScheme.numbers
+			LPAR, RPAR -> colorScheme.parentheses
+			LBRACE, RBRACE -> colorScheme.braces
+			LBRACKET, RBRACKET -> colorScheme.brackets
+			in stringTokens -> colorScheme.string
+			in COMMENTS -> colorScheme.blockComments
+			in KEYWORDS -> colorScheme.keywords
+			in OPERATIONS -> colorScheme.operators
+			else -> colorScheme.others
 		}
 
 		private fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
@@ -70,7 +84,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	init {
 		frame.jMenuBar = menuBar
-		editor.document = KtDocument()
+		editor.document = KtDocument(ColorScheme(settings))
 		mainMenu(menuBar, frame)
 		val lastOpenedFile = File(settings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) loadFile(lastOpenedFile)
@@ -113,6 +127,12 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		Desktop.getDesktop().browse(URL(url).toURI())
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
+	}
+
+	private fun open(file: File) = try {
+		Desktop.getDesktop().open(file)
+	} catch (e: Exception) {
+		JOptionPane.showMessageDialog(mainPanel, "Error when opening ${file.absolutePath}:\n${e.message}")
 	}
 
 	fun buildAsClasses() {
