@@ -30,6 +30,7 @@ class ColorScheme(settings: GlobalSettings) {
 
 /**
  * See https://stackoverflow.com/a/33557782/7083401
+ * Modified
  */
 fun createTabSizeAttributes(tabSize: Int): SimpleAttributeSet {
 	val spaceSize = FontDesignMetrics.getMetrics(`{-# LANGUAGE SarasaGothicFont #-}`.monoFont).charWidth(' ')

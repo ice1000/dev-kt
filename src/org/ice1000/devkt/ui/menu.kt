@@ -65,11 +65,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		separator
 		item("Save") {
 			icon = AllIcons.SAVE
-			onAction { frame.TODO() }
+			onAction { save() }
 		}
 		item("Sync") {
 			icon = AllIcons.SYNCHRONIZE
-			onAction { frame.TODO() }
+			onAction { sync() }
 		}
 		separator
 		item("Exit") {

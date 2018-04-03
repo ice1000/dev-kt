@@ -106,6 +106,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		})
 	}
 
+	fun sync() {
+		currentFile?.let(::loadFile)
+	}
+
+	fun save() {
+		val file = currentFile ?: JFileChooser().apply { }.selectedFile ?: run { noFileSelected(); return }
+		file.writeText(editor.text)
+	}
+
 	fun open() {
 		JFileChooser().apply {
 			// dialogTitle = "Choose a Kotlin file"
@@ -115,7 +124,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}.selectedFile?.let {
 			loadFile(it)
 			settings.recentFiles.add(it)
-		} ?: JOptionPane.showMessageDialog(mainPanel, "No file selected")
+		} ?: noFileSelected()
+	}
+
+	private fun noFileSelected() {
+		JOptionPane.showMessageDialog(mainPanel, "No file selected")
 	}
 
 	fun loadFile(it: File) {
