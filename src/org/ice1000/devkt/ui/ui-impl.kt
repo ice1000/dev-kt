@@ -1,10 +1,11 @@
 package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.*
-import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
+import org.jetbrains.kotlin.com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
@@ -20,6 +21,24 @@ import javax.swing.undo.UndoManager
 fun JFrame.TODO() {
 	JOptionPane.showMessageDialog(this, "This feature is TODO.",
 			"Unfinished", 1, AllIcons.KOTLIN)
+}
+
+/**
+ * @author ice1000
+ */
+interface AnnotationHolder {
+	val text: String
+	fun resetTabSize()
+	fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet)
+
+	fun highlight(range: TextRange, attributeSet: AttributeSet) =
+			highlight(range.startOffset, range.length, attributeSet)
+
+	fun highlight(astNode: ASTNode, attributeSet: AttributeSet) =
+			highlight(astNode.textRange, attributeSet)
+
+	fun highlight(element: PsiElement, attributeSet: AttributeSet) =
+			highlight(element.textRange, attributeSet)
 }
 
 /**
@@ -56,12 +75,19 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 
-	private inner class KtDocument : DefaultStyledDocument() {
+	inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
 		private val colorScheme = ColorScheme(settings)
+		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
-				KtTokens.OPEN_QUOTE,
-				KtTokens.CLOSING_QUOTE,
-				KtTokens.REGULAR_STRING_PART)
+				OPEN_QUOTE,
+				CLOSING_QUOTE,
+				REGULAR_STRING_PART
+		)
+		private val stringTemplateTokens = TokenSet.create(
+				SHORT_TEMPLATE_ENTRY_START,
+				LONG_TEMPLATE_ENTRY_START,
+				LONG_TEMPLATE_ENTRY_END
+		)
 
 		init {
 			addUndoableEditListener {
@@ -69,17 +95,16 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				edited = true
 				updateUndoMenuItems()
 			}
-			resetProperties()
+			resetTabSize()
 		}
 
-		fun resetProperties() {
-			setParagraphAttributes(0, length, colorScheme.tabSize, false)
-		}
+		override fun resetTabSize() = setParagraphAttributes(0, length, colorScheme.tabSize, false)
+		override val text get() = editor.text
 
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
 			reparse()
-			resetProperties()
+			resetTabSize()
 		}
 
 		override fun remove(offs: Int, len: Int) {
@@ -88,19 +113,30 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		private fun lex() {
-			val tokens = Kotlin.lex(editor.text)
+			val tokens = Kotlin.lex(text)
 			for ((start, end, text, type) in tokens)
-				highlight(start, end, attributesOf(type))
+				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
 		private fun reparse() {
-			val ktFile = Kotlin.parse(editor.text) ?: return lex()
-			SyntaxTraverser.astTraverser(ktFile.node).forEach {
-				setCharacterAttributes(it.startOffset, it.textLength, attributesOf(it.elementType), false)
+			// val time = System.currentTimeMillis()
+			lex()
+			// val time2 = System.currentTimeMillis()
+			val ktFile = Kotlin.parse(text) ?: return
+			// val time3 = System.currentTimeMillis()
+			SyntaxTraverser.psiTraverser(ktFile).forEach { psi ->
+				if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 			}
+			// val time4 = System.currentTimeMillis()
+			// benchmark
+			// println("${time2 - time}, ${time3 - time2}, ${time4 - time3}, ${System.currentTimeMillis() - time4}")
 		}
 
+		/**
+		 * @see com.intellij.openapi.fileTypes.SyntaxHighlighter.getTokenHighlights
+		 */
 		private fun attributesOf(type: IElementType) = when (type) {
+			IDENTIFIER -> colorScheme.identifiers
 			CHARACTER_LITERAL -> colorScheme.charLiteral
 			EOL_COMMENT -> colorScheme.lineComments
 			DOC_COMMENT -> colorScheme.docComments
@@ -111,16 +147,19 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			LPAR, RPAR -> colorScheme.parentheses
 			LBRACE, RBRACE -> colorScheme.braces
 			LBRACKET, RBRACKET -> colorScheme.brackets
+			BLOCK_COMMENT, SHEBANG_COMMENT -> colorScheme.blockComments
 			in stringTokens -> colorScheme.string
-			in COMMENTS -> colorScheme.blockComments
-			in SOFT_KEYWORDS,
+			in stringTemplateTokens -> colorScheme.templateEntries
 			in KEYWORDS -> colorScheme.keywords
 			in OPERATIONS -> colorScheme.operators
-			else -> colorScheme.others
+			else -> null
 		}
 
-		private fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
-			setCharacterAttributes(tokenStart, tokenEnd - tokenStart, attributeSet, false)
+		/**
+		 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
+		 */
+		override fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet) {
+			setCharacterAttributes(tokenStart, tokenLength, attributeSet, false)
 		}
 	}
 
