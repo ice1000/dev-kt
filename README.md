@@ -44,6 +44,8 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
 	+ [ ] Highlight selected token
+	+ [ ] Auto indent
+		+ [ ] Smart indent
 + [ ] Build and execution
 	+ [ ] Build as class files
 	+ [ ] Build as jar
