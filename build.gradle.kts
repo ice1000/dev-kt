@@ -75,7 +75,9 @@ apply {
 idea {
 	module {
 		// https://github.com/gradle/kotlin-dsl/issues/537/
-		excludeDirs = excludeDirs + file("pinpoint_piggy")
+		excludeDirs = excludeDirs +
+				file("pinpoint_piggy") +
+				Paths.get("res", "template").toFile()
 	}
 }
 
@@ -115,14 +117,14 @@ val SourceSet.kotlin
 
 java.sourceSets {
 	"main" {
-		java.srcDirs("src")
-		kotlin.srcDirs("src")
-		resources.srcDirs("res")
+		java.setSrcDirs(listOf("src"))
+		kotlin.setSrcDirs(listOf("src"))
+		resources.setSrcDirs(listOf("res"))
 	}
 
 	"test" {
-		java.srcDirs("test")
-		kotlin.srcDirs("test")
+		java.setSrcDirs(listOf("test"))
+		kotlin.setSrcDirs(listOf("test"))
 	}
 }
 
