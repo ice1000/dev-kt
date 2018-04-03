@@ -92,7 +92,8 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Jar> {
 	manifest {
-		attributes(mapOf("Main-Class" to application.mainClassName))
+		attributes(mapOf("Main-Class" to application.mainClassName,
+				"SplashScreen-Image" to "icon/kotlin24@2x.png"))
 	}
 }
 

@@ -4,8 +4,7 @@ package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.ui.UIImpl
-import java.awt.BorderLayout
-import java.awt.Font
+import java.awt.*
 import java.awt.event.*
 import javax.imageio.ImageIO
 import javax.swing.*
@@ -60,6 +59,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 		globalSettings.load()
 		setLocation(100, 100)
 		val ui = UIImpl(this)
+		// TODO replace with my own icon
 		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 		add(ui.mainPanel)
 		pack()

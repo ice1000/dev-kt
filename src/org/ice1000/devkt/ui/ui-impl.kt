@@ -25,9 +25,9 @@ fun JFrame.TODO() {
  * @since v0.0.1
  */
 class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
-	private val settings = frame.globalSettings
+	val settings = frame.globalSettings
 	private val undoManager = UndoManager()
-	private var file: File? = null
+	var currentFile: File? = null
 	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 
@@ -110,16 +110,17 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		JFileChooser().apply {
 			// dialogTitle = "Choose a Kotlin file"
 			fileFilter = kotlinFileFilter
-			file?.let { currentDirectory = it.parentFile }
+			currentFile?.let { currentDirectory = it.parentFile }
 			showOpenDialog(mainPanel)
 		}.selectedFile?.let {
 			loadFile(it)
+			settings.recentFiles.add(it)
 		} ?: JOptionPane.showMessageDialog(mainPanel, "No file selected")
 	}
 
-	private fun loadFile(it: File) {
+	fun loadFile(it: File) {
 		if (it.canRead() and !checkFileSaved()) {
-			file = it
+			currentFile = it
 			val path = it.absolutePath.orEmpty()
 			frame.title = "$path - ${`{-# LANGUAGE DevKt #-}`.defaultTitle}"
 			editor.text = it.readText()

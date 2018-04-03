@@ -23,6 +23,7 @@ object GlobalSettings {
 		set(value) {
 			useTabImpl = if (value) "1" else ""
 		}
+	var recentFiles = hashSetOf<File>()
 
 	var keywordsColor: String by properties
 	var stringColor: String by properties
@@ -62,9 +63,15 @@ object GlobalSettings {
 		if (!properties.containsKey(::othersColor.name)) othersColor = "#A9B7C6"
 		if (!properties.containsKey(::colonColor.name)) colonColor = "#A9B7C6"
 		if (!properties.containsKey(::commaColor.name)) commaColor = "#CC7832"
+		properties[::recentFiles.name]?.run {
+			toString()
+					.split(File.pathSeparatorChar)
+					.mapNotNullTo(recentFiles) { File(it).takeIf { it.exists() } }
+		}
 	}
 
 	fun save() {
+		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
 		properties.store(configFile.outputStream(), null)
 	}
 }

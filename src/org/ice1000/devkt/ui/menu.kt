@@ -49,6 +49,13 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { open() }
 		}
 		subMenu("Open Recent") {
+			settings.recentFiles.forEach { recent ->
+				val presentableFile = currentFile?.let { current -> recent.relativeTo(current.parentFile) }
+						?: recent.absoluteFile
+				item(presentableFile.toString()) {
+					onAction { loadFile(presentableFile) }
+				}
+			}
 		}
 		separator
 		item("Settings") {
