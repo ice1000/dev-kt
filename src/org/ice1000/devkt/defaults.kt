@@ -3,6 +3,7 @@
 package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.*
@@ -45,6 +46,9 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 
 object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 	init {
+		if (SystemInfo.isMac) {
+			system["apple.laf.useScreenMenuBar"] = true
+		}
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
@@ -55,6 +59,9 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	val globalSettings = GlobalSettings()
 
 	init {
+		if (SystemInfo.isMac) {
+			MacApplicationListener(this)
+		}
 		layout = BorderLayout()
 		title = defaultTitle
 		globalSettings.load()

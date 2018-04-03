@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.ice1000.devkt.AllIcons
 import java.awt.event.KeyEvent
 import java.io.File
@@ -62,7 +63,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 		}
 		separator
-		item("Settings") {
+		if (!SystemInfo.isMac) item("Settings") {
 			icon = AllIcons.SETTINGS
 			onAction { frame.TODO() }
 		}
@@ -77,9 +78,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { sync() }
 		}
 		separator
-		item("Exit") {
-			icon = AllIcons.EXIT
-			onAction { exit() }
+		if (!SystemInfo.isMac) {
+			item("Exit") {
+				icon = AllIcons.EXIT
+				onAction { exit() }
+			}
 		}
 	}
 	menuBar.subMenu("Edit") {
