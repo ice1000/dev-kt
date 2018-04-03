@@ -6,10 +6,8 @@ import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
 import org.ice1000.devkt.ui.UIImpl
-import java.awt.BorderLayout
 import java.awt.Font
 import java.awt.event.*
-import javax.imageio.ImageIO
 import javax.swing.*
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
@@ -53,25 +51,18 @@ object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 }
 
 object `{-# LANGUAGE DevKt #-}` : JFrame() {
-	const val defaultTitle = "Dev Kt"
 	val globalSettings = GlobalSettings()
 	val ui: UIImpl
 
 	init {
-		layout = BorderLayout()
-		title = defaultTitle
 		globalSettings.load()
 		ui = UIImpl(this)
-		// TODO replace with my own icon
-		iconImage = ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
+		iconImage = MacSpecific.icon
 		add(ui.mainPanel)
-		bounds = globalSettings.windowBounds
-		addFocusListener(object : FocusAdapter() {
-			override fun focusLost(e: FocusEvent?) = globalSettings.save()
-		})
 		addWindowListener(object : WindowAdapter() {
 			override fun windowDeactivated(e: WindowEvent?) = globalSettings.save()
 			override fun windowClosing(e: WindowEvent?) = globalSettings.save()
+			override fun windowLostFocus(e: WindowEvent?) = globalSettings.save()
 		})
 		addComponentListener(object : ComponentAdapter() {
 			override fun componentMoved(e: ComponentEvent?) {
@@ -85,6 +76,10 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 		})
 		defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
 		isVisible = true
+		with(ui) {
+			postInit()
+			reloadSettings()
+		}
 	}
 }
 

@@ -16,6 +16,7 @@ class GlobalSettings {
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var useTab: Boolean = true
 	var recentFiles = hashSetOf<File>()
+	var appName: String by properties
 
 	var keywordsColor: String by properties
 	var stringColor: String by properties
@@ -39,7 +40,7 @@ class GlobalSettings {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
 		if (!properties.containsKey(::lastOpenedFile.name)) lastOpenedFile = ""
-
+		if (!properties.containsKey(::appName.name)) appName = "Dev Kt"
 		if (!properties.containsKey(::keywordsColor.name)) keywordsColor = "#CC7832"
 		if (!properties.containsKey(::stringColor.name)) stringColor = "#6A8759"
 		if (!properties.containsKey(::templateEntriesColor.name)) templateEntriesColor = "#CC7832"

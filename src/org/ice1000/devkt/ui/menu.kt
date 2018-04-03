@@ -66,6 +66,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = AllIcons.SETTINGS
 			onAction { settings() }
 		}
+		item("Sync Settings") {
+			icon = AllIcons.REFRESH
+			onAction { reloadSettings() }
+		}
 		separator
 		item("Save") {
 			icon = AllIcons.SAVE

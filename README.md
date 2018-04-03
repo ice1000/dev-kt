@@ -29,6 +29,7 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [X] Deals with missing properties
 	+ [X] Auto-saving
 	+ [X] Highlight color customization
+	+ [ ] Hot reload
 	+ [ ] Text style customization
 	+ [ ] Font customization
 	+ [ ] Keymap customization

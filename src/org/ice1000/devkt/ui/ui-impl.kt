@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
+import java.awt.Image
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -62,12 +63,12 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			if (change) refreshTitle()
 		}
 
-	private fun refreshTitle() {
+	fun refreshTitle() {
 		frame.title = buildString {
 			if (edited) append("*")
 			append(currentFile?.absolutePath ?: "Untitled")
 			append(" - ")
-			append(frame.defaultTitle)
+			append(settings.appName)
 		}
 	}
 
@@ -75,8 +76,9 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
+	private val document: KtDocument
 
-	inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
+	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
 		private val colorScheme = ColorScheme(settings)
 		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
@@ -119,7 +121,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
-		private fun reparse() {
+		fun reparse() {
 			// val time = System.currentTimeMillis()
 			lex()
 			// val time2 = System.currentTimeMillis()
@@ -167,7 +169,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	init {
 		frame.jMenuBar = menuBar
 		mainMenu(menuBar, frame)
-		editor.document = KtDocument()
+		document = KtDocument()
+		editor.document = document
+	}
+
+	fun postInit() {
 		updateUndoMenuItems()
 		val lastOpenedFile = File(settings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
@@ -320,4 +326,13 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun cut() = editor.cut()
 	fun copy() = editor.copy()
 	fun paste() = editor.paste()
+
+	fun reloadSettings() {
+		frame.bounds = settings.windowBounds
+		refreshTitle()
+		with(document) {
+			resetTabSize()
+			reparse()
+		}
+	}
 }
