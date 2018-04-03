@@ -3,8 +3,11 @@ package org.ice1000.devkt
 import charlie.gensokyo.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
+import java.awt.Desktop
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
+import java.net.URI
+import java.net.URL
 import javax.swing.*
 import javax.swing.text.*
 import javax.swing.undo.UndoManager
@@ -142,8 +145,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			mnemonic = KeyEvent.VK_B
 			subMenu("Build As") {
 				icon = AllIcons.COMPILE
-				item("Jar") { onAction { buildAsJar() } }
-				item("Classes") { onAction { buildAsClasses() } }
+				item("Jar") {
+					icon = AllIcons.JAR
+					onAction { buildAsJar() }
+				}
+				item("Classes") {
+					icon = AllIcons.CLASS
+					onAction { buildAsClasses() }
+				}
 			}
 			item("Build And Run") {
 				icon = AllIcons.EXECUTE
@@ -170,9 +179,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			subMenu("Alternatives") {
 				item("IntelliJ IDEA") {
 					icon = AllIcons.IDEA
+					onAction { idea() }
 				}
 				item("Eclipse") {
 					icon = AllIcons.ECLIPSE
+					onAction { eclipse() }
+				}
+				item("Emacs") {
+					icon = AllIcons.EMACS
+					onAction { emacs() }
 				}
 			}
 		}
@@ -185,11 +200,23 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		})
 	}
 
+	private fun idea() = browse("https://www.jetbrains.com/idea/download/")
+	private fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
+	private fun emacs() = browse("https://melpa.org/#/kotlin-mode")
+
+	private fun browse(url: String) = try {
+		Desktop.getDesktop().browse(URL(url).toURI())
+	} catch (e: Exception) {
+		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
+	}
+
 	private fun buildAsClasses() {
 		Kotlin.parse(editor.text)?.let(Kotlin::compile)
 	}
 
 	private fun buildAndRun() {
+		buildAsClasses()
+		justRun()
 		frame.TODO()
 	}
 

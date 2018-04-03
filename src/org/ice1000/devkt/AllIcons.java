@@ -39,4 +39,5 @@ public interface AllIcons {
 	// Providers
 	@NotNull Icon ECLIPSE = IconLoader.getIcon("/icon/eclipse_dark.png");
 	@NotNull Icon IDEA = IconLoader.getIcon("/icon/icon_small_dark.png");
+	@NotNull Icon EMACS = IconLoader.getIcon("/icon/emacs25.png");
 }
