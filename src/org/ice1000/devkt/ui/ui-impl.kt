@@ -7,7 +7,6 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
@@ -16,9 +15,9 @@ import java.io.File
 import java.net.URL
 import javax.swing.*
 import javax.swing.event.DocumentEvent
+import javax.swing.event.UndoableEditEvent
 import javax.swing.text.*
 import javax.swing.undo.UndoManager
-
 
 fun JFrame.TODO() {
 	JOptionPane.showMessageDialog(this, "This feature is TODO.",
@@ -96,6 +95,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		init {
 			addUndoableEditListener {
+				if (it.source === highlightCache) return@addUndoableEditListener
 				undoManager.addEdit(it.edit)
 				edited = true
 				updateUndoMenuItems()
@@ -137,22 +137,50 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			// val time2 = System.currentTimeMillis()
 			if (settings.highlightSemanticBased) parse()
 			// val time3 = System.currentTimeMillis()
-			if (length > 1) {
+			rehighlight()
+			// benchmark
+			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time2}")
+		}
+
+		private fun rehighlight() {
+			if (length > 1) try {
+				writeLock()
 				var tokenStart = 0
 				var attributeSet = highlightCache[0]
 				highlightCache[0] = null
 				for (i in 1 until highlightCache.size) {
 					if (attributeSet != highlightCache[i]) {
 						if (attributeSet != null)
-							setCharacterAttributes(tokenStart, i - tokenStart, attributeSet, true)
+							setCharacterAttributesDoneByCache(tokenStart, i - tokenStart, attributeSet, true)
 						tokenStart = i
 						attributeSet = highlightCache[i]
 					}
 					highlightCache[i] = null
 				}
+			} finally {
+				writeUnlock()
 			}
-			// benchmark
-			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time2}")
+		}
+
+		private fun setCharacterAttributesDoneByCache(offset: Int, length: Int, s: AttributeSet, replace: Boolean) {
+			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
+			buffer.change(offset, length, changes)
+			val sCopy = s.copyAttributes()
+			var lastEnd: Int
+			var pos = offset
+			while (pos < offset + length) {
+				val run = getCharacterElement(pos)
+				lastEnd = run.endOffset
+				if (pos == lastEnd) break
+				val attr = run.attributes as MutableAttributeSet
+				changes.addEdit(AttributeUndoableEdit(run, sCopy, replace))
+				if (replace) attr.removeAttributes(attr)
+				attr.addAttributes(s)
+				pos = lastEnd
+			}
+			changes.end()
+			fireChangedUpdate(changes)
+			fireUndoableEditUpdate(UndoableEditEvent(highlightCache, changes))
 		}
 
 		/**
