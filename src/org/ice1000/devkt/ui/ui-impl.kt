@@ -79,7 +79,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val document: KtDocument
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
-		private val highlightCache = ArrayList<AttributeSet?>(500)
+		private val highlightCache = ArrayList<AttributeSet?>(5000)
 		private val colorScheme = ColorScheme(settings, attributeContext)
 		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
