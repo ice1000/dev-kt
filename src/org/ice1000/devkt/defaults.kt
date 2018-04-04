@@ -85,10 +85,11 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 			}
 		})
 		doNothingOnClose
+		bounds = globalSettings.windowBounds
 		isVisible = true
 		with(ui) {
 			postInit()
-			reloadSettings()
+			refreshTitle()
 		}
 	}
 }
