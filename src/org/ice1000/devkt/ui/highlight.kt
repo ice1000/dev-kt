@@ -26,6 +26,8 @@ class ColorScheme(settings: GlobalSettings, context: AbstractDocument.AttributeC
 	val annotations = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorAnnotations))
 	val colon = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorColon))
 	val comma = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorComma))
+	val variable = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorVariable))
+	val function = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorFunction))
 	val tabSize = createTabSizeAttributes(settings.tabSize)
 }
 

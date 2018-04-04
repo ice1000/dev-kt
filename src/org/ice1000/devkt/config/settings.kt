@@ -41,6 +41,8 @@ object GlobalSettings {
 	var colorAnnotations: String by properties
 	var colorColon: String by properties
 	var colorComma: String by properties
+	var colorFunction: String by properties
+	var colorVariable: String by properties
 
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
@@ -66,6 +68,8 @@ object GlobalSettings {
 		if (!properties.containsKey(::colorAnnotations.name)) colorAnnotations = "#BBB529"
 		if (!properties.containsKey(::colorColon.name)) colorColon = "#A9B7C6"
 		if (!properties.containsKey(::colorComma.name)) colorComma = "#CC7832"
+		if (!properties.containsKey(::colorFunction.name)) colorFunction = "#FFC66D"
+		if (!properties.containsKey(::colorVariable.name)) colorVariable = "#BCA5C4"
 		properties[::windowIcon.name]
 				?.toString()
 				?.also {
