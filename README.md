@@ -19,11 +19,11 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 
 Just a simple comparison:
 
-DevKt|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292918-2ec81974-3818-11e8-8eb7-3648cd747ee5.png">
+DevKt<br/><br/>Correct|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292932-3c4ce2be-3818-11e8-9a56-9d30f3109c43.png">
 :---:|:---:
-IntelliJ IDEA|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292932-3c4ce2be-3818-11e8-9a56-9d30f3109c43.png">
-Emacs|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
-VSCode|<img width=400 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
+IntelliJ IDEA<br/><br/>Correct,<br/>with inspections|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292918-2ec81974-3818-11e8-8eb7-3648cd747ee5.png">
+Emacs<br/><br/>Incorrect|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
+VSCode<br/><br/>Incorrect|<img width=400 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
 
 # Progress
 
