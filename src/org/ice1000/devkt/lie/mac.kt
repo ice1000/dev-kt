@@ -14,14 +14,13 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
 	}
 
-	private val app: Application = getApplication()
+	val app: Application = getApplication()
 
 	init {
 		app.setPreferencesHandler(this)
 		app.setQuitHandler(this)
 		app.setAboutHandler(this)
 		// TODO replace with my own icon
-		app.dockIconImage = `{-# LANGUAGE DarculaLookAndFeel #-}`.icon
 	}
 
 	override fun handlePreferences(event: AppEvent.PreferencesEvent) = ui.settings()

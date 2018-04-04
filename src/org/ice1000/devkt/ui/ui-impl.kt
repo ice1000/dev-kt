@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.Kotlin
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.config.GlobalSettings
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*
@@ -47,7 +48,6 @@ interface AnnotationHolder {
  * @since v0.0.1
  */
 class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
-	val settings = frame.globalSettings
 	private val undoManager = UndoManager()
 	private var edited = false
 		set(value) {
@@ -67,7 +67,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			if (edited) append("*")
 			append(currentFile?.absolutePath ?: "Untitled")
 			append(" - ")
-			append(settings.appName)
+			append(GlobalSettings.appName)
 		}
 	}
 
@@ -79,7 +79,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
-		private val colorScheme = ColorScheme(settings, attributeContext)
+		private val colorScheme = ColorScheme(GlobalSettings, attributeContext)
 		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
 				OPEN_QUOTE,
@@ -133,9 +133,9 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		fun reparse() {
 			while (highlightCache.size <= length) highlightCache.add(null)
 			// val time = System.currentTimeMillis()
-			if (settings.highlightTokenBased) lex()
+			if (GlobalSettings.highlightTokenBased) lex()
 			// val time2 = System.currentTimeMillis()
-			if (settings.highlightSemanticBased) parse()
+			if (GlobalSettings.highlightSemanticBased) parse()
 			// val time3 = System.currentTimeMillis()
 			rehighlight()
 			// benchmark
@@ -229,7 +229,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun postInit() {
 		updateUndoMenuItems()
-		val lastOpenedFile = File(settings.lastOpenedFile)
+		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
 			edited = false
 			loadFile(lastOpenedFile)
@@ -255,12 +255,12 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun save() {
-		val file = currentFile ?: JFileChooser(settings.recentFiles.firstOrNull()?.parentFile).apply {
+		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
 			showSaveDialog(mainPanel)
 		}.selectedFile ?: return
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
-		settings.recentFiles.add(file)
+		GlobalSettings.recentFiles.add(file)
 		file.writeText(editor.text)
 		edited = false
 	}
@@ -283,7 +283,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			showOpenDialog(mainPanel)
 		}.selectedFile?.let {
 			loadFile(it)
-			settings.recentFiles.add(it)
+			GlobalSettings.recentFiles.add(it)
 		}
 	}
 
@@ -293,7 +293,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			val path = it.absolutePath.orEmpty()
 			editor.text = it.readText()
 			edited = false
-			settings.lastOpenedFile = path
+			GlobalSettings.lastOpenedFile = path
 		}
 		updateShowInFilesMenuItem()
 	}
@@ -347,7 +347,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun exit() {
-		settings.save()
+		GlobalSettings.save()
 		if (!makeSureLeaveCurrentFile()) {
 			frame.dispose()
 			System.exit(0)
@@ -388,7 +388,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun paste() = editor.paste()
 
 	fun reloadSettings() {
-		frame.bounds = settings.windowBounds
+		frame.bounds = GlobalSettings.windowBounds
 		refreshTitle()
 		with(document) {
 			resetTabSize()

@@ -29,7 +29,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 
 + Properties-based settings (hackable!)
 	+ [X] Deals with missing properties
-	+ [X] Auto-saving
+	+ [X] Smart auto saving
 	+ [X] Highlight color customization
 	+ [X] Hot reload
 	+ [ ] Text style customization

@@ -3,23 +3,27 @@ package org.ice1000.devkt.config
 import java.awt.Rectangle
 import java.io.File
 import java.util.*
+import javax.imageio.ImageIO
 
 /**
  * @author ice1000
  * @since v0.0.1
  */
-class GlobalSettings {
+object GlobalSettings {
 	private val configFile = File("config.properties").absoluteFile
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
 	var windowBounds = Rectangle(200, 100, 800, 600)
+	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 	var useTab: Boolean = true
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
 	var recentFiles = hashSetOf<File>()
-	var appName: String by properties
 
+	var appName: String by properties
+	var monoFontName: String by properties
+	var gothicFontName: String by properties
 	var colorKeywords: String by properties
 	var colorString: String by properties
 	var colorTemplateEntries: String by properties
@@ -43,6 +47,8 @@ class GlobalSettings {
 		else properties.load(configFile.inputStream())
 		if (!properties.containsKey(::lastOpenedFile.name)) lastOpenedFile = ""
 		if (!properties.containsKey(::appName.name)) appName = "Dev Kt"
+		if (!properties.containsKey(::monoFontName.name)) monoFontName = ""
+		if (!properties.containsKey(::gothicFontName.name)) gothicFontName = ""
 		if (!properties.containsKey(::colorKeywords.name)) colorKeywords = "#CC7832"
 		if (!properties.containsKey(::colorString.name)) colorString = "#6A8759"
 		if (!properties.containsKey(::colorTemplateEntries.name)) colorTemplateEntries = "#CC7832"
@@ -60,6 +66,14 @@ class GlobalSettings {
 		if (!properties.containsKey(::colorAnnotations.name)) colorAnnotations = "#BBB529"
 		if (!properties.containsKey(::colorColon.name)) colorColon = "#A9B7C6"
 		if (!properties.containsKey(::colorComma.name)) colorComma = "#CC7832"
+		properties[::windowIcon.name]
+				?.toString()
+				?.also {
+					try {
+						windowIcon = it to ImageIO.read(File(it))
+					} catch (ignored: Exception) {
+					}
+				}
 		properties[::windowBounds.name]
 				?.toString()
 				?.split(',', limit = 4)
@@ -87,6 +101,7 @@ class GlobalSettings {
 		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()
 		properties[::tabSize.name] = tabSize.toString()
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
+		properties[::windowIcon.name] = windowIcon.first
 		properties.store(configFile.outputStream(), null)
 	}
 }

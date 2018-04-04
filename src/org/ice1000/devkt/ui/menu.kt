@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
+import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.mac
 import java.awt.event.KeyEvent
 import java.io.File
@@ -53,7 +54,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { showInFiles() }
 		}
 		subMenu("Open Recent") {
-			settings.recentFiles.forEach { recent ->
+			GlobalSettings.recentFiles.forEach { recent ->
 				val presentableFile = currentFile?.let { current -> recent.relativeTo(current.parentFile) }
 						?: recent.absoluteFile
 				item(presentableFile.toString()) {
