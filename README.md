@@ -44,7 +44,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Save and sync
 	+ [X] Show in files
 	+ [X] Record recently opened files
-	+ [X] Create new files from templates
+	+ [X] Create new files from templates (kts, kt, kt2js, android activity, multiplatform codes, etc.)
 	+ [ ] Drag files to open
 + [ ] Editing
 	+ [X] Lexer based highlights
@@ -60,6 +60,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 + [ ] Build and execution
 	+ [ ] Build as class files
 	+ [ ] Build as jar
+	+ [ ] Build as javascript module
 	+ [ ] Build and run
 	+ [ ] Run as class files
 	+ [ ] Run as jar

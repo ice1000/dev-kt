@@ -1,14 +1,12 @@
 package org.ice1000.devkt
 
-import org.ice1000.devkt.lie.mac
-
 /**
  * @author ice1000
  */
 @JvmName("main")
 fun benchmark(vararg args: String) {
 	val init = System.currentTimeMillis()
-	if (mac) `{-# LANGUAGE MacSpecific #-}`
+	`{-# LANGUAGE MacSpecific #-}`
 	val time = System.currentTimeMillis()
 	`{-# LANGUAGE DarculaLookAndFeel #-}`
 	val time2 = System.currentTimeMillis()

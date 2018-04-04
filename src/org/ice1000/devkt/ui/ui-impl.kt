@@ -103,7 +103,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		override fun resetTabSize() = setParagraphAttributes(0, length, colorScheme.tabSize, false)
-		override val text get() = editor.text
+		override val text: String get() = editor.text
 
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
@@ -161,6 +161,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			}
 		}
 
+		/**
+		 * Re-implement of [setCharacterAttributes], invoke [fireUndoableEditUpdate] with
+		 * [highlightCache] as event source, which is used by [undoManager] to prevent color
+		 * modifications to be recorded.
+		 */
 		private fun setCharacterAttributesDoneByCache(offset: Int, length: Int, s: AttributeSet, replace: Boolean) {
 			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
 			buffer.change(offset, length, changes)
@@ -226,7 +231,12 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		editor.document = document
 	}
 
-	fun postInit() {
+	/**
+	 * Should only be called once, extracted from the constructor
+	 * to shorten the startup time
+	 */
+	@JvmName("   ")
+	internal fun postInit() {
 		updateUndoMenuItems()
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {

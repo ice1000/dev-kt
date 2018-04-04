@@ -1,4 +1,6 @@
-@file:Suppress("ClassName")
+@file:Suppress("ClassName", "ObjectPropertyName")
+@file:JvmName("Main")
+@file:JvmMultifileClass
 
 package org.ice1000.devkt
 
@@ -10,8 +12,8 @@ import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.UIImpl
 import java.awt.Font
 import java.awt.event.*
-import javax.imageio.ImageIO
-import javax.swing.*
+import javax.swing.JFrame
+import javax.swing.UIManager
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
 	var monoFont: Font
@@ -71,12 +73,11 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 	}
 }
 
-object `{-# LANGUAGE DarculaLookAndFeel #-}` {
-	init {
+val `{-# LANGUAGE DarculaLookAndFeel #-}`: Unit
+	get() {
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
-}
 
 object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	val ui = UIImpl(this)
@@ -115,4 +116,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	}
 }
 
-typealias `{-# LANGUAGE MacSpecific #-}` = MacSpecific
+val `{-# LANGUAGE MacSpecific #-}`: Unit
+	get() {
+		if (mac) MacSpecific
+	}
