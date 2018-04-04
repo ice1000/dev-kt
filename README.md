@@ -51,9 +51,10 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Lexer based highlights
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
-	+ [ ] Line number
+	+ [X] Line number
 	+ [X] Semantic-based highlights
 		+ [ ] Highlight in daemon
+		+ [ ] Prioritized
 		+ [ ] Incremental
 	+ [ ] Highlight selected token
 	+ [ ] Auto indent

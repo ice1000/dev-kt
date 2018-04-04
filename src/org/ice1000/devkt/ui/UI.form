@@ -37,9 +37,10 @@
                   <text value="fun main(vararg args: String) {&#10;  println(&quot;Hello World&quot;)&#10;}" noi18n="true"/>
                 </properties>
               </component>
-              <component id="8e622" class="javax.swing.JLabel" binding="lineNumber">
+              <component id="8e622" class="javax.swing.JLabel" binding="lineNumberLabel">
                 <constraints border-constraint="West"/>
                 <properties>
+                  <horizontalAlignment value="4"/>
                   <text value=""/>
                   <verticalAlignment value="1"/>
                   <verticalTextPosition value="1"/>

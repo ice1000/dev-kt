@@ -78,6 +78,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
+	private var lineNumber = 1
 	private val document: KtDocument
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
@@ -108,10 +109,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		override fun adjustFormat() {
 			setParagraphAttributes(0, length, colorScheme.tabSize, false)
-			lineNumber.text = (1..text.count { it == '\n' }).joinToString(
-					separator = "<br/>",
-					prefix = "<html>",
-					postfix = "</html>")
+			val currentLineNumber = text.count { it == '\n' }
+			val change = currentLineNumber != lineNumber
+			lineNumber = currentLineNumber
+			if (change) lineNumberLabel.text = (1..currentLineNumber).joinToString(
+					separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>")
 		}
 
 		override val text: String get() = editor.text
@@ -249,7 +251,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	@JvmName("   ")
 	internal fun postInit() {
 		updateUndoMenuItems()
-		lineNumber.background = editor.background.brighter().brighter().brighter().brighter().brighter().brighter().brighter()
+		lineNumberLabel.isOpaque = true
+		refreshLineNumber()
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
 			edited = false
@@ -411,10 +414,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		frame.bounds = GlobalSettings.windowBounds
 		loadFont()
 		refreshTitle()
-		lineNumber.font = editor.font
+		refreshLineNumber()
 		with(document) {
 			adjustFormat()
 			reparse()
 		}
+	}
+
+	fun refreshLineNumber() {
+		lineNumberLabel.font = editor.font
+		lineNumberLabel.background = editor.background.brighter()
 	}
 }
