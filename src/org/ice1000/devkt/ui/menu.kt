@@ -87,13 +87,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	}
 	menuBar.subMenu("Edit") {
 		mnemonic = KeyEvent.VK_E
-		item("Undo") {
-			undoMenuItem = this
+		undoMenuItem = item("Undo") {
 			icon = AllIcons.UNDO
 			onAction { undo() }
 		}
-		item("Redo") {
-			redoMenuItem = this
+		redoMenuItem = item("Redo") {
 			icon = AllIcons.REDO
 			onAction { redo() }
 		}
@@ -123,6 +121,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			item("Classes") {
 				icon = AllIcons.CLASS
 				onAction { buildAsClasses() }
+			}
+			item("JavaScript Module") {
+				icon = AllIcons.KOTLIN_JS
+				onAction { buildAsJs() }
 			}
 		}
 		item("Build And Run") {

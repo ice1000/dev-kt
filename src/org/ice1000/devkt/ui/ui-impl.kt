@@ -78,6 +78,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val document: KtDocument
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
+		private val highlightCache = HashMap<Int, AttributeSet>(500)
 		private val colorScheme = ColorScheme(settings, attributeContext)
 		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
@@ -134,8 +135,9 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			// val time2 = System.currentTimeMillis()
 			if (settings.highlightSemanticBased) parse()
 			// val time3 = System.currentTimeMillis()
+			// rehighlight()
 			// benchmark
-			// println("${time2 - time}, ${time3 - time2}")
+			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time2}")
 		}
 
 		/**
@@ -162,28 +164,36 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		override fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet) =
-				highlight(tokenStart, tokenLength, attributeSet, false)
+				doHighlight(tokenStart, tokenLength, attributeSet, false)
 
 		/**
 		 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
 		 */
-		fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet, replace: Boolean) {
-			if (tokenLength == 0) return
+		fun doHighlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet, replace: Boolean) {
+			setCharacterAttributes(tokenStart, tokenLength, attributeSet, replace)
+//			if (tokenLength == 0) return
+//			for (i in 0 until tokenLength) {
+//				val original = highlightCache[tokenStart + i]
+//				if (replace || original == null) highlightCache[tokenStart + i] = attributeSet
+//			}
+		}
+
+		fun rehighlight() {
 			try {
 				writeLock()
-				val changes = DefaultDocumentEvent(tokenStart, tokenLength, DocumentEvent.EventType.CHANGE)
-				buffer.change(tokenStart, tokenLength, changes)
-				val sCopy = attributeSet.copyAttributes()
+				val changes = DefaultDocumentEvent(0, length, DocumentEvent.EventType.CHANGE)
+				buffer.change(0, length, changes)
 				// TODO improve efficiency
 				var lastEnd: Int
-				var pos = tokenStart
-				while (pos < tokenStart + tokenLength) {
+				var pos = 0
+				while (pos < length) {
 					val run = getCharacterElement(pos)
+					val attributeSet = highlightCache[pos] ?: continue
 					lastEnd = run.endOffset
 					if (pos == lastEnd) break
 					val attr = run.attributes as MutableAttributeSet
-					changes.addEdit(AttributeUndoableEdit(run, sCopy, replace))
-					if (replace) attr.removeAttributes(attr)
+					changes.addEdit(AttributeUndoableEdit(run, attributeSet.copyAttributes(), true))
+					attr.removeAttributes(attr)
 					attr.addAttributes(attributeSet)
 					pos = lastEnd
 				}
@@ -292,6 +302,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun buildAsClasses() {
 		Kotlin.parse(editor.text)?.let(Kotlin::compile)
+	}
+
+	fun buildAsJs() {
+		frame.TODO()
 	}
 
 	fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=

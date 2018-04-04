@@ -48,6 +48,7 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [X] Copy/paste/cut/select all
 	+ [X] Semantic-based highlights
 		+ [ ] Highlight in daemon
+		+ [ ] Incremental
 	+ [ ] Highlight selected token
 	+ [ ] Auto indent
 		+ [ ] Smart indent
