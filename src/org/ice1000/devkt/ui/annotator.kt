@@ -37,7 +37,7 @@ class KotlinAnnotator {
 			}
 
 			is KtFunction -> {
-				document.highlight(element.nameIdentifier ?: return, colorScheme.functionDeclaration)
+				document.highlight(element.nameIdentifier ?: return, colorScheme.function)
 			}
 		}
 	}
