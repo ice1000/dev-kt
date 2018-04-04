@@ -13,6 +13,6 @@ fun main(args: Array<String>) {
 			"src", "org", "ice1000", "devkt", "kotlin.kt")))))
 	dialog.pack()
 	dialog.isVisible = true
-	assertTrue(dialog.isVisible)
+	assertFalse(dialog.isVisible)
 	System.exit(0)
 }

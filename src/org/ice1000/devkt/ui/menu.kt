@@ -150,6 +150,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	}
 	menuBar.subMenu("Help") {
 		mnemonic = KeyEvent.VK_H
+		item("View Psi...") {
+			icon = AllIcons.KOTLIN
+			onAction { viewPsi() }
+		}
 		subMenu("Alternatives") {
 			item("IntelliJ IDEA") {
 				icon = AllIcons.IDEA

@@ -6,12 +6,14 @@ import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.KotlinAnnotator
+import org.ice1000.devkt.psi.PsiViewerImpl
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -79,6 +81,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	private var lineNumber = 1
+	private var ktFileCache: KtFile? = null
 	private val document: KtDocument
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
@@ -136,10 +139,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		private fun parse() {
-			val ktFile = Kotlin.parse(text) ?: return
-			SyntaxTraverser.psiTraverser(ktFile).forEach { psi ->
-				if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
-			}
+			SyntaxTraverser
+					.psiTraverser(Kotlin.parse(text).also { ktFileCache = it })
+					.forEach { psi ->
+						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
+					}
 		}
 
 		fun reparse() {
@@ -326,6 +330,13 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 
+	fun viewPsi() {
+		PsiViewerImpl(ktFileCache ?: Kotlin.parse(editor.text)).apply {
+			pack()
+			isVisible = true
+		}
+	}
+
 	private fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
 	} catch (e: Exception) {
@@ -339,7 +350,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun buildAsClasses() {
-		Kotlin.compile(Kotlin.parse(editor.text))
+		Kotlin.compile(ktFileCache ?: Kotlin.parse(editor.text))
 	}
 
 	fun buildAsJs() {
