@@ -46,7 +46,7 @@ object Kotlin {
 	}
 
 	fun parse(text: String) = psiFileFactory
-			.createFileFromText(KotlinLanguage.INSTANCE, text) as? KtFile
+			.createFileFromText(KotlinLanguage.INSTANCE, text) as KtFile
 
 	fun compile(ktFile: KtFile) {
 		val file = File("./build-cache")

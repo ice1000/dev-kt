@@ -339,7 +339,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun buildAsClasses() {
-		Kotlin.parse(editor.text)?.let(Kotlin::compile)
+		Kotlin.compile(Kotlin.parse(editor.text))
 	}
 
 	fun buildAsJs() {
