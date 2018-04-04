@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.*
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.psi.KotlinAnnotator
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*

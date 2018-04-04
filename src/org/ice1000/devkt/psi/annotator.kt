@@ -1,10 +1,10 @@
-package org.ice1000.devkt.ui
+package org.ice1000.devkt.psi
 
+import org.ice1000.devkt.ui.AnnotationHolder
+import org.ice1000.devkt.ui.ColorScheme
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtTypeProjection
+import org.jetbrains.kotlin.psi.*
 
 /**
  * @author ice1000
@@ -27,17 +27,16 @@ class KotlinAnnotator {
 			is KtAnnotationEntry -> {
 				document.highlight(element, colorScheme.annotations)
 			}
-
 			is KtTypeProjection -> {
-				//<泛型>
-				if (element.prevSibling?.node?.elementType == KtTokens.LT
-						&& element.nextSibling?.node?.elementType == KtTokens.GT) {
+				if (element.prevSibling?.nodeType == KtTokens.LT
+						&& element.nextSibling?.nodeType == KtTokens.GT) {
 					document.highlight(element, colorScheme.numbers)
 				}
 			}
-
-			is KtFunction -> {
-				document.highlight(element.nameIdentifier ?: return, colorScheme.function)
+			is KtNamedFunction -> {
+				element.nameIdentifier?.let {
+					document.highlight(it, colorScheme.function)
+				}
 			}
 		}
 	}
