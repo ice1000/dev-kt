@@ -139,7 +139,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			// val time3 = System.currentTimeMillis()
 			rehighlight()
 			// benchmark
-			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time2}")
+			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time3}")
 		}
 
 		private fun rehighlight() {
