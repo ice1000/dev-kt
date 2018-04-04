@@ -1,6 +1,9 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Kotlin
+import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
+import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.KotlinAnnotator
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
@@ -30,7 +33,7 @@ fun JFrame.TODO() {
  */
 interface AnnotationHolder {
 	val text: String
-	fun resetTabSize()
+	fun adjustFormat()
 	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
 
 	fun highlight(range: TextRange, attributeSet: AttributeSet) =
@@ -100,16 +103,23 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				edited = true
 				updateUndoMenuItems()
 			}
-			resetTabSize()
+			adjustFormat()
 		}
 
-		override fun resetTabSize() = setParagraphAttributes(0, length, colorScheme.tabSize, false)
+		override fun adjustFormat() {
+			setParagraphAttributes(0, length, colorScheme.tabSize, false)
+			//language=HTML
+			lineNumber.text = """<html>
+
+</html>"""
+		}
+
 		override val text: String get() = editor.text
 
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			super.insertString(offs, str, a)
 			reparse()
-			resetTabSize()
+			adjustFormat()
 		}
 
 		override fun remove(offs: Int, len: Int) {
@@ -243,7 +253,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		if (lastOpenedFile.canRead()) {
 			edited = false
 			loadFile(lastOpenedFile)
-			edited = false // TODO replace with direct text operation
 		}
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
@@ -399,10 +408,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun reloadSettings() {
 		frame.bounds = GlobalSettings.windowBounds
-		`{-# LANGUAGE SarasaGothicFont #-}`.loadFont()
+		loadFont()
 		refreshTitle()
 		with(document) {
-			resetTabSize()
+			adjustFormat()
 			reparse()
 		}
 	}

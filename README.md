@@ -35,6 +35,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Highlight color customization
 	+ [X] Hot reload
 	+ [X] Font customization
+		+ [X] Font size customization
 	+ [ ] Text style customization
 	+ [ ] Keymap customization
 	+ [ ] Internationalization

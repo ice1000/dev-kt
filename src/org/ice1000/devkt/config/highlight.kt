@@ -1,9 +1,8 @@
 @file:Suppress("HasPlatformType")
 
-package org.ice1000.devkt.ui
+package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`
-import org.ice1000.devkt.config.GlobalSettings
 import sun.font.FontDesignMetrics
 import java.awt.Color
 import javax.swing.text.*
@@ -29,7 +28,7 @@ class ColorScheme(settings: GlobalSettings, context: AbstractDocument.AttributeC
 	val variable = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorVariable))
 	val function = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorFunction))
 	val typeParam = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorTypeParam))
-	val typeRef = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorTypeRef))
+	val userTypeRef = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorUserTypeRef))
 	val tabSize = createTabSizeAttributes(settings.tabSize)
 }
 

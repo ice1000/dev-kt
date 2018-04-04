@@ -1,7 +1,7 @@
 package org.ice1000.devkt.psi
 
 import org.ice1000.devkt.ui.AnnotationHolder
-import org.ice1000.devkt.ui.ColorScheme
+import org.ice1000.devkt.config.ColorScheme
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -28,14 +28,16 @@ class KotlinAnnotator {
 		when (element) {
 			is KtAnnotationEntry -> annotationEntry(element, document, colorScheme)
 			is KtTypeParameter -> typeParameter(element, document, colorScheme)
-			is KtTypeReference -> typeReference(element, document, colorScheme)
+			is KtUserType -> typeReference(element, document, colorScheme)
 			is KtNamedFunction -> namedFunction(element, document, colorScheme)
 		}
 	}
 
 	private fun typeReference(
-			element: KtTypeReference, document: AnnotationHolder, colorScheme: ColorScheme) {
-		document.highlight(element, colorScheme.typeRef)
+			element: KtUserType, document: AnnotationHolder, colorScheme: ColorScheme) {
+		if (null == element.firstChild.nextSibling)
+			document.highlight(element, colorScheme.userTypeRef)
+		else document.highlight(element.firstChild, colorScheme.userTypeRef)
 	}
 
 	private fun namedFunction(

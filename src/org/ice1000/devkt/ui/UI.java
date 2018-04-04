@@ -13,6 +13,7 @@ public abstract class UI {
 	protected JTextPane editor;
 	protected JToolBar toolbar;
 	protected JLabel messageLabel;
+	protected JLabel lineNumber;
 
 	public @NotNull JPanel getMainPanel() {
 		return mainPanel;

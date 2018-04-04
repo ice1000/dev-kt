@@ -2,7 +2,6 @@ package org.ice1000.devkt.config
 
 import java.awt.Rectangle
 import java.io.File
-import java.lang.reflect.Field
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -15,6 +14,7 @@ object GlobalSettings {
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
+	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
 	var useTab: Boolean = true
@@ -45,36 +45,40 @@ object GlobalSettings {
 	var colorVariable: String by properties
 	var colorFunction: String by properties
 	var colorTypeParam: String by properties
-	var colorTypeRef: String by properties
+	var colorUserTypeRef: String by properties
+
+	fun defaultOf(name: String, value: String) {
+		if (!properties.containsKey(name)) properties[name] = value
+	}
 
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
-		if (!properties.containsKey(::lastOpenedFile.name)) lastOpenedFile = ""
-		if (!properties.containsKey(::appName.name)) appName = "Dev Kt"
-		if (!properties.containsKey(::monoFontName.name)) monoFontName = ""
-		if (!properties.containsKey(::gothicFontName.name)) gothicFontName = ""
-		if (!properties.containsKey(::colorKeywords.name)) colorKeywords = "#CC7832"
-		if (!properties.containsKey(::colorString.name)) colorString = "#6A8759"
-		if (!properties.containsKey(::colorTemplateEntries.name)) colorTemplateEntries = "#CC7832"
-		if (!properties.containsKey(::colorCharLiteral.name)) colorCharLiteral = "#6A8759"
-		if (!properties.containsKey(::colorLineComments.name)) colorLineComments = "#808080"
-		if (!properties.containsKey(::colorBlockComments.name)) colorBlockComments = "#808080"
-		if (!properties.containsKey(::colorDocComments.name)) colorDocComments = "#629755"
-		if (!properties.containsKey(::colorOperators.name)) colorOperators = "#A9B7C6"
-		if (!properties.containsKey(::colorParentheses.name)) colorParentheses = "#A9B7C6"
-		if (!properties.containsKey(::colorBraces.name)) colorBraces = "#A9B7C6"
-		if (!properties.containsKey(::colorBrackets.name)) colorBrackets = "#A9B7C6"
-		if (!properties.containsKey(::colorSemicolon.name)) colorSemicolon = "#CC7832"
-		if (!properties.containsKey(::colorNumbers.name)) colorNumbers = "#6897BB"
-		if (!properties.containsKey(::colorIdentifiers.name)) colorIdentifiers = "#A9B7C6"
-		if (!properties.containsKey(::colorAnnotations.name)) colorAnnotations = "#BBB529"
-		if (!properties.containsKey(::colorColon.name)) colorColon = "#A9B7C6"
-		if (!properties.containsKey(::colorComma.name)) colorComma = "#CC7832"
-		if (!properties.containsKey(::colorVariable.name)) colorVariable = "#BCA5C4"
-		if (!properties.containsKey(::colorFunction.name)) colorFunction = "#FFC66D"
-		if (!properties.containsKey(::colorTypeParam.name)) colorTypeParam = "#6897BB"
-		if (!properties.containsKey(::colorTypeRef.name)) colorTypeRef = "#6897BB"
+		defaultOf(::lastOpenedFile.name, "")
+		defaultOf(::appName.name, "Dev Kt")
+		defaultOf(::monoFontName.name, "")
+		defaultOf(::gothicFontName.name, "")
+		defaultOf(::colorKeywords.name, "#CC7832")
+		defaultOf(::colorString.name, "#6A8759")
+		defaultOf(::colorTemplateEntries.name, "#CC7832")
+		defaultOf(::colorCharLiteral.name, "#6A8759")
+		defaultOf(::colorLineComments.name, "#808080")
+		defaultOf(::colorBlockComments.name, "#808080")
+		defaultOf(::colorDocComments.name, "#629755")
+		defaultOf(::colorOperators.name, "#A9B7C6")
+		defaultOf(::colorParentheses.name, "#A9B7C6")
+		defaultOf(::colorBraces.name, "#A9B7C6")
+		defaultOf(::colorBrackets.name, "#A9B7C6")
+		defaultOf(::colorSemicolon.name, "#CC7832")
+		defaultOf(::colorNumbers.name, "#6897BB")
+		defaultOf(::colorIdentifiers.name, "#A9B7C6")
+		defaultOf(::colorAnnotations.name, "#BBB529")
+		defaultOf(::colorColon.name, "#A9B7C6")
+		defaultOf(::colorComma.name, "#CC7832")
+		defaultOf(::colorVariable.name, "#BCA5C4")
+		defaultOf(::colorFunction.name, "#FFC66D")
+		defaultOf(::colorTypeParam.name, "#6897BB")
+		defaultOf(::colorUserTypeRef.name, "#62ABF0")
 		properties[::windowIcon.name]
 				?.toString()
 				?.also {
@@ -93,6 +97,7 @@ object GlobalSettings {
 					height.toIntOrNull()?.let { windowBounds.height = it }
 				}
 		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
+		properties[::fontSize.name]?.toString()?.toFloatOrNull()?.let { fontSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
 		properties[::highlightSemanticBased.name]?.let { highlightSemanticBased = it.toString() == "true" }
@@ -106,6 +111,7 @@ object GlobalSettings {
 	fun save() {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
 		properties[::useTab.name] = useTab.toString()
+		properties[::fontSize.name] = fontSize.toString()
 		properties[::highlightTokenBased.name] = highlightTokenBased.toString()
 		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()
 		properties[::tabSize.name] = tabSize.toString()

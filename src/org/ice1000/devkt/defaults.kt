@@ -51,9 +51,9 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			if (null != monoFontInputStream)
 				monoFont = Font
 						.createFont(Font.TRUETYPE_FONT, monoFontInputStream)
-						.deriveFont(16F)
+						.deriveFont(GlobalSettings.fontSize)
 		} else {
-			monoFont = Font(mono, Font.TRUETYPE_FONT, 16)
+			monoFont = Font(mono, Font.TRUETYPE_FONT, 16).deriveFont(GlobalSettings.fontSize)
 		}
 		val gothic = GlobalSettings.gothicFontName.trim()
 		if (gothic.isEmpty() or
@@ -66,9 +66,9 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			if (null != gothicFontInputStream)
 				gothicFont = Font
 						.createFont(Font.TRUETYPE_FONT, gothicFontInputStream)
-						.deriveFont(16F)
+						.deriveFont(GlobalSettings.fontSize)
 		} else {
-			gothicFont = Font(gothic, Font.TRUETYPE_FONT, 16)
+			gothicFont = Font(gothic, Font.TRUETYPE_FONT, 16).deriveFont(GlobalSettings.fontSize)
 		}
 	}
 }
