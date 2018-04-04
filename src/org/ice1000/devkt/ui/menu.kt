@@ -62,7 +62,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 		}
 		separator
-		if (!SystemInfo.isMac) item("Settings") {
+		if (!SystemInfo.isMac) item("Settings...") {
 			icon = AllIcons.SETTINGS
 			onAction { settings() }
 		}

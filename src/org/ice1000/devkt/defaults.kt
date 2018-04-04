@@ -35,6 +35,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 
 	init {
 		val monoFontInputStream = javaClass.getResourceAsStream("/font/sarasa-mono-sc-regular.ttf")
+		?: javaClass.getResourceAsStream("/font/FiraCode-Regular.ttf")
 		if (null != monoFontInputStream)
 			monoFont = Font
 					.createFont(Font.TRUETYPE_FONT, monoFontInputStream)
