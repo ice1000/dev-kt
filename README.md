@@ -8,6 +8,8 @@ CircleCI|[![CircleCI](https://circleci.com/gh/ice1000/dev-kt.svg?style=svg)](htt
 
 This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 
+You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-kt/build/artifacts), the one ends with "-all.jar" is an executable jar.
+
 # Features
 
 + Fast (at least faster than Emacs/Eclipse/IntelliJ/CLion/VSCode/Atom)
@@ -32,8 +34,8 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Smart auto saving
 	+ [X] Highlight color customization
 	+ [X] Hot reload
+	+ [X] Font customization
 	+ [ ] Text style customization
-	+ [ ] Font customization
 	+ [ ] Keymap customization
 	+ [ ] Internationalization
 	+ [ ] Settings UI

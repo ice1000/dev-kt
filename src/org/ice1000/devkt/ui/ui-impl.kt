@@ -1,7 +1,6 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.Kotlin
-import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.*
 import org.ice1000.devkt.config.GlobalSettings
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
@@ -389,6 +388,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun reloadSettings() {
 		frame.bounds = GlobalSettings.windowBounds
+		`{-# LANGUAGE SarasaGothicFont #-}`.loadFont()
 		refreshTitle()
 		with(document) {
 			resetTabSize()

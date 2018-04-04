@@ -33,8 +33,12 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		}
 
 	init {
-		val mono = GlobalSettings.monoFontName
-		if (mono.isBlank() or
+		loadFont()
+	}
+
+	fun loadFont() {
+		val mono = GlobalSettings.monoFontName.trim()
+		if (mono.isEmpty() or
 				mono.equals("sarasa", true) or
 				mono.equals("sarasa mono", true) or
 				mono.equals("sarasa mono sc", true) or
@@ -47,13 +51,23 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 						.createFont(Font.TRUETYPE_FONT, monoFontInputStream)
 						.deriveFont(16F)
 		} else {
-			monoFont = Font(GlobalSettings.monoFontName, Font.TRUETYPE_FONT, 16)
+			monoFont = Font(mono, Font.TRUETYPE_FONT, 16)
 		}
-		val gothicFontInputStream = javaClass.getResourceAsStream("/font/sarasa-gothic-sc-regular.ttf")
-		if (null != gothicFontInputStream)
-			gothicFont = Font
-					.createFont(Font.TRUETYPE_FONT, gothicFontInputStream)
-					.deriveFont(16F)
+		val gothic = GlobalSettings.gothicFontName.trim()
+		if (gothic.isEmpty() or
+				gothic.equals("sarasa", true) or
+				gothic.equals("sarasa gothic", true) or
+				gothic.equals("sarasa gothic sc", true) or
+				gothic.equals("sarasa-gothic", true) or
+				gothic.equals("sarasa-gothic-sc", true)) {
+			val gothicFontInputStream = javaClass.getResourceAsStream("/font/sarasa-gothic-sc-regular.ttf")
+			if (null != gothicFontInputStream)
+				gothicFont = Font
+						.createFont(Font.TRUETYPE_FONT, gothicFontInputStream)
+						.deriveFont(16F)
+		} else {
+			gothicFont = Font(gothic, Font.TRUETYPE_FONT, 16)
+		}
 	}
 }
 
@@ -65,11 +79,9 @@ object `{-# LANGUAGE DarculaLookAndFeel #-}` {
 }
 
 object `{-# LANGUAGE DevKt #-}` : JFrame() {
-	val ui: UIImpl
+	val ui = UIImpl(this)
 
 	init {
-		GlobalSettings.load()
-		ui = UIImpl(this)
 		GlobalSettings.windowIcon.second.also {
 			iconImage = it
 			if (mac) MacSpecific.app.dockIconImage = it

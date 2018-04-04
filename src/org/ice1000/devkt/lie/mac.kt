@@ -3,8 +3,8 @@ package org.ice1000.devkt.lie
 import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
-import org.ice1000.devkt.`{-# LANGUAGE DarculaLookAndFeel #-}`
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`.ui
+import org.ice1000.devkt.config.GlobalSettings
 
 val mac = SystemInfo.isMac
 
@@ -20,6 +20,7 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		app.setPreferencesHandler(this)
 		app.setQuitHandler(this)
 		app.setAboutHandler(this)
+		app.dockIconImage = GlobalSettings.windowIcon.second
 		// TODO replace with my own icon
 	}
 
