@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
@@ -268,6 +269,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_S) save()
 				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Y) sync()
 				if (e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_Z) redo()
+				if (!e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) nextLine()
 			}
 		})
 	}
@@ -347,6 +349,16 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		Desktop.getDesktop().open(file)
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when opening ${file.absolutePath}:\n${e.message}")
+	}
+
+	//Shift + Enter
+	private fun nextLine() {
+		val index = editor.caretPosition        //光标所在位置
+		val text = editor.text                //编辑器内容
+		val endOfLine = text.indexOfOrNull('\n', index) ?: text.lastIndex            //换行符
+
+		editor.text = text.replaceRange(endOfLine..endOfLine, "\n\n")        //stupid code
+		editor.caretPosition = endOfLine + 1            //设置光标位置
 	}
 
 	fun buildAsClasses() {
