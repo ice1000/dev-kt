@@ -26,6 +26,12 @@ class KotlinAnnotator {
 			is KtAnnotationEntry -> {
 				document.highlight(element, colorScheme.annotations)
 			}
+			
+			is KtTypeProjection -> {
+				if (element.prevSibling.node.elementType == KtTokens.LT && element.nextSibling.node.elementType == KtTokens.GT) {
+					document.highlight(element, colorScheme.numbers)
+				}
+			}
 		}
 	}
 }
