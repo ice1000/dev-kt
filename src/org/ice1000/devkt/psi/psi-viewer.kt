@@ -24,7 +24,7 @@ class PsiViewerImpl(file: KtFile) : PsiViewer() {
 	 * 缅怀一下天国的 Lice AST Viewer
 	 */
 	private fun mapAst2Display(
-			node: PsiElement, root: UINode = UINode(node)): UINode = when {
+			node: PsiElement, root: UINode = UINode("${node.text} => $node")): UINode = when {
 		node.firstChild == null -> UINode(node)
 		else -> root.apply {
 			node.children.forEach { add(mapAst2Display(it)) }
