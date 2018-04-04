@@ -26,6 +26,18 @@ class KotlinAnnotator {
 			is KtAnnotationEntry -> {
 				document.highlight(element, colorScheme.annotations)
 			}
+			
+			is KtTypeProjection -> {
+				//<泛型>
+				if (element.prevSibling?.node?.elementType == KtTokens.LT
+						&& element.nextSibling?.node?.elementType == KtTokens.GT) {
+					document.highlight(element, colorScheme.numbers)
+				}
+			}
+
+			is KtFunction -> {
+				document.highlight(element.nameIdentifier ?: return, colorScheme.functionDeclaration)
+			}
 		}
 	}
 }
