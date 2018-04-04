@@ -108,10 +108,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		override fun adjustFormat() {
 			setParagraphAttributes(0, length, colorScheme.tabSize, false)
-			//language=HTML
-			lineNumber.text = """<html>
-
-</html>"""
+			lineNumber.text = (1..text.count { it == '\n' }).joinToString(
+					separator = "<br/>",
+					prefix = "<html>",
+					postfix = "</html>")
 		}
 
 		override val text: String get() = editor.text
@@ -249,6 +249,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	@JvmName("   ")
 	internal fun postInit() {
 		updateUndoMenuItems()
+		lineNumber.background = editor.background.brighter().brighter().brighter().brighter().brighter().brighter().brighter()
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
 			edited = false
@@ -410,6 +411,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		frame.bounds = GlobalSettings.windowBounds
 		loadFont()
 		refreshTitle()
+		lineNumber.font = editor.font
 		with(document) {
 			adjustFormat()
 			reparse()
