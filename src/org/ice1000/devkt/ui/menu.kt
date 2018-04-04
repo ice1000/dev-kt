@@ -1,7 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
-import com.bulenkov.iconloader.util.SystemInfo
+import org.ice1000.devkt.lie.mac
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.JFrame
@@ -62,7 +62,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 		}
 		separator
-		if (!SystemInfo.isMac) item("Settings...") {
+		if (!mac) item("Settings...") {
 			icon = AllIcons.SETTINGS
 			onAction { settings() }
 		}
@@ -80,7 +80,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { sync() }
 		}
 		separator
-		if (!SystemInfo.isMac) item("Exit") {
+		if (!mac) item("Exit") {
 			icon = AllIcons.EXIT
 			onAction { exit() }
 		}

@@ -6,9 +6,7 @@ import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.`{-# LANGUAGE DarculaLookAndFeel #-}`
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`.ui
 
-inline fun mac(block: () -> Unit) {
-	if (SystemInfo.isMac) block()
-}
+val mac = SystemInfo.isMac
 
 object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	init {
@@ -17,12 +15,12 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	}
 
 	private val app: Application = getApplication()
-	// TODO replace with my own icon
 
 	init {
 		app.setPreferencesHandler(this)
 		app.setQuitHandler(this)
 		app.setAboutHandler(this)
+		// TODO replace with my own icon
 		app.dockIconImage = `{-# LANGUAGE DarculaLookAndFeel #-}`.icon
 	}
 

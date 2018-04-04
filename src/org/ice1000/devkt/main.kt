@@ -10,7 +10,7 @@ import org.ice1000.devkt.lie.mac
  */
 @JvmName("main")
 fun devKt(vararg args: String) {
-	mac { `{-# LANGUAGE MacSpecific #-}` }
+	if (mac) `{-# LANGUAGE MacSpecific #-}`
 	`{-# LANGUAGE DarculaLookAndFeel #-}`
 	`{-# LANGUAGE SarasaGothicFont #-}`
 	`{-# LANGUAGE DevKt #-}`
