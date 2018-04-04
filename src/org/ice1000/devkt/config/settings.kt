@@ -2,6 +2,7 @@ package org.ice1000.devkt.config
 
 import java.awt.Rectangle
 import java.io.File
+import java.lang.reflect.Field
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -41,8 +42,10 @@ object GlobalSettings {
 	var colorAnnotations: String by properties
 	var colorColon: String by properties
 	var colorComma: String by properties
-	var colorFunction: String by properties
 	var colorVariable: String by properties
+	var colorFunction: String by properties
+	var colorTypeParam: String by properties
+	var colorTypeRef: String by properties
 
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
@@ -68,8 +71,10 @@ object GlobalSettings {
 		if (!properties.containsKey(::colorAnnotations.name)) colorAnnotations = "#BBB529"
 		if (!properties.containsKey(::colorColon.name)) colorColon = "#A9B7C6"
 		if (!properties.containsKey(::colorComma.name)) colorComma = "#CC7832"
-		if (!properties.containsKey(::colorFunction.name)) colorFunction = "#FFC66D"
 		if (!properties.containsKey(::colorVariable.name)) colorVariable = "#BCA5C4"
+		if (!properties.containsKey(::colorFunction.name)) colorFunction = "#FFC66D"
+		if (!properties.containsKey(::colorTypeParam.name)) colorTypeParam = "#6897BB"
+		if (!properties.containsKey(::colorTypeRef.name)) colorTypeRef = "#6897BB"
 		properties[::windowIcon.name]
 				?.toString()
 				?.also {

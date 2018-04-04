@@ -12,6 +12,7 @@ public abstract class UI {
 	protected JMenuBar menuBar;
 	protected JTextPane editor;
 	protected JToolBar toolbar;
+	protected JLabel messageLabel;
 
 	public @NotNull JPanel getMainPanel() {
 		return mainPanel;

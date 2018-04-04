@@ -45,11 +45,12 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Show in files
 	+ [X] Record recently opened files
 	+ [X] Create new files from templates (kts, kt, kt2js, android activity, multiplatform codes, etc.)
-	+ [ ] Drag files to open
+	+ [ ] Drag file to open
 + [ ] Editing
 	+ [X] Lexer based highlights
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
+	+ [ ] Line number
 	+ [X] Semantic-based highlights
 		+ [ ] Highlight in daemon
 		+ [ ] Incremental

@@ -5,6 +5,8 @@ import org.ice1000.devkt.ui.ColorScheme
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 /**
  * @author ice1000
@@ -19,25 +21,43 @@ class KotlinAnnotator {
 	 * @param colorScheme current color scheme, initialized in [org.ice1000.devkt.config.GlobalSettings]
 	 */
 	fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme) {
-		if (element.node.elementType in KtTokens.SOFT_KEYWORDS) {
+		if (element.nodeType in KtTokens.SOFT_KEYWORDS) {
 			document.highlight(element, colorScheme.keywords)
 			return
 		}
 		when (element) {
-			is KtAnnotationEntry -> {
-				document.highlight(element, colorScheme.annotations)
-			}
-			is KtTypeProjection -> {
-				if (element.prevSibling?.nodeType == KtTokens.LT
-						&& element.nextSibling?.nodeType == KtTokens.GT) {
-					document.highlight(element, colorScheme.numbers)
-				}
-			}
-			is KtNamedFunction -> {
-				element.nameIdentifier?.let {
-					document.highlight(it, colorScheme.function)
-				}
-			}
+			is KtAnnotationEntry -> annotationEntry(element, document, colorScheme)
+			is KtTypeParameter -> typeParameter(element, document, colorScheme)
+			is KtTypeReference -> typeReference(element, document, colorScheme)
+			is KtNamedFunction -> namedFunction(element, document, colorScheme)
 		}
+	}
+
+	private fun typeReference(
+			element: KtTypeReference, document: AnnotationHolder, colorScheme: ColorScheme) {
+		document.highlight(element, colorScheme.typeRef)
+	}
+
+	private fun namedFunction(
+			element: KtNamedFunction, document: AnnotationHolder, colorScheme: ColorScheme) {
+		element.nameIdentifier?.let {
+			document.highlight(it, colorScheme.function)
+		}
+	}
+
+	private fun typeParameter(
+			element: KtTypeParameter, document: AnnotationHolder, colorScheme: ColorScheme) {
+		document.highlight(element, colorScheme.typeParam)
+		element.references.forEach {
+			val refTo = it.element ?: return@forEach
+			document.highlight(refTo, colorScheme.typeParam)
+		}
+	}
+
+	private fun annotationEntry(
+			element: KtAnnotationEntry, document: AnnotationHolder, colorScheme: ColorScheme) {
+		val start = element.startOffset
+		val end = element.typeReference?.endOffset ?: start
+		document.highlight(start, end, colorScheme.annotations)
 	}
 }
