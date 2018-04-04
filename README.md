@@ -8,12 +8,6 @@ CircleCI|[![CircleCI](https://circleci.com/gh/ice1000/dev-kt.svg?style=svg)](htt
 
 This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 
-# Build
-
-+ (Optional) Download and decompress [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic/releases) font to `res/font`
-  + As reference you can see [this shell script](./download-font.sh)
-+ Use `gradlew run` to run this application
-
 # Features
 
 + Fast (at least faster than Emacs/Eclipse/IntelliJ/CLion/VSCode/Atom)
@@ -22,6 +16,14 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 + JetBrains IDE icons
 + Build as jar/class files, run after build, just one click
 + Cross platform (windows/macos/linux), just one jar file
+
+Just a simple comparison:
+
+DevKt|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292918-2ec81974-3818-11e8-8eb7-3648cd747ee5.png">
+:---:|:---:
+IntelliJ IDEA|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292932-3c4ce2be-3818-11e8-9a56-9d30f3109c43.png">
+Emacs|<img width=400 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
+VSCode|<img width=400 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
 
 # Progress
 
@@ -64,3 +66,9 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [X] Open alternative editors' download page in browser
 	+ [X] MacOS toolbar support
 	+ [ ] Built-in documentation
+
+# Build
+
++ (Optional) Download and decompress [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic/releases) font to `res/font`
+  + As reference you can see [this shell script](./download-font.sh)
++ Use `gradlew run` to run this application

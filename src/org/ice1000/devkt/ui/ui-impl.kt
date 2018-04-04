@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import java.awt.Desktop
 import java.awt.event.KeyAdapter
@@ -30,10 +31,10 @@ fun JFrame.TODO() {
 interface AnnotationHolder {
 	val text: String
 	fun resetTabSize()
-	fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet)
+	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
 
 	fun highlight(range: TextRange, attributeSet: AttributeSet) =
-			highlight(range.startOffset, range.length, attributeSet)
+			highlight(range.startOffset, range.endOffset, attributeSet)
 
 	fun highlight(astNode: ASTNode, attributeSet: AttributeSet) =
 			highlight(astNode.textRange, attributeSet)
@@ -78,7 +79,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val document: KtDocument
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
-		private val highlightCache = HashMap<Int, AttributeSet>(500)
+		private val highlightCache = ArrayList<AttributeSet?>(500)
 		private val colorScheme = ColorScheme(settings, attributeContext)
 		private val annotator = KotlinAnnotator()
 		private val stringTokens = TokenSet.create(
@@ -130,12 +131,26 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		fun reparse() {
+			while (highlightCache.size <= length) highlightCache.add(null)
 			// val time = System.currentTimeMillis()
 			if (settings.highlightTokenBased) lex()
 			// val time2 = System.currentTimeMillis()
 			if (settings.highlightSemanticBased) parse()
 			// val time3 = System.currentTimeMillis()
-			// rehighlight()
+			if (length > 1) {
+				var tokenStart = 0
+				var attributeSet = highlightCache[0]
+				highlightCache[0] = null
+				for (i in 1 until highlightCache.size) {
+					if (attributeSet != highlightCache[i]) {
+						if (attributeSet != null)
+							setCharacterAttributes(tokenStart, i - tokenStart, attributeSet, true)
+						tokenStart = i
+						attributeSet = highlightCache[i]
+					}
+					highlightCache[i] = null
+				}
+			}
 			// benchmark
 			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time2}")
 		}
@@ -163,44 +178,16 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			else -> null
 		}
 
-		override fun highlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet) =
-				doHighlight(tokenStart, tokenLength, attributeSet, false)
+		override fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) =
+				doHighlight(tokenStart, tokenEnd, attributeSet)
 
 		/**
 		 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
 		 */
-		fun doHighlight(tokenStart: Int, tokenLength: Int, attributeSet: AttributeSet, replace: Boolean) {
-			setCharacterAttributes(tokenStart, tokenLength, attributeSet, replace)
-//			if (tokenLength == 0) return
-//			for (i in 0 until tokenLength) {
-//				val original = highlightCache[tokenStart + i]
-//				if (replace || original == null) highlightCache[tokenStart + i] = attributeSet
-//			}
-		}
-
-		fun rehighlight() {
-			try {
-				writeLock()
-				val changes = DefaultDocumentEvent(0, length, DocumentEvent.EventType.CHANGE)
-				buffer.change(0, length, changes)
-				// TODO improve efficiency
-				var lastEnd: Int
-				var pos = 0
-				while (pos < length) {
-					val run = getCharacterElement(pos)
-					val attributeSet = highlightCache[pos] ?: continue
-					lastEnd = run.endOffset
-					if (pos == lastEnd) break
-					val attr = run.attributes as MutableAttributeSet
-					changes.addEdit(AttributeUndoableEdit(run, attributeSet.copyAttributes(), true))
-					attr.removeAttributes(attr)
-					attr.addAttributes(attributeSet)
-					pos = lastEnd
-				}
-				changes.end()
-				fireChangedUpdate(changes)
-			} finally {
-				writeUnlock()
+		fun doHighlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
+			if (tokenStart >= tokenEnd) return
+			for (i in tokenStart until tokenEnd) {
+				highlightCache[i] = attributeSet
 			}
 		}
 	}
