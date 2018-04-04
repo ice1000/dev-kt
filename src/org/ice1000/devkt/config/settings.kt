@@ -15,51 +15,51 @@ class GlobalSettings {
 	var tabSize: Int = 2
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var useTab: Boolean = true
-	var tokenBasedHighlight: Boolean = true
-	var semanticBasedHighlight: Boolean = true
+	var highlightTokenBased: Boolean = true
+	var highlightSemanticBased: Boolean = true
 	var recentFiles = hashSetOf<File>()
 	var appName: String by properties
 
-	var keywordsColor: String by properties
-	var stringColor: String by properties
-	var templateEntriesColor: String by properties
-	var charLiteralColor: String by properties
-	var lineCommentsColor: String by properties
-	var blockCommentsColor: String by properties
-	var docCommentsColor: String by properties
-	var operatorsColor: String by properties
-	var parenthesesColor: String by properties
-	var bracesColor: String by properties
-	var bracketsColor: String by properties
-	var semicolonColor: String by properties
-	var numbersColor: String by properties
-	var identifiersColor: String by properties
-	var annotationsColor: String by properties
-	var colonColor: String by properties
-	var commaColor: String by properties
+	var colorKeywords: String by properties
+	var colorString: String by properties
+	var colorTemplateEntries: String by properties
+	var colorCharLiteral: String by properties
+	var colorLineComments: String by properties
+	var colorBlockComments: String by properties
+	var colorDocComments: String by properties
+	var colorOperators: String by properties
+	var colorParentheses: String by properties
+	var colorBraces: String by properties
+	var colorBrackets: String by properties
+	var colorSemicolon: String by properties
+	var colorNumbers: String by properties
+	var colorIdentifiers: String by properties
+	var colorAnnotations: String by properties
+	var colorColon: String by properties
+	var colorComma: String by properties
 
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
 		if (!properties.containsKey(::lastOpenedFile.name)) lastOpenedFile = ""
 		if (!properties.containsKey(::appName.name)) appName = "Dev Kt"
-		if (!properties.containsKey(::keywordsColor.name)) keywordsColor = "#CC7832"
-		if (!properties.containsKey(::stringColor.name)) stringColor = "#6A8759"
-		if (!properties.containsKey(::templateEntriesColor.name)) templateEntriesColor = "#CC7832"
-		if (!properties.containsKey(::charLiteralColor.name)) charLiteralColor = "#6A8759"
-		if (!properties.containsKey(::lineCommentsColor.name)) lineCommentsColor = "#808080"
-		if (!properties.containsKey(::blockCommentsColor.name)) blockCommentsColor = "#808080"
-		if (!properties.containsKey(::docCommentsColor.name)) docCommentsColor = "#629755"
-		if (!properties.containsKey(::operatorsColor.name)) operatorsColor = "#A9B7C6"
-		if (!properties.containsKey(::parenthesesColor.name)) parenthesesColor = "#A9B7C6"
-		if (!properties.containsKey(::bracesColor.name)) bracesColor = "#A9B7C6"
-		if (!properties.containsKey(::bracketsColor.name)) bracketsColor = "#A9B7C6"
-		if (!properties.containsKey(::semicolonColor.name)) semicolonColor = "#CC7832"
-		if (!properties.containsKey(::numbersColor.name)) numbersColor = "#6897BB"
-		if (!properties.containsKey(::identifiersColor.name)) identifiersColor = "#A9B7C6"
-		if (!properties.containsKey(::annotationsColor.name)) annotationsColor = "#BBB529"
-		if (!properties.containsKey(::colonColor.name)) colonColor = "#A9B7C6"
-		if (!properties.containsKey(::commaColor.name)) commaColor = "#CC7832"
+		if (!properties.containsKey(::colorKeywords.name)) colorKeywords = "#CC7832"
+		if (!properties.containsKey(::colorString.name)) colorString = "#6A8759"
+		if (!properties.containsKey(::colorTemplateEntries.name)) colorTemplateEntries = "#CC7832"
+		if (!properties.containsKey(::colorCharLiteral.name)) colorCharLiteral = "#6A8759"
+		if (!properties.containsKey(::colorLineComments.name)) colorLineComments = "#808080"
+		if (!properties.containsKey(::colorBlockComments.name)) colorBlockComments = "#808080"
+		if (!properties.containsKey(::colorDocComments.name)) colorDocComments = "#629755"
+		if (!properties.containsKey(::colorOperators.name)) colorOperators = "#A9B7C6"
+		if (!properties.containsKey(::colorParentheses.name)) colorParentheses = "#A9B7C6"
+		if (!properties.containsKey(::colorBraces.name)) colorBraces = "#A9B7C6"
+		if (!properties.containsKey(::colorBrackets.name)) colorBrackets = "#A9B7C6"
+		if (!properties.containsKey(::colorSemicolon.name)) colorSemicolon = "#CC7832"
+		if (!properties.containsKey(::colorNumbers.name)) colorNumbers = "#6897BB"
+		if (!properties.containsKey(::colorIdentifiers.name)) colorIdentifiers = "#A9B7C6"
+		if (!properties.containsKey(::colorAnnotations.name)) colorAnnotations = "#BBB529"
+		if (!properties.containsKey(::colorColon.name)) colorColon = "#A9B7C6"
+		if (!properties.containsKey(::colorComma.name)) colorComma = "#CC7832"
 		properties[::windowBounds.name]
 				?.toString()
 				?.split(',', limit = 4)
@@ -71,8 +71,8 @@ class GlobalSettings {
 				}
 		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
-		properties[::tokenBasedHighlight.name]?.let { tokenBasedHighlight = it.toString() == "true" }
-		properties[::semanticBasedHighlight.name]?.let { semanticBasedHighlight = it.toString() == "true" }
+		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
+		properties[::highlightSemanticBased.name]?.let { highlightSemanticBased = it.toString() == "true" }
 		properties[::recentFiles.name]?.run {
 			toString()
 					.split(File.pathSeparatorChar)
@@ -83,8 +83,8 @@ class GlobalSettings {
 	fun save() {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
 		properties[::useTab.name] = useTab.toString()
-		properties[::tokenBasedHighlight.name] = tokenBasedHighlight.toString()
-		properties[::semanticBasedHighlight.name] = semanticBasedHighlight.toString()
+		properties[::highlightTokenBased.name] = highlightTokenBased.toString()
+		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()
 		properties[::tabSize.name] = tabSize.toString()
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
 		properties.store(configFile.outputStream(), null)

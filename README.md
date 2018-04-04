@@ -29,17 +29,19 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [X] Deals with missing properties
 	+ [X] Auto-saving
 	+ [X] Highlight color customization
-	+ [ ] Hot reload
+	+ [X] Hot reload
 	+ [ ] Text style customization
 	+ [ ] Font customization
 	+ [ ] Keymap customization
 	+ [ ] Internationalization
+	+ [ ] Settings UI
 + File operations
 	+ [X] Create new file when no files are opened
 	+ [X] Save and sync
 	+ [X] Show in files
 	+ [X] Record recently opened files
-	+ [ ] Create new files from templates
+	+ [X] Create new files from templates
+	+ [ ] Drag files to open
 + [ ] Editing
 	+ [X] Lexer based highlights
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
@@ -59,4 +61,5 @@ This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
 	+ [ ] Run as kotlin script
 + Others
 	+ [X] Open alternative editors' download page in browser
+	+ [X] MacOS toolbar support
 	+ [ ] Built-in documentation

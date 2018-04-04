@@ -130,9 +130,9 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		fun reparse() {
 			// val time = System.currentTimeMillis()
-			if (settings.tokenBasedHighlight) lex()
+			if (settings.highlightTokenBased) lex()
 			// val time2 = System.currentTimeMillis()
-			if (settings.semanticBasedHighlight) parse()
+			if (settings.highlightSemanticBased) parse()
 			// val time3 = System.currentTimeMillis()
 			// benchmark
 			// println("${time2 - time}, ${time3 - time2}")

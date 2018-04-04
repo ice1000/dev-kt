@@ -37,11 +37,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 			item("Multiplatform (Common)") {
 				icon = AllIcons.KOTLIN_MP
-				onAction { frame.TODO() }
+				onAction { createNewFile("mp-common.kt") }
 			}
 			item("Multiplatform (Implementation)") {
 				icon = AllIcons.KOTLIN_MP
-				onAction { frame.TODO() }
+				onAction { createNewFile("mp-impl.kt") }
 			}
 		}
 		item("Open...") {
@@ -71,9 +71,8 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { reloadSettings() }
 		}
 		separator
-		item("Save") {
+		saveMenuItem = item("Save") {
 			icon = AllIcons.SAVE
-			saveMenuItem = this
 			onAction { save() }
 		}
 		item("Sync") {
