@@ -85,6 +85,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				CLOSING_QUOTE,
 				REGULAR_STRING_PART
 		)
+
 		private val stringTemplateTokens = TokenSet.create(
 				SHORT_TEMPLATE_ENTRY_START,
 				LONG_TEMPLATE_ENTRY_START,
@@ -120,18 +121,21 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
-		fun reparse() {
-			// val time = System.currentTimeMillis()
-			lex()
-			// val time2 = System.currentTimeMillis()
+		private fun parse() {
 			val ktFile = Kotlin.parse(text) ?: return
-			// val time3 = System.currentTimeMillis()
 			SyntaxTraverser.psiTraverser(ktFile).forEach { psi ->
 				if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 			}
-			// val time4 = System.currentTimeMillis()
+		}
+
+		fun reparse() {
+			// val time = System.currentTimeMillis()
+			if (settings.tokenBasedHighlight) lex()
+			// val time2 = System.currentTimeMillis()
+			if (settings.semanticBasedHighlight) parse()
+			// val time3 = System.currentTimeMillis()
 			// benchmark
-			// println("${time2 - time}, ${time3 - time2}, ${time4 - time3}, ${System.currentTimeMillis() - time4}")
+			// println("${time2 - time}, ${time3 - time2}")
 		}
 
 		/**
@@ -332,7 +336,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun showInFiles() {
-		currentFile?.let(::open)
+		currentFile?.run { open(parentFile) }
 	}
 
 	fun undo() {

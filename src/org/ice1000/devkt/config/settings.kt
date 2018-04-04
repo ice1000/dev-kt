@@ -15,6 +15,8 @@ class GlobalSettings {
 	var tabSize: Int = 2
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var useTab: Boolean = true
+	var tokenBasedHighlight: Boolean = true
+	var semanticBasedHighlight: Boolean = true
 	var recentFiles = hashSetOf<File>()
 	var appName: String by properties
 
@@ -69,6 +71,8 @@ class GlobalSettings {
 				}
 		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
+		properties[::tokenBasedHighlight.name]?.let { tokenBasedHighlight = it.toString() == "true" }
+		properties[::semanticBasedHighlight.name]?.let { semanticBasedHighlight = it.toString() == "true" }
 		properties[::recentFiles.name]?.run {
 			toString()
 					.split(File.pathSeparatorChar)
@@ -79,6 +83,8 @@ class GlobalSettings {
 	fun save() {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
 		properties[::useTab.name] = useTab.toString()
+		properties[::tokenBasedHighlight.name] = tokenBasedHighlight.toString()
+		properties[::semanticBasedHighlight.name] = semanticBasedHighlight.toString()
 		properties[::tabSize.name] = tabSize.toString()
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
 		properties.store(configFile.outputStream(), null)
