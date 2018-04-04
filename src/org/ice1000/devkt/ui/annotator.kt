@@ -1,9 +1,10 @@
 package org.ice1000.devkt.ui
 
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtTypeProjection
 
 /**
  * @author ice1000
@@ -25,6 +26,18 @@ class KotlinAnnotator {
 		when (element) {
 			is KtAnnotationEntry -> {
 				document.highlight(element, colorScheme.annotations)
+			}
+
+			is KtTypeProjection -> {
+				//<泛型>
+				if (element.prevSibling?.node?.elementType == KtTokens.LT
+						&& element.nextSibling?.node?.elementType == KtTokens.GT) {
+					document.highlight(element, colorScheme.numbers)
+				}
+			}
+
+			is KtFunction -> {
+				document.highlight(element.nameIdentifier ?: return, colorScheme.functionDeclaration)
 			}
 		}
 	}
