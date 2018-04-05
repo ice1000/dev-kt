@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.Desktop
+import java.awt.event.InputMethodEvent
+import java.awt.event.InputMethodListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -355,10 +357,13 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
 		val text = editor.text                //编辑器内容
-		val endOfLine = text.indexOfOrNull('\n', index) ?: text.lastIndex            //换行符
+		val endOfLine = text.indexOfOrNull('\n', index)            //换行符
 
-		editor.text = text.replaceRange(endOfLine..endOfLine, "\n\n")        //stupid code
-		editor.caretPosition = endOfLine + 1            //设置光标位置
+		editor.text = endOfLine?.let {
+			//如果endOfLine是null, 表示是在最后一行
+			text.replaceRange(endOfLine..endOfLine, "\n\n")        //stupid code
+		} ?: text + "\n\n"
+		editor.caretPosition = endOfLine?.plus(1) ?: text.lastIndex            //设置光标位置
 	}
 
 	fun buildAsClasses() {
