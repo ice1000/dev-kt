@@ -362,7 +362,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun buildAsClasses() {
-		Kotlin.compile(ktFileCache ?: Kotlin.parse(editor.text))
+		try {
+			Kotlin.compile(ktFileCache ?: Kotlin.parse(editor.text))
+		} catch (e: Exception) {
+			JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
+		}
 	}
 
 	fun buildAsJs() {
