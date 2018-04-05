@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.Kotlin
+import org.ice1000.devkt.Quad
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.ColorScheme
@@ -103,6 +104,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				LONG_TEMPLATE_ENTRY_END
 		)
 
+		private val charPairs = mapOf(
+				"\"" to "\"",
+				"(" to ")",
+				"[" to "]",
+				"{" to "}",
+				"<" to ">"
+		)
+
 		init {
 			addUndoableEditListener {
 				if (it.source === highlightCache) return@addUndoableEditListener
@@ -124,8 +133,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		override val text: String get() = editor.text
 
+		//TODO 按下 `(` 后输入 `)` 会变成 `())`
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
-			super.insertString(offs, str, a)
+			val (offset, string, attr, move) = when (str) {
+				in charPairs -> Quad(offs, str + charPairs[str], a, -1)
+				else -> Quad(offs, str, a, 0)
+			}
+
+			super.insertString(offset, string, attr)
+			editor.caretPosition += move
 			reparse()
 			adjustFormat()
 		}
