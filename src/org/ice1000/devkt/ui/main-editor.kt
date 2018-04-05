@@ -147,7 +147,17 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		override fun remove(offs: Int, len: Int) {
-			super.remove(offs, len)
+			val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
+			val (offset, length) = when {
+				delString in charPairs            //是否存在于字符对里
+						&& text.getOrNull(offs + 1).toString() == charPairs[delString] -> {
+					offs to 2        //
+				}
+
+				else -> offs to len
+			}
+
+			super.remove(offset, length)
 			reparse()
 		}
 
