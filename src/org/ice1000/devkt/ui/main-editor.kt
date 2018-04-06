@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.*
+import java.awt.Image.SCALE_SMOOTH
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -82,13 +83,16 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private var lineNumber = 1
 	private var ktFileCache: KtFile? = null
 	private val document: KtDocument
+	var imageCache: Image? = null
 
 	override fun createUIComponents() {
-		editorPanel = object : JPanel() {
+		mainPanel = object : JPanel() {
 			public override fun paintComponent(g: Graphics) {
 				super.paintComponent(g)
 				val image = GlobalSettings.backgroundImage.second ?: return
-				g.drawImage(image, 0, 0, null)
+				val bounds = editorPanel.visibleRect
+				g.drawImage(imageCache ?: image.getScaledInstance(bounds.width, bounds.height, SCALE_SMOOTH)
+						.also { imageCache = it }, bounds.x, bounds.y, null)
 			}
 		}
 	}
@@ -261,6 +265,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		mainMenu(menuBar, frame)
 		document = KtDocument()
 		editor.document = document
+		scrollPane.viewport.isOpaque = false
 	}
 
 	/**
@@ -465,13 +470,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun refreshLineNumber() {
-		with(editor) {
-			val backgroundColor = background
-			val red = backgroundColor.red
-			val green = backgroundColor.green
-			val blue = backgroundColor.blue
-//			background = Color(red, green, blue, 100)
-		}
 		with(lineNumberLabel) {
 			font = editor.font
 			background = editor.background.brighter()

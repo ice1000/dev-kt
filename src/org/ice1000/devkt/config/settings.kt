@@ -16,7 +16,7 @@ object GlobalSettings {
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
-	var backgroundTransparency: Int = 120
+	var backgroundOpacity: Int = 120
 	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
@@ -106,7 +106,7 @@ object GlobalSettings {
 					height.toIntOrNull()?.let { windowBounds.height = it }
 				}
 		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
-		properties[::backgroundTransparency.name]?.toString()?.toIntOrNull()?.let { backgroundTransparency = it }
+		properties[::backgroundOpacity.name]?.toString()?.toIntOrNull()?.let { backgroundOpacity = it }
 		properties[::fontSize.name]?.toString()?.toFloatOrNull()?.let { fontSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
@@ -123,7 +123,7 @@ object GlobalSettings {
 		properties[::useTab.name] = useTab.toString()
 		properties[::fontSize.name] = fontSize.toString()
 		properties[::tabSize.name] = tabSize.toString()
-		properties[::backgroundTransparency.name] = backgroundTransparency.toString()
+		properties[::backgroundOpacity.name] = backgroundOpacity.toString()
 		properties[::highlightTokenBased.name] = highlightTokenBased.toString()
 		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"

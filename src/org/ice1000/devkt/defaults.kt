@@ -104,6 +104,7 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 			override fun componentResized(e: ComponentEvent?) {
 				super.componentResized(e)
 				GlobalSettings.windowBounds = bounds
+				ui.imageCache = null
 			}
 		})
 		doNothingOnClose
