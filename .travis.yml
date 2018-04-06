@@ -4,6 +4,6 @@ language: kotlin
 jdk:
 - oraclejdk8
 script:
-- ./gradlew build --info
+- ./gradlew test --info
 before_install:
 - chmod a+x gradlew

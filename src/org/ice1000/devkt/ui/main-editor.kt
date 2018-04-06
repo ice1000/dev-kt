@@ -319,7 +319,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 
 	private fun justRun() {
 		val selfLocation = javaClass.protectionDomain.codeSource.location.file
-		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}"
+		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
 		when {
 			SystemInfo.isLinux -> {
 				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$jvmCommand; bash")

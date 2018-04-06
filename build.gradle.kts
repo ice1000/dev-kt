@@ -72,6 +72,21 @@ apply {
 	plugin("de.undercouch.download")
 }
 
+val disabledTasks = listOf("assembleDist",
+		"distZip",
+		"distTar",
+		"installDist",
+		"runIde",
+		"verifyPlugin",
+		"buildPlugin",
+		"prepareSandbox",
+		"prepareTestingSandbox",
+		"patchPluginXml",
+		"publishPlugin"
+)
+
+tasks.removeIf { it.name in disabledTasks }
+
 idea {
 	module {
 		// https://github.com/gradle/kotlin-dsl/issues/537/
@@ -100,16 +115,11 @@ tasks.withType<Jar> {
 	}
 }
 
-tasks["assembleDist"].enabled = false
-tasks["distZip"].enabled = false
-tasks["distTar"].enabled = false
-tasks["installDist"].enabled = false
-tasks["runIde"].enabled = false
-tasks["verifyPlugin"].enabled = false
-tasks["buildPlugin"].enabled = false
-tasks["prepareSandbox"].enabled = false
-tasks["prepareTestingSandbox"].enabled = false
-tasks["patchPluginXml"].enabled = false
+val downloadFiraCode = task<Download>("downloadFiraCode") {
+	src("https://raw.githubusercontent.com/tonsky/FiraCode/master/distr/ttf/FiraCode-Regular.ttf")
+	dest(Paths.get("res", "font").toFile())
+	overwrite(false)
+}
 
 val fatJar = task<Jar>("fatJar") {
 	classifier = "all"

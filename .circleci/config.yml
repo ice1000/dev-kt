@@ -26,7 +26,11 @@ jobs:
 
       - run: gradle dependencies
 
+      - run: gradle downloadFiraCode
+
       - run: gradle build --info
+
+      - run: gradle fatJar --info
 
       - store_artifacts:
           path: build/libs

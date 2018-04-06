@@ -59,7 +59,7 @@ object Kotlin {
 		ensureTargetDirExists()
 		CompileEnvironmentUtil.writeToJar(
 				targetDir.resolve(GlobalSettings.jarName),
-				true,
+				false,
 				FqName.fromSegments(listOf("devkt", GlobalSettings.javaClassName)),
 				compileFile(ktFile, environment))
 	}

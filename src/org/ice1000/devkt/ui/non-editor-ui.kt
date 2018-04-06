@@ -15,6 +15,7 @@ import java.io.File
 import java.net.URL
 import javax.swing.*
 import javax.swing.text.AttributeSet
+import kotlin.concurrent.thread
 
 abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	init {
@@ -112,34 +113,47 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		}
 	}
 
-	fun buildAsJar() = try {
-		Kotlin.compileJar(ktFile())
-		buildSuccess()
-	} catch (e: Exception) {
-		buildFail(e)
+	fun buildAsJar() = thread {
+		try {
+			startBuilding()
+			Kotlin.compileJar(ktFile())
+			buildSuccess()
+		} catch (e: Exception) {
+			buildFail(e)
+		}
 	}
 
-	fun buildAsJs() = try {
-		Kotlin.compileJs(ktFile())
-		buildSuccess()
-	} catch (e: Exception) {
-		buildFail(e)
+	fun buildAsJs() = thread {
+		try {
+			startBuilding()
+			Kotlin.compileJs(ktFile())
+			buildSuccess()
+		} catch (e: Exception) {
+			buildFail(e)
+		}
 	}
 
-	fun buildAsClasses() = try {
-		Kotlin.compileJvm(ktFile())
-		buildSuccess()
-	} catch (e: Exception) {
-		buildFail(e)
+	fun buildAsClasses() = thread {
+		try {
+			startBuilding()
+			Kotlin.compileJvm(ktFile())
+			buildSuccess()
+		} catch (e: Exception) {
+			buildFail(e)
+		}
 	}
 
-	private fun buildSuccess() {
+	private fun buildSuccess() = SwingUtilities.invokeLater {
 		messageLabel.text = "Build successfully."
 	}
 
-	private fun buildFail(e: Exception) {
-		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
+	private fun startBuilding() = SwingUtilities.invokeLater {
+		messageLabel.text = "Build started…"
+	}
+
+	private fun buildFail(e: Exception) = SwingUtilities.invokeLater {
 		messageLabel.text = "Build failed."
+		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
 	}
 
 	open fun makeSureLeaveCurrentFile() = JOptionPane.YES_OPTION !=
