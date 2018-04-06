@@ -327,6 +327,16 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 				processBuilder.start()
 			}
 			SystemInfo.isMac -> {
+				// fatJar for selfLocation is jar and task run for selfLocation is `build-cache`
+				val javaExe = "/usr/bin/java"
+				val file = File("devKtBuild.sh").apply { setExecutable(true) }
+				val fileContent = jvmCommand.replaceFirst("java", javaExe).replace(" devkt.", " ")
+				file.writeText(fileContent)
+				println(file.absolutePath)
+				println(fileContent)
+				val processBuilder = ProcessBuilder("/usr/bin/open", "-a", "terminal", file.absolutePath, "/usr/bin/read")
+				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
+				processBuilder.start()
 			}
 			SystemInfo.isWindows -> {
 			}

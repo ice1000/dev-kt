@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.controlKey
 import org.ice1000.devkt.lie.mac
 import java.awt.event.KeyEvent
 import java.io.File
@@ -48,6 +49,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		item("Open...") {
 			icon = AllIcons.OPEN
 			onAction { open() }
+			controlKey(KeyEvent.VK_O)
 		}
 		item("Show in Files") {
 			showInFilesMenuItem = this
@@ -75,6 +77,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		saveMenuItem = item("Save") {
 			icon = AllIcons.SAVE
 			onAction { save() }
+			controlKey(KeyEvent.VK_S)
 		}
 		item("Sync") {
 			icon = AllIcons.SYNCHRONIZE

@@ -5,8 +5,10 @@ import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`.ui
 import org.ice1000.devkt.config.GlobalSettings
+import java.awt.event.KeyEvent
 
 val mac = SystemInfo.isMac
+val ctrlOrMeta = if (!mac) KeyEvent.CTRL_DOWN_MASK else KeyEvent.META_DOWN_MASK
 
 object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	init {
