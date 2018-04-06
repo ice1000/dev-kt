@@ -84,9 +84,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private val document: KtDocument
 
 	override fun createUIComponents() {
-		mainPanel = object : JPanel() {
+		editorPanel = object : JPanel() {
 			public override fun paintComponent(g: Graphics) {
-				g.drawImage(GlobalSettings.windowIcon.second, 0, 0, null)
+				super.paintComponent(g)
+				val image = GlobalSettings.backgroundImage.second ?: return
+				g.drawImage(image, 0, 0, null)
 			}
 		}
 	}
@@ -268,16 +270,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	@JvmName("   ")
 	internal fun postInit() {
 		updateUndoMenuItems()
-		lineNumberLabel.isOpaque = true
 		refreshLineNumber()
-		with(editor) {
-			isOpaque = true
-			val backgroundColor = background
-			val red = backgroundColor.red
-			val green = backgroundColor.green
-			val blue = backgroundColor.blue
-			background = Color(red, green, blue, 25)
-		}
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
 			edited = false
@@ -472,7 +465,16 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun refreshLineNumber() {
-		lineNumberLabel.font = editor.font
-		lineNumberLabel.background = editor.background.brighter()
+		with(editor) {
+			val backgroundColor = background
+			val red = backgroundColor.red
+			val green = backgroundColor.green
+			val blue = backgroundColor.blue
+//			background = Color(red, green, blue, 100)
+		}
+		with(lineNumberLabel) {
+			font = editor.font
+			background = editor.background.brighter()
+		}
 	}
 }

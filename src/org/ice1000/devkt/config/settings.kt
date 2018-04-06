@@ -1,9 +1,11 @@
 package org.ice1000.devkt.config
 
 import java.awt.Rectangle
+import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
+import kotlin.reflect.KMutableProperty
 
 /**
  * @author ice1000
@@ -14,9 +16,11 @@ object GlobalSettings {
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
+	var backgroundTransparency: Int = 120
 	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
+	var backgroundImage: Pair<String, BufferedImage?> = "" to null
 	var useTab: Boolean = true
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
@@ -51,6 +55,17 @@ object GlobalSettings {
 		if (!properties.containsKey(name)) properties[name] = value
 	}
 
+	private inline fun initImageProperty(property: KMutableProperty<Pair<String, BufferedImage?>>) {
+		properties[property.name]
+				?.toString()
+				?.also {
+					try {
+						property.setter.call(it to ImageIO.read(File(it)))
+					} catch (ignored: Exception) {
+					}
+				}
+	}
+
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
@@ -79,14 +94,8 @@ object GlobalSettings {
 		defaultOf(::colorFunction.name, "#FFC66D")
 		defaultOf(::colorTypeParam.name, "#6897BB")
 		defaultOf(::colorUserTypeRef.name, "#62ABF0")
-		properties[::windowIcon.name]
-				?.toString()
-				?.also {
-					try {
-						windowIcon = it to ImageIO.read(File(it))
-					} catch (ignored: Exception) {
-					}
-				}
+		initImageProperty(::windowIcon)
+		initImageProperty(::backgroundImage)
 		properties[::windowBounds.name]
 				?.toString()
 				?.split(',', limit = 4)
@@ -97,6 +106,7 @@ object GlobalSettings {
 					height.toIntOrNull()?.let { windowBounds.height = it }
 				}
 		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
+		properties[::backgroundTransparency.name]?.toString()?.toIntOrNull()?.let { backgroundTransparency = it }
 		properties[::fontSize.name]?.toString()?.toFloatOrNull()?.let { fontSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
@@ -112,11 +122,13 @@ object GlobalSettings {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
 		properties[::useTab.name] = useTab.toString()
 		properties[::fontSize.name] = fontSize.toString()
+		properties[::tabSize.name] = tabSize.toString()
+		properties[::backgroundTransparency.name] = backgroundTransparency.toString()
 		properties[::highlightTokenBased.name] = highlightTokenBased.toString()
 		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()
-		properties[::tabSize.name] = tabSize.toString()
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
 		properties[::windowIcon.name] = windowIcon.first
+		properties[::backgroundImage.name] = backgroundImage.first
 		properties.store(configFile.outputStream(), null)
 	}
 }

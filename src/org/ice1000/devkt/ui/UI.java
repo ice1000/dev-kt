@@ -9,9 +9,9 @@ public abstract class UI {
 	public JPanel mainPanel;
 	protected JMenuBar menuBar;
 	protected JTextPane editor;
-	protected JToolBar toolbar;
 	protected JLabel messageLabel;
 	protected JLabel lineNumberLabel;
+	protected JPanel editorPanel;
 
 	protected abstract void createUIComponents();
 }

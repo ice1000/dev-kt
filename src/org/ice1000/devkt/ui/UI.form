@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.ice1000.devkt.ui.UI">
-  <grid id="27dc6" binding="mainPanel" custom-create="true" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="682" height="642"/>
@@ -20,7 +20,7 @@
       </grid>
       <scrollpane id="ef08">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <clientProperties>
@@ -28,7 +28,7 @@
         </clientProperties>
         <border type="none"/>
         <children>
-          <grid id="679ed" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="679ed" binding="editorPanel" custom-create="true" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints/>
             <properties/>
             <clientProperties>
@@ -39,14 +39,21 @@
               <component id="67d52" class="javax.swing.JTextPane" binding="editor">
                 <constraints border-constraint="Center"/>
                 <properties>
+                  <dragEnabled value="true"/>
                   <font/>
+                  <opaque value="false"/>
                   <text value="fun main(vararg args: String) {&#10;  println(&quot;Hello World&quot;)&#10;}" noi18n="true"/>
                 </properties>
               </component>
               <component id="8e622" class="javax.swing.JLabel" binding="lineNumberLabel">
                 <constraints border-constraint="West"/>
                 <properties>
+                  <focusable value="false"/>
                   <horizontalAlignment value="4"/>
+                  <inheritsPopupMenu value="false"/>
+                  <labelFor value="67d52"/>
+                  <opaque value="true"/>
+                  <requestFocusEnabled value="false"/>
                   <text value=""/>
                   <verticalAlignment value="1"/>
                   <verticalTextPosition value="1"/>
@@ -56,19 +63,9 @@
           </grid>
         </children>
       </scrollpane>
-      <toolbar id="b06a" binding="toolbar">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="-1" height="20"/>
-          </grid>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children/>
-      </toolbar>
       <component id="db026" class="javax.swing.JLabel" binding="messageLabel">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value=""/>
