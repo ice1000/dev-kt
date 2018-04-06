@@ -1,8 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
-import org.ice1000.devkt.Kotlin
-import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.*
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.PsiViewerImpl
@@ -16,6 +15,11 @@ import java.net.URL
 import javax.swing.*
 import javax.swing.text.AttributeSet
 import kotlin.concurrent.thread
+
+fun JFrame.TODO() {
+	JOptionPane.showMessageDialog(this, "This feature is TODO.",
+			"Unfinished", 1, AllIcons.KOTLIN)
+}
 
 abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	init {
@@ -37,11 +41,11 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		mainPanel = object : JPanel() {
 			public override fun paintComponent(g: Graphics) {
 				super.paintComponent(g)
-				val image = GlobalSettings.backgroundImage.second ?: return
-				g.drawImage(imageCache ?: image
+				val image = GlobalSettings.backgroundImage.second
+				if (null != image) g.drawImage(imageCache ?: image
 						.getScaledInstance(mainPanel.width, mainPanel.height, Image.SCALE_SMOOTH)
 						.also { imageCache = it }, 0, 0, null)
-				g.color = backgroundColorCache ?: editor.background
+				g.color = backgroundColorCache ?: Color.decode(GlobalSettings.colorBackground)
 						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
 						.also { backgroundColorCache = it }
 				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
@@ -71,7 +75,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		background = editor.background.brighter()
 	}
 
-	fun browse(url: String) = try {
+	private fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
 		messageLabel.text = "Browsing $url"
 	} catch (e: Exception) {
@@ -113,45 +117,59 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		}
 	}
 
-	fun buildAsJar() = thread {
+	fun importSettings() {
+		val file = JFileChooser(selfLocation).apply {
+			showOpenDialog(mainPanel)
+		}.selectedFile ?: return
+		GlobalSettings.loadFile(file)
+		reloadSettings()
+	}
+
+	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		try {
 			startBuilding()
 			Kotlin.compileJar(ktFile())
 			buildSuccess()
+			SwingUtilities.invokeLater { callback(true) }
 		} catch (e: Exception) {
 			buildFail(e)
+			SwingUtilities.invokeLater { callback(false) }
 		}
 	}
 
-	fun buildAsJs() = thread {
+	inline fun buildAsJs(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		try {
 			startBuilding()
 			Kotlin.compileJs(ktFile())
 			buildSuccess()
+			SwingUtilities.invokeLater { callback(true) }
 		} catch (e: Exception) {
 			buildFail(e)
+			SwingUtilities.invokeLater { callback(false) }
 		}
 	}
 
-	fun buildAsClasses() = thread {
+	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		try {
 			startBuilding()
 			Kotlin.compileJvm(ktFile())
 			buildSuccess()
+			SwingUtilities.invokeLater { callback(true) }
 		} catch (e: Exception) {
 			buildFail(e)
+			SwingUtilities.invokeLater { callback(false) }
 		}
 	}
 
-	private fun buildSuccess() = SwingUtilities.invokeLater {
+	fun buildSuccess() = SwingUtilities.invokeLater {
 		messageLabel.text = "Build successfully."
 	}
 
-	private fun startBuilding() = SwingUtilities.invokeLater {
+	fun startBuilding() = SwingUtilities.invokeLater {
 		messageLabel.text = "Build started…"
 	}
 
-	private fun buildFail(e: Exception) = SwingUtilities.invokeLater {
+	fun buildFail(e: Exception) = SwingUtilities.invokeLater {
 		messageLabel.text = "Build failed."
 		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
 	}
@@ -165,7 +183,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 					JOptionPane.QUESTION_MESSAGE,
 					AllIcons.KOTLIN)
 
-	protected abstract fun ktFile(): KtFile
+	abstract fun ktFile(): KtFile
 	abstract fun reloadSettings()
 }
 
@@ -174,7 +192,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
  */
 interface AnnotationHolder {
 	val text: String
-	fun adjustFormat()
+	val len: Int
 	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
 
 	fun highlight(range: TextRange, attributeSet: AttributeSet) =
@@ -185,4 +203,6 @@ interface AnnotationHolder {
 
 	fun highlight(element: PsiElement, attributeSet: AttributeSet) =
 			highlight(element.textRange, attributeSet)
+
+	fun adjustFormat(offs: Int = 0, length: Int = len - offs)
 }

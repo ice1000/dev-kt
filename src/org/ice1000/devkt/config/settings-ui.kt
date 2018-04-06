@@ -1,16 +1,19 @@
 package org.ice1000.devkt.config
 
 import charlie.gensokyo.doNothingOnClose
-import org.ice1000.devkt.ui.*
+import org.ice1000.devkt.ui.AbstractUI
+import org.ice1000.devkt.ui.Configuration
 import java.awt.Window
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.KeyStroke
 
 class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
+		title = "Settings"
 		isModal = true
 		getRootPane().defaultButton = buttonOK
 		buttonOK.addActionListener { ok() }
@@ -34,6 +37,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 		backgroundImageField.text = GlobalSettings.backgroundImage.first
 		editorFontField.text = GlobalSettings.monoFontName
 		uiFontField.text = GlobalSettings.gothicFontName
+		fontSizeSpinner.value = GlobalSettings.fontSize
 	}
 
 	private fun ok() {
@@ -45,6 +49,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 		with(GlobalSettings) {
 			monoFontName = editorFontField.text
 			gothicFontName = uiFontField.text
+			(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
 			backgroundImage = try {
 				val path = backgroundImageField.text
 				path to ImageIO.read(File(path))

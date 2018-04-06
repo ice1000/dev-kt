@@ -14,16 +14,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import javax.swing.*
+import javax.swing.JFileChooser
+import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
 import javax.swing.text.*
 import javax.swing.undo.UndoManager
-
-fun JFrame.TODO() {
-	JOptionPane.showMessageDialog(this, "This feature is TODO.",
-			"Unfinished", 1, AllIcons.KOTLIN)
-}
 
 /**
  * @author ice1000
@@ -49,6 +45,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
 		private val colorScheme = ColorScheme(GlobalSettings, attributeContext)
 		private val annotator = KotlinAnnotator()
+		override val len: Int get() = length
 
 		init {
 			addUndoableEditListener {
@@ -60,9 +57,10 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 			adjustFormat()
 		}
 
-		override fun adjustFormat() {
-			setParagraphAttributesDoneBySettings(0, length, colorScheme.tabSize, false)
-			val currentLineNumber = text.count { it == '\n' }
+		override fun adjustFormat(offs: Int, length: Int) {
+			if (length <= 0) return
+			setParagraphAttributesDoneBySettings(offs, length, colorScheme.tabSize, false)
+			val currentLineNumber = text.count { it == '\n' } + 1
 			val change = currentLineNumber != lineNumber
 			lineNumber = currentLineNumber
 			if (change) lineNumberLabel.text = (1..currentLineNumber).joinToString(
@@ -81,7 +79,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 			super.insertString(offset, string, attr)
 			editor.caretPosition += move
 			reparse()
-			adjustFormat()
+			adjustFormat(offset, string.length)
 		}
 
 		override fun remove(offs: Int, len: Int) {
@@ -97,6 +95,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 
 			super.remove(offset, length)
 			reparse()
+			adjustFormat(offset, length)
 		}
 
 		private fun lex() {
@@ -312,33 +311,37 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
 
-	fun buildAndRun() {
-		buildAsClasses()
-		justRun()
+	fun buildClassAndRun() {
+		buildAsClasses { if (it) runCommand() }
 	}
 
-	private fun justRun() {
-		val selfLocation = javaClass.protectionDomain.codeSource.location.file
-		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
+	fun buildJarAndRun() {
+		buildAsJar { if (it) runCommand() }
+	}
+
+	private fun runCommand(java: String = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt") {
 		when {
 			SystemInfo.isLinux -> {
-				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$jvmCommand; bash")
+				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
+				println(processBuilder.command())
 				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 				processBuilder.start()
 			}
 			SystemInfo.isMac -> {
+				// TODO
 				// fatJar for selfLocation is jar and task run for selfLocation is `build-cache`
-				val javaExe = "/usr/bin/java"
-				val file = File("devKtBuild.sh").apply { setExecutable(true) }
-				val fileContent = jvmCommand.replaceFirst("java", javaExe).replace(" devkt.", " ")
-				file.writeText(fileContent)
-				println(file.absolutePath)
-				println(fileContent)
-				val processBuilder = ProcessBuilder("/usr/bin/open", "-a", "terminal", file.absolutePath, "/usr/bin/read")
-				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
-				processBuilder.start()
+//				val javaExe = "/usr/bin/java"
+//				val file = File("devKtBuild.sh").apply { setExecutable(true) }
+//				val fileContent = jvmCommand.replaceFirst("java", javaExe).replace(" devkt.", " ")
+//				file.writeText(fileContent)
+//				println(file.absolutePath)
+//				println(fileContent)
+//				val processBuilder = ProcessBuilder("/usr/bin/open", "-a", "terminal", file.absolutePath, "/usr/bin/read")
+//				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
+//				processBuilder.start()
 			}
 			SystemInfo.isWindows -> {
+				// TODO
 			}
 		}
 	}

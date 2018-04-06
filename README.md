@@ -27,13 +27,18 @@ IntelliJ IDEA<br/><br/>Correct,<br/>with inspections|<img width=200 src="https:/
 Emacs<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
 VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
 
+# Screenshots
+
+<img src="https://user-images.githubusercontent.com/16398479/38440232-5ab4d282-3a13-11e8-9b00-5d199d687f8f.png">
+<img src="https://user-images.githubusercontent.com/16398479/38440305-983541b4-3a13-11e8-9651-25e9a61a9b9a.png">
+
 # Progress
 
 + Properties-based settings (hackable!)
 	+ [X] Deals with missing properties
 	+ [X] Smart auto saving
 	+ [X] Highlight color customization
-	+ [X] Hot reload
+	+ [ ] Hot reload (Due to some limitations of Swing it's really hard to implement)
 	+ [X] Font customization
 		+ [X] Font size customization
 	+ [ ] Text style customization
@@ -62,18 +67,19 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [ ] Auto indent
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
-+ Build and execution
-	+ [ ] Build
-		+ [ ] Build as class files
-		+ [ ] Build as jar
++ Build and run
+	+ Build
+		+ [X] Build as class files
+		+ [X] Build as jar
 		+ [ ] Build as javascript module
-	+ [ ] Run
-		+ [ ] Run as class files
-		+ [ ] Run as jar
+	+ Run
+		+ [X] Run as class files
+		+ [X] Run as jar
 		+ [ ] Run as kotlin script
 + Others
 	+ [X] Open alternative editors' download page in browser
 	+ [X] MacOS toolbar support
+	+ [X] PsiViewer
 	+ [ ] Built-in documentation
 
 # Build

@@ -30,6 +30,8 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("MenuBar.font", value)
 			UIManager.put("MenuItem.font", value)
 			UIManager.put("Label.font", value)
+			UIManager.put("Spinner.font", value)
+			UIManager.put("FormattedTextField.font", value)
 			UIManager.put("TextField.font", value)
 			UIManager.put("Button.font", value)
 			UIManager.put("Panel.font", value)
@@ -71,6 +73,11 @@ val `{-# LANGUAGE DarculaLookAndFeel #-}`: Unit
 	get() {
 		UIManager.getFont("Label.font")
 		UIManager.setLookAndFeel(DarculaLaf())
+	}
+
+val `{-# LANGUAGE GlobalSettings #-}`: Unit
+	get() {
+		GlobalSettings.load()
 	}
 
 object `{-# LANGUAGE DevKt #-}` : JFrame() {

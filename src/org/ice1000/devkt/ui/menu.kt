@@ -69,6 +69,9 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = AllIcons.SETTINGS
 			onAction { settings() }
 		}
+		item("Import Settings...") {
+			onAction { importSettings() }
+		}
 		item("Sync Settings") {
 			icon = AllIcons.REFRESH
 			onAction { reloadSettings() }
@@ -135,9 +138,13 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		subMenu("Run As") {
 			icon = AllIcons.EXECUTE
+			item("Jar") {
+				icon = AllIcons.JAR
+				onAction { buildJarAndRun() }
+			}
 			item("Classes") {
 				icon = AllIcons.CLASS
-				onAction { buildAndRun() }
+				onAction { buildClassAndRun() }
 			}
 			item("Kotlin Script") {
 				icon = AllIcons.KOTLIN_FILE
@@ -178,7 +185,7 @@ val kotlinFileFilter = object : FileFilter() {
 		input.isDirectory -> true
 		else -> {
 			val fileName = input.path.toLowerCase()
-			fileName.endsWith(".kt") || fileName.endsWith(".kts")
+			fileName.endsWith(".kt") or fileName.endsWith(".kts")
 		}
 	}
 

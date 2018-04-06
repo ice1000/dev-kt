@@ -16,6 +16,7 @@ object GlobalSettings {
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
+	var psiViewerMaxCodeLength: Int = 30
 	var backgroundAlpha: Int = 180
 	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
@@ -52,25 +53,36 @@ object GlobalSettings {
 	var colorFunction: String by properties
 	var colorTypeParam: String by properties
 	var colorUserTypeRef: String by properties
+	var colorProperty: String by properties
+	var colorBackground: String by properties
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value
 	}
 
 	private fun initImageProperty(property: KMutableProperty<Pair<String, BufferedImage?>>) {
-		properties[property.name]
-				?.toString()
-				?.also {
-					try {
-						property.setter.call(it to ImageIO.read(File(it)))
-					} catch (ignored: Exception) {
-					}
-				}
+		properties[property.name]?.toString()?.also {
+			try {
+				property.setter.call(it to ImageIO.read(File(it)))
+			} catch (ignored: Exception) {
+			}
+		}
 	}
+
+	private fun initIntProperty(property: KMutableProperty<Int>) {
+		properties[property.name]?.toString()?.also {
+			try {
+				it.toIntOrNull()?.let { property.setter.call(it) }
+			} catch (ignored: Exception) {
+			}
+		}
+	}
+
+	fun loadFile(file: File) = properties.load(file.inputStream())
 
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
-		else properties.load(configFile.inputStream())
+		else loadFile(configFile)
 		defaultOf(::lastOpenedFile.name, "")
 		defaultOf(::javaClassName.name, "DevKtCompiled")
 		defaultOf(::jarName.name, "DevKtCompiled.jar")
@@ -98,6 +110,8 @@ object GlobalSettings {
 		defaultOf(::colorFunction.name, "#FFC66D")
 		defaultOf(::colorTypeParam.name, "#6897BB")
 		defaultOf(::colorUserTypeRef.name, "#62ABF0")
+		defaultOf(::colorProperty.name, "#9876AA")
+		defaultOf(::colorBackground.name, "#2B2B2B")
 		initImageProperty(::windowIcon)
 		initImageProperty(::backgroundImage)
 		properties[::windowBounds.name]
@@ -109,8 +123,9 @@ object GlobalSettings {
 					width.toIntOrNull()?.let { windowBounds.width = it }
 					height.toIntOrNull()?.let { windowBounds.height = it }
 				}
-		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
-		properties[::backgroundAlpha.name]?.toString()?.toIntOrNull()?.let { backgroundAlpha = it }
+		initIntProperty(::tabSize)
+		initIntProperty(::psiViewerMaxCodeLength)
+		initIntProperty(::backgroundAlpha)
 		properties[::fontSize.name]?.toString()?.toFloatOrNull()?.let { fontSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
@@ -127,6 +142,7 @@ object GlobalSettings {
 		properties[::useTab.name] = useTab.toString()
 		properties[::fontSize.name] = fontSize.toString()
 		properties[::tabSize.name] = tabSize.toString()
+		properties[::psiViewerMaxCodeLength.name] = psiViewerMaxCodeLength.toString()
 		properties[::backgroundAlpha.name] = backgroundAlpha.toString()
 		properties[::highlightTokenBased.name] = highlightTokenBased.toString()
 		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()
