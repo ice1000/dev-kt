@@ -53,6 +53,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Copy/paste/cut/select all
 	+ [X] Line number
 	+ [X] Background image
+	+ [X] Insert paired characters
 	+ [X] Semantic-based highlights
 		+ [ ] Highlight in daemon
 		+ [ ] Prioritized
