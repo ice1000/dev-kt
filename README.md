@@ -62,14 +62,14 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [ ] Auto indent
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
-+ Build and execution
++ Build and run
 	+ [ ] Build
-		+ [ ] Build as class files
-		+ [ ] Build as jar
+		+ [X] Build as class files
+		+ [X] Build as jar
 		+ [ ] Build as javascript module
 	+ [ ] Run
-		+ [ ] Run as class files
-		+ [ ] Run as jar
+		+ [X] Run as class files
+		+ [X] Run as jar
 		+ [ ] Run as kotlin script
 + Others
 	+ [X] Open alternative editors' download page in browser

@@ -17,6 +17,11 @@ import javax.swing.*
 import javax.swing.text.AttributeSet
 import kotlin.concurrent.thread
 
+fun JFrame.TODO() {
+	JOptionPane.showMessageDialog(this, "This feature is TODO.",
+			"Unfinished", 1, AllIcons.KOTLIN)
+}
+
 abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	init {
 		frame.jMenuBar = menuBar
@@ -71,7 +76,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		background = editor.background.brighter()
 	}
 
-	fun browse(url: String) = try {
+	private fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
 		messageLabel.text = "Browsing $url"
 	} catch (e: Exception) {

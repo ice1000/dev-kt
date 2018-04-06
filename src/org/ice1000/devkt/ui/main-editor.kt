@@ -14,16 +14,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import javax.swing.*
+import javax.swing.JFileChooser
+import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
 import javax.swing.text.*
 import javax.swing.undo.UndoManager
-
-fun JFrame.TODO() {
-	JOptionPane.showMessageDialog(this, "This feature is TODO.",
-			"Unfinished", 1, AllIcons.KOTLIN)
-}
 
 /**
  * @author ice1000
@@ -312,14 +308,19 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
 
-	fun buildAndRun() {
+	fun buildClassAndRun() {
 		buildAsClasses()
-		justRun()
+		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
+		runCommand(jvmCommand)
 	}
 
-	private fun justRun() {
-		val selfLocation = javaClass.protectionDomain.codeSource.location.file
-		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
+	fun buildJarAndRun() {
+		buildAsJar()
+		val jvmCommand = "java -jar ${Kotlin.targetDir.absolutePath}:$selfLocation"
+		runCommand(jvmCommand)
+	}
+
+	private fun runCommand(jvmCommand: String) {
 		when {
 			SystemInfo.isLinux -> {
 				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$jvmCommand; bash")
@@ -327,8 +328,10 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 				processBuilder.start()
 			}
 			SystemInfo.isMac -> {
+				// TODO
 			}
 			SystemInfo.isWindows -> {
+				// TODO
 			}
 		}
 	}
