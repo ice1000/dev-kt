@@ -1,8 +1,6 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.Kotlin
-import org.ice1000.devkt.Quad
-import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
@@ -17,8 +15,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.Desktop
-import java.awt.event.InputMethodEvent
-import java.awt.event.InputMethodListener
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -92,25 +88,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
 		private val colorScheme = ColorScheme(GlobalSettings, attributeContext)
 		private val annotator = KotlinAnnotator()
-		private val stringTokens = TokenSet.create(
-				OPEN_QUOTE,
-				CLOSING_QUOTE,
-				REGULAR_STRING_PART
-		)
-
-		private val stringTemplateTokens = TokenSet.create(
-				SHORT_TEMPLATE_ENTRY_START,
-				LONG_TEMPLATE_ENTRY_START,
-				LONG_TEMPLATE_ENTRY_END
-		)
-
-		private val charPairs = mapOf(
-				"\"" to "\"",
-				"(" to ")",
-				"[" to "]",
-				"{" to "}",
-				"<" to ">"
-		)
 
 		init {
 			addUndoableEditListener {
@@ -136,7 +113,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		//TODO 按下 `(` 后输入 `)` 会变成 `())`
 		override fun insertString(offs: Int, str: String, a: AttributeSet) {
 			val (offset, string, attr, move) = when (str) {
-				in charPairs -> Quad(offs, str + charPairs[str], a, -1)
+				in paired -> Quad(offs, str + paired[str], a, -1)
 				else -> Quad(offs, str, a, 0)
 			}
 
@@ -149,8 +126,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		override fun remove(offs: Int, len: Int) {
 			val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
 			val (offset, length) = when {
-				delString in charPairs            //是否存在于字符对里
-						&& text.getOrNull(offs + 1).toString() == charPairs[delString] -> {
+				delString in paired            //是否存在于字符对里
+						&& text.getOrNull(offs + 1).toString() == paired[delString] -> {
 					offs to 2        //
 				}
 

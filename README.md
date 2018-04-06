@@ -47,7 +47,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Record recently opened files
 	+ [X] Create new files from templates (kts, kt, kt2js, android activity, multiplatform codes, etc.)
 	+ [ ] Drag file to open
-+ [ ] Editing
++ Editor
 	+ [X] Lexer based highlights
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
@@ -60,14 +60,15 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [ ] Auto indent
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
-+ [ ] Build and execution
-	+ [ ] Build as class files
-	+ [ ] Build as jar
-	+ [ ] Build as javascript module
-	+ [ ] Build and run
-	+ [ ] Run as class files
-	+ [ ] Run as jar
-	+ [ ] Run as kotlin script
++ Build and execution
+	+ [ ] Build
+		+ [ ] Build as class files
+		+ [ ] Build as jar
+		+ [ ] Build as javascript module
+	+ [ ] Run
+		+ [ ] Run as class files
+		+ [ ] Run as jar
+		+ [ ] Run as kotlin script
 + Others
 	+ [X] Open alternative editors' download page in browser
 	+ [X] MacOS toolbar support

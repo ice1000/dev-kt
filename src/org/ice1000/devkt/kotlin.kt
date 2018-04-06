@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions.getArea
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.preprocessor.mkdirsOrFail
 import org.jetbrains.kotlin.psi.KtFile
@@ -64,3 +66,16 @@ object Kotlin {
 		}
 	}
 }
+
+val stringTokens = TokenSet.create(
+		KtTokens.OPEN_QUOTE,
+		KtTokens.CLOSING_QUOTE,
+		KtTokens.REGULAR_STRING_PART
+)
+
+val stringTemplateTokens = TokenSet.create(
+		KtTokens.SHORT_TEMPLATE_ENTRY_START,
+		KtTokens.LONG_TEMPLATE_ENTRY_START,
+		KtTokens.LONG_TEMPLATE_ENTRY_END
+)
+
