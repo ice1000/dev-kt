@@ -18,6 +18,7 @@ class PsiViewerImpl(file: KtFile) : PsiViewer() {
 		rootPane.defaultButton = buttonClose
 		pane.setViewportView(JTree(mapAst2Display(file)))
 		buttonClose.addActionListener { dispose() }
+		pack()
 	}
 
 	/**

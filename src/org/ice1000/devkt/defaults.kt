@@ -4,7 +4,7 @@
 
 package org.ice1000.devkt
 
-import charlie.gensokyo.doNothingOnClose
+import charlie.gensokyo.*
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
@@ -107,9 +107,9 @@ object `{-# LANGUAGE DevKt #-}` : JFrame() {
 				ui.imageCache = null
 			}
 		})
-		doNothingOnClose
 		bounds = GlobalSettings.windowBounds
-		isVisible = true
+		doNothingOnClose
+		show
 		with(ui) {
 			postInit()
 			refreshTitle()

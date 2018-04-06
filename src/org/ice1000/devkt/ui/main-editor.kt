@@ -1,9 +1,9 @@
 package org.ice1000.devkt.ui
 
+import charlie.gensokyo.show
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
-import org.ice1000.devkt.config.ColorScheme
-import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.config.*
 import org.ice1000.devkt.psi.KotlinAnnotator
 import org.ice1000.devkt.psi.PsiViewerImpl
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
@@ -298,7 +298,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun settings() {
-		frame.TODO()
+		ConfigurationImpl().show
 		reloadSettings()
 	}
 
@@ -356,10 +356,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 
 	fun viewPsi() {
-		PsiViewerImpl(ktFileCache ?: Kotlin.parse(editor.text)).apply {
-			pack()
-			isVisible = true
-		}
+		PsiViewerImpl(ktFileCache ?: Kotlin.parse(editor.text)).show
 	}
 
 	private fun browse(url: String) = try {

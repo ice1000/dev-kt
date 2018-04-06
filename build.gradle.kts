@@ -99,6 +99,17 @@ tasks.withType<Jar> {
 	}
 }
 
+tasks["assembleDist"].enabled = false
+tasks["distZip"].enabled = false
+tasks["distTar"].enabled = false
+tasks["installDist"].enabled = false
+tasks["runIde"].enabled = false
+tasks["verifyPlugin"].enabled = false
+tasks["buildPlugin"].enabled = false
+tasks["prepareSandbox"].enabled = false
+tasks["prepareTestingSandbox"].enabled = false
+tasks["patchPluginXml"].enabled = false
+
 val fatJar = task<Jar>("fatJar") {
 	classifier = "all"
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
@@ -137,7 +148,7 @@ repositories {
 dependencies {
 	compile(kotlin("stdlib-jdk8", kotlinVersion))
 	compile(kotlin("compiler-embeddable", kotlinVersion))
-	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.0")
+	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
 	compile(files(Paths.get("lib", "darcula.jar")))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
