@@ -43,12 +43,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 	fun loadFont() {
 		val mono = GlobalSettings.monoFontName.trim()
 		if (mono.isEmpty() or
-				mono.equals("DevKt Default", true) or
-				mono.equals("sarasa", true) or
-				mono.equals("sarasa mono", true) or
-				mono.equals("sarasa mono sc", true) or
-				mono.equals("sarasa-mono", true) or
-				mono.equals("sarasa-mono-sc", true)) {
+				mono.equals("DevKt Default", true)) {
 			val monoFontInputStream = javaClass.getResourceAsStream("/font/sarasa-mono-sc-regular.ttf")
 					?: javaClass.getResourceAsStream("/font/FiraCode-Regular.ttf")
 			if (null != monoFontInputStream)
@@ -60,12 +55,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		}
 		val gothic = GlobalSettings.gothicFontName.trim()
 		if (gothic.isEmpty() or
-				gothic.equals("DevKt Default", true) or
-				gothic.equals("sarasa", true) or
-				gothic.equals("sarasa gothic", true) or
-				gothic.equals("sarasa gothic sc", true) or
-				gothic.equals("sarasa-gothic", true) or
-				gothic.equals("sarasa-gothic-sc", true)) {
+				gothic.equals("DevKt Default", true)) {
 			val gothicFontInputStream = javaClass.getResourceAsStream("/font/sarasa-gothic-sc-regular.ttf")
 			if (null != gothicFontInputStream)
 				gothicFont = Font
