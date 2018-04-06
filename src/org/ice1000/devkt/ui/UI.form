@@ -23,11 +23,17 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
+        <clientProperties>
+          <html.disable class="java.lang.Boolean" value="true"/>
+        </clientProperties>
         <border type="none"/>
         <children>
           <grid id="679ed" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints/>
             <properties/>
+            <clientProperties>
+              <html.disable class="java.lang.Boolean" value="true"/>
+            </clientProperties>
             <border type="none"/>
             <children>
               <component id="67d52" class="javax.swing.JTextPane" binding="editor">

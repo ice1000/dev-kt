@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
-import java.awt.Desktop
+import java.awt.*
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -83,6 +82,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private var lineNumber = 1
 	private var ktFileCache: KtFile? = null
 	private val document: KtDocument
+
+	override fun createUIComponents() {
+		mainPanel = object : JPanel() {
+			public override fun paintComponent(g: Graphics) {
+				g.drawImage(GlobalSettings.windowIcon.second, 0, 0, null)
+			}
+		}
+	}
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
@@ -263,6 +270,14 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		updateUndoMenuItems()
 		lineNumberLabel.isOpaque = true
 		refreshLineNumber()
+		with(editor) {
+			isOpaque = true
+			val backgroundColor = background
+			val red = backgroundColor.red
+			val green = backgroundColor.green
+			val blue = backgroundColor.blue
+			background = Color(red, green, blue, 25)
+		}
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
 			edited = false
