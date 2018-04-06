@@ -1,8 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
-import org.ice1000.devkt.Kotlin
-import org.ice1000.devkt.`{-# LANGUAGE DevKt #-}`
+import org.ice1000.devkt.*
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.PsiViewerImpl
@@ -42,8 +41,8 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		mainPanel = object : JPanel() {
 			public override fun paintComponent(g: Graphics) {
 				super.paintComponent(g)
-				val image = GlobalSettings.backgroundImage.second ?: return
-				g.drawImage(imageCache ?: image
+				val image = GlobalSettings.backgroundImage.second
+				if (null != image) g.drawImage(imageCache ?: image
 						.getScaledInstance(mainPanel.width, mainPanel.height, Image.SCALE_SMOOTH)
 						.also { imageCache = it }, 0, 0, null)
 				g.color = backgroundColorCache ?: Color.decode(GlobalSettings.colorBackground)
@@ -118,14 +117,12 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		}
 	}
 
-	fun selectOneFile(): File? = currentFile
-			?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
-				showSaveDialog(mainPanel)
-			}.selectedFile
-
 	fun importSettings() {
-		val file = selectOneFile() ?: return
+		val file = JFileChooser(selfLocation).apply {
+			showOpenDialog(mainPanel)
+		}.selectedFile ?: return
 		GlobalSettings.loadFile(file)
+		reloadSettings()
 	}
 
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
