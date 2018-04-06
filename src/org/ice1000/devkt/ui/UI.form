@@ -57,7 +57,7 @@
                   <horizontalAlignment value="4"/>
                   <inheritsPopupMenu value="false"/>
                   <labelFor value="67d52"/>
-                  <opaque value="true"/>
+                  <opaque value="false"/>
                   <requestFocusEnabled value="false"/>
                   <text value=""/>
                   <verticalAlignment value="1"/>

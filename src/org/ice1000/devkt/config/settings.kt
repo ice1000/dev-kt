@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
+import javax.swing.ImageIcon
 import kotlin.reflect.KMutableProperty
+import kotlin.reflect.KMutableProperty0
 
 /**
  * @author ice1000
@@ -19,8 +21,8 @@ object GlobalSettings {
 	var backgroundOpacity: Int = 120
 	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
-	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
-	var backgroundImage: Pair<String, BufferedImage?> = "" to null
+	var windowIcon = "" to ImageIcon(javaClass.getResource("/icon/kotlin24@2x.png"))
+	var backgroundImage: Pair<String, ImageIcon?> = "" to null
 	var useTab: Boolean = true
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
@@ -55,12 +57,12 @@ object GlobalSettings {
 		if (!properties.containsKey(name)) properties[name] = value
 	}
 
-	private inline fun initImageProperty(property: KMutableProperty<Pair<String, BufferedImage?>>) {
+	private fun <ImageIcon> initImageProperty(property: KMutableProperty0<Pair<String, ImageIcon>>) {
 		properties[property.name]
 				?.toString()
 				?.also {
 					try {
-						property.setter.call(it to ImageIO.read(File(it)))
+						property.setter.call(it to ImageIcon(File(it).toURI().toURL()))
 					} catch (ignored: Exception) {
 					}
 				}

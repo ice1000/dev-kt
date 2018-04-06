@@ -90,9 +90,9 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			public override fun paintComponent(g: Graphics) {
 				super.paintComponent(g)
 				val image = GlobalSettings.backgroundImage.second ?: return
-				val bounds = editorPanel.visibleRect
-				g.drawImage(imageCache ?: image.getScaledInstance(bounds.width, bounds.height, SCALE_SMOOTH)
-						.also { imageCache = it }, bounds.x, bounds.y, null)
+				g.drawImage(imageCache ?: image
+						.getScaledInstance(mainPanel.width, mainPanel.height, SCALE_SMOOTH)
+						.also { imageCache = it }, 0, 0, null)
 			}
 		}
 	}
