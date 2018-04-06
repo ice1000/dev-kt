@@ -16,6 +16,7 @@ object GlobalSettings {
 	private val properties = Properties()
 	var lastOpenedFile: String by properties
 	var tabSize: Int = 2
+	var psiViewerMaxCodeLength: Int = 30
 	var backgroundAlpha: Int = 180
 	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
@@ -58,14 +59,21 @@ object GlobalSettings {
 	}
 
 	private fun initImageProperty(property: KMutableProperty<Pair<String, BufferedImage?>>) {
-		properties[property.name]
-				?.toString()
-				?.also {
-					try {
-						property.setter.call(it to ImageIO.read(File(it)))
-					} catch (ignored: Exception) {
-					}
-				}
+		properties[property.name]?.toString()?.also {
+			try {
+				property.setter.call(it to ImageIO.read(File(it)))
+			} catch (ignored: Exception) {
+			}
+		}
+	}
+
+	private fun initIntProperty(property: KMutableProperty<Int>) {
+		properties[property.name]?.toString()?.also {
+			try {
+				it.toIntOrNull()?.let { property.setter.call(it) }
+			} catch (ignored: Exception) {
+			}
+		}
 	}
 
 	fun load() {
@@ -109,8 +117,9 @@ object GlobalSettings {
 					width.toIntOrNull()?.let { windowBounds.width = it }
 					height.toIntOrNull()?.let { windowBounds.height = it }
 				}
-		properties[::tabSize.name]?.toString()?.toIntOrNull()?.let { tabSize = it }
-		properties[::backgroundAlpha.name]?.toString()?.toIntOrNull()?.let { backgroundAlpha = it }
+		initIntProperty(::tabSize)
+		initIntProperty(::psiViewerMaxCodeLength)
+		initIntProperty(::backgroundAlpha)
 		properties[::fontSize.name]?.toString()?.toFloatOrNull()?.let { fontSize = it }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
@@ -127,6 +136,7 @@ object GlobalSettings {
 		properties[::useTab.name] = useTab.toString()
 		properties[::fontSize.name] = fontSize.toString()
 		properties[::tabSize.name] = tabSize.toString()
+		properties[::psiViewerMaxCodeLength.name] = psiViewerMaxCodeLength.toString()
 		properties[::backgroundAlpha.name] = backgroundAlpha.toString()
 		properties[::highlightTokenBased.name] = highlightTokenBased.toString()
 		properties[::highlightSemanticBased.name] = highlightSemanticBased.toString()

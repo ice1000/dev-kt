@@ -45,6 +45,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
 		private val colorScheme = ColorScheme(GlobalSettings, attributeContext)
 		private val annotator = KotlinAnnotator()
+		override val len: Int get() = length
 
 		init {
 			addUndoableEditListener {
@@ -56,9 +57,10 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 			adjustFormat()
 		}
 
-		override fun adjustFormat() {
-			setParagraphAttributesDoneBySettings(0, length, colorScheme.tabSize, false)
-			val currentLineNumber = text.count { it == '\n' }
+		override fun adjustFormat(offs: Int, length: Int) {
+			if (length <= 0) return
+			setParagraphAttributesDoneBySettings(offs, length, colorScheme.tabSize, false)
+			val currentLineNumber = text.count { it == '\n' } + 1
 			val change = currentLineNumber != lineNumber
 			lineNumber = currentLineNumber
 			if (change) lineNumberLabel.text = (1..currentLineNumber).joinToString(
@@ -77,7 +79,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 			super.insertString(offset, string, attr)
 			editor.caretPosition += move
 			reparse()
-			adjustFormat()
+			adjustFormat(offset, string.length)
 		}
 
 		override fun remove(offs: Int, len: Int) {
@@ -93,6 +95,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 
 			super.remove(offset, length)
 			reparse()
+			adjustFormat(offset, length)
 		}
 
 		private fun lex() {
@@ -309,21 +312,18 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 			edited && super.makeSureLeaveCurrentFile()
 
 	fun buildClassAndRun() {
-		buildAsClasses()
-		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
-		runCommand(jvmCommand)
+		buildAsClasses { if (it) runCommand() }
 	}
 
 	fun buildJarAndRun() {
-		buildAsJar()
-		val jvmCommand = "java -jar ${Kotlin.targetDir.absolutePath}:$selfLocation"
-		runCommand(jvmCommand)
+		buildAsJar { if (it) runCommand() }
 	}
 
-	private fun runCommand(jvmCommand: String) {
+	private fun runCommand(java: String = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt") {
 		when {
 			SystemInfo.isLinux -> {
-				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$jvmCommand; bash")
+				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
+				println(processBuilder.command())
 				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 				processBuilder.start()
 			}

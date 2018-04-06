@@ -73,6 +73,11 @@ val `{-# LANGUAGE DarculaLookAndFeel #-}`: Unit
 		UIManager.setLookAndFeel(DarculaLaf())
 	}
 
+val `{-# LANGUAGE GlobalSettings #-}`: Unit
+	get() {
+		GlobalSettings.load()
+	}
+
 object `{-# LANGUAGE DevKt #-}` : JFrame() {
 	val ui = UIImpl(this)
 

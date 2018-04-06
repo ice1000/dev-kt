@@ -11,6 +11,7 @@ import javax.swing.*
 class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
+		title = "Settings"
 		isModal = true
 		getRootPane().defaultButton = buttonOK
 		buttonOK.addActionListener { ok() }

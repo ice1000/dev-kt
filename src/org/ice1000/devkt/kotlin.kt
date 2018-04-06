@@ -31,6 +31,7 @@ data class ASTToken(
  */
 object Kotlin {
 	val targetDir = File("./build-cache")
+	val targetJar get() = targetDir.resolve(GlobalSettings.jarName)
 	private val environment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
 	private val lexer: KotlinLexer
@@ -58,9 +59,9 @@ object Kotlin {
 	fun compileJar(ktFile: KtFile) {
 		ensureTargetDirExists()
 		CompileEnvironmentUtil.writeToJar(
-				targetDir.resolve(GlobalSettings.jarName),
+				targetJar,
 				false,
-				FqName.fromSegments(listOf("devkt", GlobalSettings.javaClassName)),
+				FqName.fromSegments(listOf("devkt", "${GlobalSettings.javaClassName}Kt")),
 				compileFile(ktFile, environment))
 	}
 

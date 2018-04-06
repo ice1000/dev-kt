@@ -118,45 +118,51 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		}
 	}
 
-	fun buildAsJar() = thread {
+	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		try {
 			startBuilding()
 			Kotlin.compileJar(ktFile())
 			buildSuccess()
+			SwingUtilities.invokeLater { callback(true) }
 		} catch (e: Exception) {
 			buildFail(e)
+			SwingUtilities.invokeLater { callback(false) }
 		}
 	}
 
-	fun buildAsJs() = thread {
+	inline fun buildAsJs(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		try {
 			startBuilding()
 			Kotlin.compileJs(ktFile())
 			buildSuccess()
+			SwingUtilities.invokeLater { callback(true) }
 		} catch (e: Exception) {
 			buildFail(e)
+			SwingUtilities.invokeLater { callback(false) }
 		}
 	}
 
-	fun buildAsClasses() = thread {
+	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		try {
 			startBuilding()
 			Kotlin.compileJvm(ktFile())
 			buildSuccess()
+			SwingUtilities.invokeLater { callback(true) }
 		} catch (e: Exception) {
 			buildFail(e)
+			SwingUtilities.invokeLater { callback(false) }
 		}
 	}
 
-	private fun buildSuccess() = SwingUtilities.invokeLater {
+	fun buildSuccess() = SwingUtilities.invokeLater {
 		messageLabel.text = "Build successfully."
 	}
 
-	private fun startBuilding() = SwingUtilities.invokeLater {
+	fun startBuilding() = SwingUtilities.invokeLater {
 		messageLabel.text = "Build started…"
 	}
 
-	private fun buildFail(e: Exception) = SwingUtilities.invokeLater {
+	fun buildFail(e: Exception) = SwingUtilities.invokeLater {
 		messageLabel.text = "Build failed."
 		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
 	}
@@ -170,7 +176,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 					JOptionPane.QUESTION_MESSAGE,
 					AllIcons.KOTLIN)
 
-	protected abstract fun ktFile(): KtFile
+	abstract fun ktFile(): KtFile
 	abstract fun reloadSettings()
 }
 
@@ -179,7 +185,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
  */
 interface AnnotationHolder {
 	val text: String
-	fun adjustFormat()
+	val len: Int
 	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
 
 	fun highlight(range: TextRange, attributeSet: AttributeSet) =
@@ -190,4 +196,6 @@ interface AnnotationHolder {
 
 	fun highlight(element: PsiElement, attributeSet: AttributeSet) =
 			highlight(element.textRange, attributeSet)
+
+	fun adjustFormat(offs: Int = 0, length: Int = len - offs)
 }

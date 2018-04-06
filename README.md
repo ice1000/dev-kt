@@ -63,17 +63,18 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
 + Build and run
-	+ [ ] Build
+	+ Build
 		+ [X] Build as class files
 		+ [X] Build as jar
 		+ [ ] Build as javascript module
-	+ [ ] Run
+	+ Run
 		+ [X] Run as class files
 		+ [X] Run as jar
 		+ [ ] Run as kotlin script
 + Others
 	+ [X] Open alternative editors' download page in browser
 	+ [X] MacOS toolbar support
+	+ [X] PsiViewer
 	+ [ ] Built-in documentation
 
 # Build

@@ -7,6 +7,10 @@ val selfLocation: String = Kotlin::class.java.protectionDomain.codeSource.locati
 val paired = mapOf(
 		"\"" to "\"",
 		"'" to "'",
+		"“" to "”",
+		"‘" to "’",
+		"`" to "`",
+		"`" to "`",
 		"(" to ")",
 		"（" to "）",
 		"『" to "』",
