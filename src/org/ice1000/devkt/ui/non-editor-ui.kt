@@ -72,14 +72,18 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 
 	fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
+		messageLabel.text = "Browsing $url"
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
+		messageLabel.text = "Failed to browse $url"
 	}
 
 	private fun open(file: File) = try {
 		Desktop.getDesktop().open(file)
+		messageLabel.text = "Opened $file"
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when opening ${file.absolutePath}:\n${e.message}")
+		messageLabel.text = "Failed to open $file"
 	}
 
 	fun showInFiles() {
@@ -108,19 +112,34 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 		}
 	}
 
-	fun buildAsJar() {
-		frame.TODO()
+	fun buildAsJar() = try {
+		Kotlin.compileJar(ktFile())
+		buildSuccess()
+	} catch (e: Exception) {
+		buildFail(e)
 	}
 
-	fun buildAsJs() {
+	fun buildAsJs() = try {
 		Kotlin.compileJs(ktFile())
+		buildSuccess()
+	} catch (e: Exception) {
+		buildFail(e)
 	}
 
 	fun buildAsClasses() = try {
 		Kotlin.compileJvm(ktFile())
-		messageLabel.text = "Build successfully."
+		buildSuccess()
 	} catch (e: Exception) {
+		buildFail(e)
+	}
+
+	private fun buildSuccess() {
+		messageLabel.text = "Build successfully."
+	}
+
+	private fun buildFail(e: Exception) {
 		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
+		messageLabel.text = "Build failed."
 	}
 
 	open fun makeSureLeaveCurrentFile() = JOptionPane.YES_OPTION !=

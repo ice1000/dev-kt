@@ -27,6 +27,7 @@ object GlobalSettings {
 	var recentFiles = hashSetOf<File>()
 
 	var javaClassName: String by properties
+	var jarName: String by properties
 	var appName: String by properties
 	var monoFontName: String by properties
 	var gothicFontName: String by properties
@@ -72,6 +73,7 @@ object GlobalSettings {
 		else properties.load(configFile.inputStream())
 		defaultOf(::lastOpenedFile.name, "")
 		defaultOf(::javaClassName.name, "DevKtCompiled")
+		defaultOf(::jarName.name, "DevKtCompiled.jar")
 		defaultOf(::appName.name, "Dev Kt")
 		defaultOf(::monoFontName.name, "DevKt Default")
 		defaultOf(::gothicFontName.name, "DevKt Default")

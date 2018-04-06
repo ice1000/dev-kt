@@ -1,9 +1,9 @@
 package org.ice1000.devkt
 
+import org.ice1000.devkt.config.GlobalSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -29,7 +30,7 @@ data class ASTToken(
  * @since v0.0.1
  */
 object Kotlin {
-	val targetDirectory = File("./build-cache")
+	val targetDir = File("./build-cache")
 	private val environment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
 	private val lexer: KotlinLexer
@@ -51,16 +52,25 @@ object Kotlin {
 
 	fun compileJvm(ktFile: KtFile) {
 		ensureTargetDirExists()
-		compileFileTo(ktFile, environment, targetDirectory)
+		compileFileTo(ktFile, environment, targetDir)
+	}
+
+	fun compileJar(ktFile: KtFile) {
+		ensureTargetDirExists()
+		CompileEnvironmentUtil.writeToJar(
+				targetDir.resolve(GlobalSettings.jarName),
+				true,
+				FqName.fromSegments(listOf("devkt", GlobalSettings.javaClassName)),
+				compileFile(ktFile, environment))
 	}
 
 	fun compileJs(ktFile: KtFile) {
 		ensureTargetDirExists()
-
+		TODO()
 	}
 
 	private fun ensureTargetDirExists() {
-		if (!targetDirectory.isDirectory) targetDirectory.mkdirs()
+		if (!targetDir.isDirectory) targetDir.mkdirs()
 	}
 
 	// TODO incremental
