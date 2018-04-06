@@ -1,25 +1,19 @@
 package org.ice1000.devkt.ui
 
-import charlie.gensokyo.show
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
-import org.ice1000.devkt.config.*
+import org.ice1000.devkt.config.ColorScheme
+import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.KotlinAnnotator
-import org.ice1000.devkt.psi.PsiViewerImpl
-import org.jetbrains.kotlin.com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.com.intellij.psi.*
+import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
-import java.awt.*
-import java.awt.Image.SCALE_SMOOTH
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import java.net.URL
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
@@ -33,27 +27,9 @@ fun JFrame.TODO() {
 
 /**
  * @author ice1000
- */
-interface AnnotationHolder {
-	val text: String
-	fun adjustFormat()
-	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
-
-	fun highlight(range: TextRange, attributeSet: AttributeSet) =
-			highlight(range.startOffset, range.endOffset, attributeSet)
-
-	fun highlight(astNode: ASTNode, attributeSet: AttributeSet) =
-			highlight(astNode.textRange, attributeSet)
-
-	fun highlight(element: PsiElement, attributeSet: AttributeSet) =
-			highlight(element.textRange, attributeSet)
-}
-
-/**
- * @author ice1000
  * @since v0.0.1
  */
-class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
+class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 	private val undoManager = UndoManager()
 	private var edited = false
 		set(value) {
@@ -61,47 +37,13 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			field = value
 			if (change) refreshTitle()
 		}
-	var currentFile: File? = null
-		set(value) {
-			val change = field != value
-			field = value
-			if (change) refreshTitle()
-		}
-
-	fun refreshTitle() {
-		frame.title = buildString {
-			if (edited) append("*")
-			append(currentFile?.absolutePath ?: "Untitled")
-			append(" - ")
-			append(GlobalSettings.appName)
-		}
-	}
 
 	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	private var lineNumber = 1
-	private var ktFileCache: KtFile? = null
 	private val document: KtDocument
-	var imageCache: Image? = null
-	var backgroundColorCache: Color? = null
-
-	override fun createUIComponents() {
-		mainPanel = object : JPanel() {
-			public override fun paintComponent(g: Graphics) {
-				super.paintComponent(g)
-				val image = GlobalSettings.backgroundImage.second ?: return
-				g.drawImage(imageCache ?: image
-						.getScaledInstance(mainPanel.width, mainPanel.height, SCALE_SMOOTH)
-						.also { imageCache = it }, 0, 0, null)
-				g.color = backgroundColorCache ?: editor.background
-						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
-						.also { backgroundColorCache = it }
-				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
-			}
-		}
-	}
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
@@ -165,7 +107,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		private fun parse() {
 			SyntaxTraverser
-					.psiTraverser(Kotlin.parse(text).also { ktFileCache = it })
+					.psiTraverser(Kotlin.parse(text).also {
+						it.name = GlobalSettings.javaClassName
+						ktFileCache = it
+					})
 					.forEach { psi ->
 						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 					}
@@ -292,11 +237,9 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	init {
-		frame.jMenuBar = menuBar
 		mainMenu(menuBar, frame)
 		document = KtDocument()
 		editor.document = document
-		scrollPane.viewport.isOpaque = false
 	}
 
 	/**
@@ -323,14 +266,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		})
 	}
 
-	fun settings() {
-		ConfigurationImpl(this, frame).show
-	}
-
-	fun sync() {
-		currentFile?.let(::loadFile)
-	}
-
 	fun save() {
 		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
 			showSaveDialog(mainPanel)
@@ -353,18 +288,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 	}
 
-	fun open() {
-		JFileChooser(currentFile?.parentFile).apply {
-			// dialogTitle = "Choose a Kotlin file"
-			fileFilter = kotlinFileFilter
-			showOpenDialog(mainPanel)
-		}.selectedFile?.let {
-			loadFile(it)
-			GlobalSettings.recentFiles.add(it)
-		}
-	}
-
-	fun loadFile(it: File) {
+	override fun loadFile(it: File) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
 			currentFile = it
 			val path = it.absolutePath.orEmpty()
@@ -375,29 +299,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		updateShowInFilesMenuItem()
 	}
 
-	fun idea() = browse("https://www.jetbrains.com/idea/download/")
-	fun clion() = browse("https://www.jetbrains.com/clion/download/")
-	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
-	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
-
-	fun viewPsi() {
-		PsiViewerImpl(ktFileCache ?: Kotlin.parse(editor.text), frame).show
-	}
-
-	private fun browse(url: String) = try {
-		Desktop.getDesktop().browse(URL(url).toURI())
-	} catch (e: Exception) {
-		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
-	}
-
-	private fun open(file: File) = try {
-		Desktop.getDesktop().open(file)
-	} catch (e: Exception) {
-		JOptionPane.showMessageDialog(mainPanel, "Error when opening ${file.absolutePath}:\n${e.message}")
-	}
-
-	//Shift + Enter
-	private fun nextLine() {
+	fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
 		val text = editor.text                //编辑器内容
 		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
@@ -405,24 +307,10 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		editor.caretPosition = endOfLineIndex + 1
 	}
 
-	fun buildAsClasses() = try {
-		Kotlin.compileJvm(ktFileCache ?: Kotlin.parse(editor.text))
-		messageLabel.text = "Build successfully."
-	} catch (e: Exception) {
-		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
-	}
+	override fun ktFile() = ktFileCache ?: Kotlin.parse(editor.text)
 
-	fun buildAsJs() {
-	}
-
-	private fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=
-			JOptionPane.showConfirmDialog(
-					mainPanel,
-					"${currentFile?.name ?: "Current file"} unsaved, leave?",
-					UIManager.getString("OptionPane.titleText"),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE,
-					AllIcons.KOTLIN)
+	override fun makeSureLeaveCurrentFile() =
+			edited && super.makeSureLeaveCurrentFile()
 
 	fun buildAndRun() {
 		buildAsClasses()
@@ -430,15 +318,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	private fun justRun() {
+		val selfLocation = javaClass.protectionDomain.codeSource.location.file
+		val jvmCommand = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}"
 		when {
 			SystemInfo.isLinux -> {
-				val processBuilder = ProcessBuilder(
-						"gnome-terminal",
-						"-x",
-						"sh",
-						"-c",
-						"java -cp ${Kotlin.targetDirectory.absolutePath}:${javaClass.protectionDomain.codeSource.location.file} devkt.FooKt; bash"
-				)
+				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$jvmCommand; bash")
 				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 				processBuilder.start()
 			}
@@ -446,18 +330,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			}
 			SystemInfo.isWindows -> {
 			}
-		}
-	}
-
-	fun buildAsJar() {
-		frame.TODO()
-	}
-
-	fun exit() {
-		GlobalSettings.save()
-		if (!makeSureLeaveCurrentFile()) {
-			frame.dispose()
-			System.exit(0)
 		}
 	}
 
@@ -469,10 +341,6 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun updateShowInFilesMenuItem() {
 		showInFilesMenuItem.isEnabled = currentFile != null
-	}
-
-	fun showInFiles() {
-		currentFile?.run { open(parentFile) }
 	}
 
 	fun undo() {
@@ -494,7 +362,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun copy() = editor.copy()
 	fun paste() = editor.paste()
 
-	fun reloadSettings() {
+	override fun reloadSettings() {
 		frame.bounds = GlobalSettings.windowBounds
 		imageCache = null
 		loadFont()
@@ -506,8 +374,13 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 	}
 
-	private fun refreshLineNumber() = with(lineNumberLabel) {
-		font = editor.font
-		background = editor.background.brighter()
+	override fun refreshTitle() {
+		frame.title = buildString {
+			if (edited) append("*")
+			append(currentFile?.absolutePath ?: "Untitled")
+			append(" - ")
+			append(GlobalSettings.appName)
+		}
 	}
+
 }

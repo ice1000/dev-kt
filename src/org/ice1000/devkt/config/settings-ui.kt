@@ -1,15 +1,14 @@
 package org.ice1000.devkt.config
 
 import charlie.gensokyo.doNothingOnClose
-import org.ice1000.devkt.ui.Configuration
-import org.ice1000.devkt.ui.UIImpl
+import org.ice1000.devkt.ui.*
 import java.awt.Window
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*
 
-class ConfigurationImpl(private val uiImpl: UIImpl, parent: Window? = null) : Configuration(parent) {
+class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
 		isModal = true

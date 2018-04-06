@@ -26,6 +26,7 @@ object GlobalSettings {
 	var highlightSemanticBased: Boolean = true
 	var recentFiles = hashSetOf<File>()
 
+	var javaClassName: String by properties
 	var appName: String by properties
 	var monoFontName: String by properties
 	var gothicFontName: String by properties
@@ -70,6 +71,7 @@ object GlobalSettings {
 		if (!configFile.exists()) configFile.createNewFile()
 		else properties.load(configFile.inputStream())
 		defaultOf(::lastOpenedFile.name, "")
+		defaultOf(::javaClassName.name, "DevKtCompiled")
 		defaultOf(::appName.name, "Dev Kt")
 		defaultOf(::monoFontName.name, "DevKt Default")
 		defaultOf(::gothicFontName.name, "DevKt Default")
