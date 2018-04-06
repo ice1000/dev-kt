@@ -7,8 +7,7 @@ import java.awt.Window
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.JComponent
-import javax.swing.KeyStroke
+import javax.swing.*
 
 class ConfigurationImpl(private val uiImpl: UIImpl, parent: Window? = null) : Configuration(parent) {
 	init {

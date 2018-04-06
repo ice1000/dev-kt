@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
+import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.*
@@ -109,7 +110,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		init {
 			addUndoableEditListener {
-				if (it.source === highlightCache) return@addUndoableEditListener
+				if (it.source !== this) return@addUndoableEditListener
 				undoManager.addEdit(it.edit)
 				edited = true
 				updateUndoMenuItems()
@@ -118,7 +119,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 
 		override fun adjustFormat() {
-			setParagraphAttributes(0, length, colorScheme.tabSize, false)
+			setParagraphAttributesDoneBySettings(0, length, colorScheme.tabSize, false)
 			val currentLineNumber = text.count { it == '\n' }
 			val change = currentLineNumber != lineNumber
 			lineNumber = currentLineNumber
@@ -226,6 +227,31 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 			changes.end()
 			fireChangedUpdate(changes)
 			fireUndoableEditUpdate(UndoableEditEvent(highlightCache, changes))
+		}
+
+		/**
+		 * Re-implement of [setParagraphAttributes], invoke [fireUndoableEditUpdate] with
+		 * [GlobalSettings] as event source, which is used by [undoManager] to prevent color
+		 * modifications to be recorded.
+		 */
+		private fun setParagraphAttributesDoneBySettings(
+				offset: Int, length: Int, s: AttributeSet, replace: Boolean) = try {
+			writeLock()
+			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
+			val sCopy = s.copyAttributes()
+			val section = defaultRootElement
+			for (i in section.getElementIndex(offset)..section.getElementIndex(offset + if (length > 0) length - 1 else 0)) {
+				val paragraph = section.getElement(i)
+				val attr = paragraph.attributes as MutableAttributeSet
+				changes.addEdit(AttributeUndoableEdit(paragraph, sCopy, replace))
+				if (replace) attr.removeAttributes(attr)
+				attr.addAttributes(s)
+			}
+			changes.end()
+			fireChangedUpdate(changes)
+			fireUndoableEditUpdate(UndoableEditEvent(GlobalSettings, changes))
+		} finally {
+			writeUnlock()
 		}
 
 		/**

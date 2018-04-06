@@ -4,7 +4,8 @@
 
 package org.ice1000.devkt
 
-import charlie.gensokyo.*
+import charlie.gensokyo.doNothingOnClose
+import charlie.gensokyo.show
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
