@@ -298,7 +298,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun settings() {
-		ConfigurationImpl().show
+		ConfigurationImpl(frame).show
 		reloadSettings()
 	}
 
@@ -356,7 +356,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 
 	fun viewPsi() {
-		PsiViewerImpl(ktFileCache ?: Kotlin.parse(editor.text)).show
+		PsiViewerImpl(ktFileCache ?: Kotlin.parse(editor.text), frame).show
 	}
 
 	private fun browse(url: String) = try {

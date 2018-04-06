@@ -29,6 +29,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("MenuBar.font", value)
 			UIManager.put("MenuItem.font", value)
 			UIManager.put("Label.font", value)
+			UIManager.put("TextField.font", value)
 			UIManager.put("Button.font", value)
 			UIManager.put("Panel.font", value)
 			UIManager.put("ToolTip.font", value)

@@ -3,6 +3,7 @@ package org.ice1000.devkt.psi
 import org.ice1000.devkt.ui.PsiViewer
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtFile
+import java.awt.Window
 import javax.swing.JTree
 import javax.swing.tree.DefaultMutableTreeNode
 
@@ -11,7 +12,7 @@ typealias UINode = DefaultMutableTreeNode
 /**
  * @author ice1000
  */
-class PsiViewerImpl(file: KtFile) : PsiViewer() {
+class PsiViewerImpl(file: KtFile, owner: Window? = null) : PsiViewer(owner) {
 	init {
 		contentPane = mainPanel
 		isModal = true
