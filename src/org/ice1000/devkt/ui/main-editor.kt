@@ -1,7 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
-import com.bulenkov.darcula.DarculaLaf
+import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.*
@@ -409,12 +409,11 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		editor.caretPosition = endOfLine?.plus(1) ?: text.lastIndex            //设置光标位置
 	}
 
-	fun buildAsClasses() {
-		try {
-			Kotlin.compile(ktFileCache ?: Kotlin.parse(editor.text))
-		} catch (e: Exception) {
-			JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
-		}
+	fun buildAsClasses() = try {
+		Kotlin.compile(ktFileCache ?: Kotlin.parse(editor.text))
+		messageLabel.text = "Build successfully."
+	} catch (e: Exception) {
+		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
 	}
 
 	fun buildAsJs() {
@@ -433,11 +432,26 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	fun buildAndRun() {
 		buildAsClasses()
 		justRun()
-		frame.TODO()
 	}
 
 	fun justRun() {
-		frame.TODO()
+		when {
+			SystemInfo.isLinux -> {
+				val processBuilder = ProcessBuilder(
+						"gnome-terminal",
+						"-x",
+						"sh",
+						"-c",
+						"java -cp ${Kotlin.targetDirectory.absolutePath}:${javaClass.protectionDomain.codeSource.location.file} devkt.FooKt; bash"
+				)
+				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
+				processBuilder.start()
+			}
+			SystemInfo.isMac -> {
+			}
+			SystemInfo.isWindows -> {
+			}
+		}
 	}
 
 	fun buildAsJar() {

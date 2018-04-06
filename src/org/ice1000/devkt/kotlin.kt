@@ -5,10 +5,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.com.intellij.openapi.extensions.ExtensionPoint
-import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions.getArea
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
-import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.TreeCopyHandler
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -16,7 +13,6 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.preprocessor.mkdirsOrFail
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
@@ -32,6 +28,7 @@ data class ASTToken(
  * @since v0.0.1
  */
 object Kotlin {
+	val targetDirectory = File("./build-cache")
 	private val environment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
 	private val lexer: KotlinLexer
@@ -51,9 +48,8 @@ object Kotlin {
 			.createFileFromText(KotlinLanguage.INSTANCE, text) as KtFile
 
 	fun compile(ktFile: KtFile) {
-		val file = File("./build-cache")
-		if (!file.isDirectory) file.mkdirs()
-		compileFileTo(ktFile, environment, file)
+		if (!targetDirectory.isDirectory) targetDirectory.mkdirs()
+		compileFileTo(ktFile, environment, targetDirectory)
 	}
 
 	// TODO incremental

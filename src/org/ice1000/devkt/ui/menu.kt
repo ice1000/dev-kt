@@ -128,19 +128,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 				onAction { buildAsJs() }
 			}
 		}
-		item("Build And Run") {
-			icon = AllIcons.EXECUTE
-			onAction { buildAndRun() }
-		}
 		subMenu("Run As") {
 			icon = AllIcons.EXECUTE
-			item("Executable Jar") {
-				icon = AllIcons.JAR
-				onAction { frame.TODO() }
-			}
 			item("Classes") {
 				icon = AllIcons.CLASS
-				onAction { frame.TODO() }
+				onAction { buildAndRun() }
 			}
 			item("Kotlin Script") {
 				icon = AllIcons.KOTLIN_FILE
