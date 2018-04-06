@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import javax.swing.JFileChooser
 import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
@@ -266,9 +265,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 	}
 
 	fun save() {
-		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
-			showSaveDialog(mainPanel)
-		}.selectedFile ?: return
+		val file = selectOneFile() ?: return
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
 		GlobalSettings.recentFiles.add(file)

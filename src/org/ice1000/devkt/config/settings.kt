@@ -53,6 +53,7 @@ object GlobalSettings {
 	var colorFunction: String by properties
 	var colorTypeParam: String by properties
 	var colorUserTypeRef: String by properties
+	var colorBackground: String by properties
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value
@@ -76,9 +77,11 @@ object GlobalSettings {
 		}
 	}
 
+	fun loadFile(file: File) = properties.load(file.inputStream())
+
 	fun load() {
 		if (!configFile.exists()) configFile.createNewFile()
-		else properties.load(configFile.inputStream())
+		else loadFile(configFile)
 		defaultOf(::lastOpenedFile.name, "")
 		defaultOf(::javaClassName.name, "DevKtCompiled")
 		defaultOf(::jarName.name, "DevKtCompiled.jar")
@@ -106,6 +109,7 @@ object GlobalSettings {
 		defaultOf(::colorFunction.name, "#FFC66D")
 		defaultOf(::colorTypeParam.name, "#6897BB")
 		defaultOf(::colorUserTypeRef.name, "#62ABF0")
+		defaultOf(::colorBackground.name, "#2B2B2B")
 		initImageProperty(::windowIcon)
 		initImageProperty(::backgroundImage)
 		properties[::windowBounds.name]

@@ -67,6 +67,9 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = AllIcons.SETTINGS
 			onAction { settings() }
 		}
+		item("Import Settings...") {
+			onAction { importSettings() }
+		}
 		item("Sync Settings") {
 			icon = AllIcons.REFRESH
 			onAction { reloadSettings() }

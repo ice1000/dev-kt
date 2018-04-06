@@ -46,7 +46,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 				g.drawImage(imageCache ?: image
 						.getScaledInstance(mainPanel.width, mainPanel.height, Image.SCALE_SMOOTH)
 						.also { imageCache = it }, 0, 0, null)
-				g.color = backgroundColorCache ?: editor.background
+				g.color = backgroundColorCache ?: Color.decode(GlobalSettings.colorBackground)
 						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
 						.also { backgroundColorCache = it }
 				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
@@ -116,6 +116,16 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 			frame.dispose()
 			System.exit(0)
 		}
+	}
+
+	fun selectOneFile(): File? = currentFile
+			?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
+				showSaveDialog(mainPanel)
+			}.selectedFile
+
+	fun importSettings() {
+		val file = selectOneFile() ?: return
+		GlobalSettings.loadFile(file)
 	}
 
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
