@@ -52,6 +52,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
 	+ [X] Line number
+	+ [X] Background image
 	+ [X] Semantic-based highlights
 		+ [ ] Highlight in daemon
 		+ [ ] Prioritized

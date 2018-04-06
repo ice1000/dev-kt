@@ -30,10 +30,10 @@
         </clientProperties>
         <border type="none"/>
         <children>
-          <grid id="679ed" binding="editorPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+          <grid id="679ed" layout-manager="BorderLayout" hgap="0" vgap="0">
             <constraints/>
             <properties>
-              <doubleBuffered value="true"/>
+              <doubleBuffered value="false"/>
               <opaque value="false"/>
             </properties>
             <clientProperties>

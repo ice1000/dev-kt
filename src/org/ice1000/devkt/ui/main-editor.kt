@@ -84,6 +84,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private var ktFileCache: KtFile? = null
 	private val document: KtDocument
 	var imageCache: Image? = null
+	var backgroundColorCache: Color? = null
 
 	override fun createUIComponents() {
 		mainPanel = object : JPanel() {
@@ -92,7 +93,15 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 				val image = GlobalSettings.backgroundImage.second ?: return
 				g.drawImage(imageCache ?: image
 						.getScaledInstance(mainPanel.width, mainPanel.height, SCALE_SMOOTH)
-						.also { imageCache = it }, 0, 0, null)
+						.also {
+							imageCache = it
+						}, 0, 0, null)
+				g.color = backgroundColorCache ?: editor.background
+						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
+						.also {
+							backgroundColorCache = it
+						}
+				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
 			}
 		}
 	}
@@ -460,6 +469,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 	fun reloadSettings() {
 		frame.bounds = GlobalSettings.windowBounds
+		imageCache = null
 		loadFont()
 		refreshTitle()
 		refreshLineNumber()

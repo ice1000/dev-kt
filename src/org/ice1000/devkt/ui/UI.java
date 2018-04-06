@@ -11,7 +11,6 @@ public abstract class UI {
 	protected JTextPane editor;
 	protected JLabel messageLabel;
 	protected JLabel lineNumberLabel;
-	protected JPanel editorPanel;
 	protected JScrollPane scrollPane;
 
 	protected abstract void createUIComponents();
