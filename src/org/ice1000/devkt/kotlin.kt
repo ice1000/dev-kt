@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -36,6 +37,7 @@ object Kotlin {
 	init {
 		val compilerConfiguration = CompilerConfiguration()
 		compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+		compilerConfiguration.put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
 		environment = KotlinCoreEnvironment.createForProduction(Disposable {},
 				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 		val project = environment.project
@@ -47,9 +49,18 @@ object Kotlin {
 	fun parse(text: String) = psiFileFactory
 			.createFileFromText(KotlinLanguage.INSTANCE, text) as KtFile
 
-	fun compile(ktFile: KtFile) {
-		if (!targetDirectory.isDirectory) targetDirectory.mkdirs()
+	fun compileJvm(ktFile: KtFile) {
+		ensureTargetDirExists()
 		compileFileTo(ktFile, environment, targetDirectory)
+	}
+
+	fun compileJs(ktFile: KtFile) {
+		ensureTargetDirExists()
+
+	}
+
+	private fun ensureTargetDirExists() {
+		if (!targetDirectory.isDirectory) targetDirectory.mkdirs()
 	}
 
 	// TODO incremental

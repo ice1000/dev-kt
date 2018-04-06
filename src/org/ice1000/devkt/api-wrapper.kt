@@ -14,19 +14,11 @@ import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import java.io.File
-
-fun createContainer(environment: KotlinCoreEnvironment, files: Collection<KtFile> = emptyList()): ComponentProvider =
-		TopDownAnalyzerFacadeForJVM.createContainer(
-				environment.project, files, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-				environment.configuration, { PackagePartProvider.Empty }, ::FileBasedDeclarationProviderFactory
-		)
 
 fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
 		analyzeAndCheckForErrors(setOf(file), environment)
@@ -47,9 +39,6 @@ fun analyzeAndCheckForErrors(
 		AnalyzingUtils.throwExceptionOnErrors(bindingContext)
 	}
 }
-
-fun analyze(environment: KotlinCoreEnvironment): AnalysisResult =
-		analyze(emptySet(), environment)
 
 fun analyze(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
 		analyze(setOf(file), environment)

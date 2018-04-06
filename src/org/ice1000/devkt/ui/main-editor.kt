@@ -130,7 +130,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		override val text: String get() = editor.text
 
 		//TODO 按下 `(` 后输入 `)` 会变成 `())`
-		override fun insertString(offs: Int, str: String, a: AttributeSet) {
+		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
 			val (offset, string, attr, move) = when (str) {
 				in paired -> Quad(offs, str + paired[str], a, -1)
 				else -> Quad(offs, str, a, 0)
@@ -159,7 +159,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 
 		private fun lex() {
 			val tokens = Kotlin.lex(text)
-			for ((start, end, text, type) in tokens)
+			for ((start, end, _, type) in tokens)
 				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
@@ -400,27 +400,22 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	private fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
 		val text = editor.text                //编辑器内容
-		val endOfLine = text.indexOfOrNull('\n', index)            //换行符
-
-		editor.text = endOfLine?.let {
-			//如果endOfLine是null, 表示是在最后一行
-			text.replaceRange(endOfLine..endOfLine, "\n\n")        //stupid code
-		} ?: text + "\n\n"
-		editor.caretPosition = endOfLine?.plus(1) ?: text.lastIndex            //设置光标位置
+		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
+		document.insertString(endOfLineIndex, "\n", null)
+		editor.caretPosition = endOfLineIndex + 1
 	}
 
 	fun buildAsClasses() = try {
-		Kotlin.compile(ktFileCache ?: Kotlin.parse(editor.text))
+		Kotlin.compileJvm(ktFileCache ?: Kotlin.parse(editor.text))
 		messageLabel.text = "Build successfully."
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
 	}
 
 	fun buildAsJs() {
-		frame.TODO()
 	}
 
-	fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=
+	private fun makeSureLeaveCurrentFile() = edited && JOptionPane.YES_OPTION !=
 			JOptionPane.showConfirmDialog(
 					mainPanel,
 					"${currentFile?.name ?: "Current file"} unsaved, leave?",
@@ -434,7 +429,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		justRun()
 	}
 
-	fun justRun() {
+	private fun justRun() {
 		when {
 			SystemInfo.isLinux -> {
 				val processBuilder = ProcessBuilder(
@@ -511,10 +506,8 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 		}
 	}
 
-	fun refreshLineNumber() {
-		with(lineNumberLabel) {
-			font = editor.font
-			background = editor.background.brighter()
-		}
+	private fun refreshLineNumber() = with(lineNumberLabel) {
+		font = editor.font
+		background = editor.background.brighter()
 	}
 }
