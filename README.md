@@ -1,5 +1,7 @@
 # DevKt
 
+[![GitHub (pre-)release](https://img.shields.io/github/release/ice1000/dev-kt/all.svg)](https://github.com/ice1000/dev-kt)
+
 CI|Status
 :---:|:---:
 Travis CI (test, no artifact)|[![Build Status](https://travis-ci.org/ice1000/dev-kt.svg?branch=master)](https://travis-ci.org/ice1000/dev-kt)
@@ -18,6 +20,7 @@ You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-k
 + JetBrains IDE icons
 + Build as jar/class files, run after build, just one click
 + Cross platform (windows/macos/linux), just one jar file
++ One property-based configuration file, hackable
 
 Just a simple comparison:
 

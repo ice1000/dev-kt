@@ -86,7 +86,7 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 			val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
 			val (offset, length) = when {
 				delString in paired            //是否存在于字符对里
-						&& text.getOrNull(offs + 1).toString() == paired[delString] -> {
+						&& text.getOrNull(offs + 1)?.toString() == paired[delString] -> {
 					offs to 2        //
 				}
 
@@ -323,12 +323,13 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 		when {
 			SystemInfo.isLinux -> {
 				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
-				println(processBuilder.command())
 				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 				processBuilder.start()
 			}
+			// FIXME @zxj5470 看下这个 https://superuser.com/a/308460
+			// 感觉这个比较靠谱，周围一圈人都说没问题
+			// 你这代码除了最后两行都别留
 			SystemInfo.isMac -> {
-				// fatJar for selfLocation is jar and task run for selfLocation is `build-cache`
 				val javaExe = "/usr/bin/java"
 				val file = File("devKtBuild.sh").apply { setExecutable(true) }
 				val fileContent = java.replaceFirst("java", javaExe).replaceFirst(" devkt.", " ")

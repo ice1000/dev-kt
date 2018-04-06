@@ -35,10 +35,8 @@ val paired = mapOf(
 )
 
 /**
- * `Ctrl` for Windows/Linux and
- * `Meta` for MacOS
- * DO NOT use `Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask()`
- * which is out-of-date!!!
+ * `Ctrl` for Windows/Linux, `Meta` for MacOS
+ * Replacement of [java.awt.Toolkit.getMenuShortcutKeyMask]
  * @param key Int
  * @sample KeyEvent.VK_S
  */
