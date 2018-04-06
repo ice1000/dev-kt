@@ -298,8 +298,7 @@ class UIImpl(private val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
 	}
 
 	fun settings() {
-		ConfigurationImpl(frame).show
-		reloadSettings()
+		ConfigurationImpl(this, frame).show
 	}
 
 	fun sync() {

@@ -42,6 +42,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 	fun loadFont() {
 		val mono = GlobalSettings.monoFontName.trim()
 		if (mono.isEmpty() or
+				mono.equals("DevKt Default", true) or
 				mono.equals("sarasa", true) or
 				mono.equals("sarasa mono", true) or
 				mono.equals("sarasa mono sc", true) or
@@ -58,6 +59,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		}
 		val gothic = GlobalSettings.gothicFontName.trim()
 		if (gothic.isEmpty() or
+				gothic.equals("DevKt Default", true) or
 				gothic.equals("sarasa", true) or
 				gothic.equals("sarasa gothic", true) or
 				gothic.equals("sarasa gothic sc", true) or

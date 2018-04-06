@@ -10,7 +10,10 @@ public abstract class Configuration extends JDialog {
 	protected JButton buttonOK;
 	protected JButton buttonCancel;
 	protected JButton buttonReset;
+	protected JButton buttonApply;
 	protected JTextField backgroundImageField;
+	protected JTextField editorFontField;
+	protected JTextField uiFontField;
 
 	public Configuration(@Nullable Window owner) {
 		super(owner);

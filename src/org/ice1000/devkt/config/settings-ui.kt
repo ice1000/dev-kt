@@ -2,6 +2,7 @@ package org.ice1000.devkt.config
 
 import charlie.gensokyo.doNothingOnClose
 import org.ice1000.devkt.ui.Configuration
+import org.ice1000.devkt.ui.UIImpl
 import java.awt.Window
 import java.awt.event.*
 import java.io.File
@@ -9,12 +10,13 @@ import javax.imageio.ImageIO
 import javax.swing.JComponent
 import javax.swing.KeyStroke
 
-class ConfigurationImpl(parent: Window? = null) : Configuration(parent) {
+class ConfigurationImpl(private val uiImpl: UIImpl, parent: Window? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
 		isModal = true
 		getRootPane().defaultButton = buttonOK
 		buttonOK.addActionListener { ok() }
+		buttonApply.addActionListener { apply() }
 		buttonCancel.addActionListener { dispose() }
 		buttonReset.addActionListener { reset() }
 		doNothingOnClose
@@ -32,15 +34,26 @@ class ConfigurationImpl(parent: Window? = null) : Configuration(parent) {
 
 	private fun reset() {
 		backgroundImageField.text = GlobalSettings.backgroundImage.first
+		editorFontField.text = GlobalSettings.monoFontName
+		uiFontField.text = GlobalSettings.gothicFontName
 	}
 
 	private fun ok() {
-		GlobalSettings.backgroundImage = try {
-			val path = backgroundImageField.text
-			path to ImageIO.read(File(path))
-		} catch (e: Exception) {
-			return
-		}
+		apply()
 		dispose()
+	}
+
+	private fun apply() {
+		with(GlobalSettings) {
+			monoFontName = editorFontField.text
+			gothicFontName = uiFontField.text
+			backgroundImage = try {
+				val path = backgroundImageField.text
+				path to ImageIO.read(File(path))
+			} catch (e: Exception) {
+				return
+			}
+		}
+		uiImpl.reloadSettings()
 	}
 }
