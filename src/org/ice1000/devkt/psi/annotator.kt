@@ -30,6 +30,14 @@ class KotlinAnnotator {
 			is KtTypeParameter -> typeParameter(element, document, colorScheme)
 			is KtTypeReference -> typeReference(element, document, colorScheme)
 			is KtNamedFunction -> namedFunction(element, document, colorScheme)
+			is KtProperty -> property(element, document, colorScheme)
+		}
+	}
+
+	private fun property(
+			element: KtProperty, document: AnnotationHolder, colorScheme: ColorScheme) {
+		element.nameIdentifier?.let {
+			document.highlight(it, colorScheme.property)
 		}
 	}
 

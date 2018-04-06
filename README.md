@@ -27,13 +27,18 @@ IntelliJ IDEA<br/><br/>Correct,<br/>with inspections|<img width=200 src="https:/
 Emacs<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
 VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
 
+# Screenshots
+
+<img src="https://user-images.githubusercontent.com/16398479/38440232-5ab4d282-3a13-11e8-9b00-5d199d687f8f.png">
+<img src="https://user-images.githubusercontent.com/16398479/38440305-983541b4-3a13-11e8-9651-25e9a61a9b9a.png">
+
 # Progress
 
 + Properties-based settings (hackable!)
 	+ [X] Deals with missing properties
 	+ [X] Smart auto saving
 	+ [X] Highlight color customization
-	+ [X] Hot reload
+	+ [ ] Hot reload (Due to some limitations of Swing it's really hard to implement)
 	+ [X] Font customization
 		+ [X] Font size customization
 	+ [ ] Text style customization
