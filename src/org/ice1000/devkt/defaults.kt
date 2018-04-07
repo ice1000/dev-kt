@@ -10,6 +10,7 @@ import org.ice1000.devkt.lie.MacSpecific
 import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtFrame
 import java.awt.Font
+import java.awt.GraphicsEnvironment
 import javax.swing.UIManager
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
@@ -37,6 +38,10 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("Panel.font", value)
 			UIManager.put("ToolTip.font", value)
 		}
+
+	val allFonts by lazy {
+		GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
+	}
 
 	init {
 		loadFont()
