@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import javax.swing.JFileChooser
-import javax.swing.JMenuItem
+import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
 import javax.swing.text.*
@@ -321,28 +320,24 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	private fun runCommand(java: String = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt") {
-		when {
+		val processBuilder = when {
 			SystemInfo.isLinux -> {
-				val processBuilder = ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
-				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
-				processBuilder.start()
+				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
 			}
-		// FIXME @zxj5470 看下这个 https://superuser.com/a/308460
-		// 感觉这个比较靠谱，周围一圈人都说没问题
-		// 你这代码除了最后两行都别留
 			SystemInfo.isMac -> {
-				val javaExe = "/usr/bin/java"
-				val file = File("devKtBuild.sh").apply { setExecutable(true) }
-				val fileContent = java.replaceFirst("java", javaExe).replaceFirst(" devkt.", " ")
-				file.writeText(fileContent)
-				val processBuilder = ProcessBuilder("/usr/bin/open", "-a", "terminal", file.absolutePath, "/usr/bin/read")
-				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
-				processBuilder.start()
+				val lajiJava = "/usr/bin/$java"
+				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$lajiJava\"")
 			}
 			SystemInfo.isWindows -> {
-				// TODO
+				ProcessBuilder("cmd.exe", "/c", "start", "$java && pause")
+			}
+			else -> {
+				JOptionPane.showMessageDialog(mainPanel, "Unsupported OS!")
+				return
 			}
 		}
+		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
+		processBuilder.start()
 	}
 
 	fun updateUndoMenuItems() {
