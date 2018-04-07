@@ -4,7 +4,7 @@ import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.ui.DevKtFrame
+import org.ice1000.devkt.ui.DevKtFrame.Companion.instance
 import java.awt.event.KeyEvent
 
 val mac = SystemInfo.isMac
@@ -26,8 +26,7 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		// TODO replace with my own icon
 	}
 
-	override fun handlePreferences(event: AppEvent.PreferencesEvent) = DevKtFrame.instance.ui.settings()
+	override fun handlePreferences(event: AppEvent.PreferencesEvent) = instance.ui.settings()
 	override fun handleAbout(event: AppEvent.AboutEvent) = Unit
-	override fun handleQuitRequestWith(
-			event: AppEvent.QuitEvent, quitResponse: QuitResponse) = DevKtFrame.instance.ui.exit()
+	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) = instance.ui.exit()
 }

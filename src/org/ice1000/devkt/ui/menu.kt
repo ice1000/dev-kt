@@ -51,8 +51,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { open() }
 			controlKey(KeyEvent.VK_O)
 		}
-		item("Show in Files") {
-			showInFilesMenuItem = this
+		showInFilesMenuItem = item("Show in Files") {
 			onAction { showInFiles() }
 		}
 		subMenu("Open Recent") {

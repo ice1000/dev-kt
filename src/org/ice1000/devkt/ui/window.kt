@@ -9,7 +9,7 @@ import java.awt.event.*
 import javax.swing.JFrame
 
 class DevKtFrame : JFrame() {
-	companion object InstanceHolder {
+	companion object {
 		lateinit var instance: DevKtFrame
 	}
 
@@ -44,7 +44,9 @@ class DevKtFrame : JFrame() {
 		bounds = GlobalSettings.windowBounds
 		doNothingOnClose
 		show
-		ui.postInit()
-		ui.refreshTitle()
+		with(ui) {
+			postInit()
+			refreshTitle()
+		}
 	}
 }

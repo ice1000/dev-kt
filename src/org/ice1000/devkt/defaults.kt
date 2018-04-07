@@ -11,29 +11,27 @@ import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtFrame
 import java.awt.Font
 import javax.swing.UIManager
-import javax.swing.plaf.FontUIResource
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
 	var monoFont: Font
 		get() = UIManager.getFont("TextPane.font")
 		set(value) {
-			UIManager.put("TextPane.font", FontUIResource(value))
+			UIManager.put("TextPane.font", value)
 		}
 
 	var gothicFont: Font
 		get() = UIManager.getFont("Panel.font")
 		set(value) {
-			val ui = FontUIResource(value)
-			UIManager.put("Menu.font", ui)
-			UIManager.put("MenuBar.font", ui)
-			UIManager.put("MenuItem.font", ui)
-			UIManager.put("Label.font", ui)
-			UIManager.put("Spinner.font", ui)
-			UIManager.put("FormattedTextField.font", ui)
-			UIManager.put("TextField.font", ui)
-			UIManager.put("Button.font", ui)
-			UIManager.put("Panel.font", ui)
-			UIManager.put("ToolTip.font", ui)
+			UIManager.put("Menu.font", value)
+			UIManager.put("MenuBar.font", value)
+			UIManager.put("MenuItem.font", value)
+			UIManager.put("Label.font", value)
+			UIManager.put("Spinner.font", value)
+			UIManager.put("FormattedTextField.font", value)
+			UIManager.put("TextField.font", value)
+			UIManager.put("Button.font", value)
+			UIManager.put("Panel.font", value)
+			UIManager.put("ToolTip.font", value)
 		}
 
 	init {

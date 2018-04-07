@@ -291,7 +291,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
 			currentFile = it
 			val path = it.absolutePath.orEmpty()
-			editor.text = it.readText()
+			document.insertString(0, it.readText(), null)
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 		}
@@ -301,7 +301,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
 		val text = editor.text                //编辑器内容
-		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
+		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.len
 		document.insertString(endOfLineIndex, "\n", null)
 		editor.caretPosition = endOfLineIndex + 1
 	}
