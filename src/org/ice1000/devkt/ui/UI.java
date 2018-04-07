@@ -12,6 +12,7 @@ public abstract class UI {
 	protected JLabel messageLabel;
 	protected JLabel lineNumberLabel;
 	protected JScrollPane scrollPane;
+	protected JButton memoryIndicator;
 
 	protected abstract void createUIComponents();
 }

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.*
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
@@ -23,10 +25,15 @@ fun JFrame.TODO() {
 			"Unfinished", 1, AllIcons.KOTLIN)
 }
 
+private const val MEGABYTE = 1024 * 1024
+
 abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	init {
 		frame.jMenuBar = menuBar
 		scrollPane.viewport.isOpaque = false
+		memoryIndicator.addMouseListener(object : MouseAdapter() {
+			override fun mouseClicked(e: MouseEvent?) = System.gc()
+		})
 	}
 
 	var imageCache: Image? = null
@@ -54,8 +61,17 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
 						.also { backgroundColorCache = it }
 				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
+				refreshMemoryIndicator()
 			}
 		}
+	}
+
+	private fun refreshMemoryIndicator() {
+		val runtime = Runtime.getRuntime()
+		val total = runtime.totalMemory() / MEGABYTE
+		val free = runtime.freeMemory() / MEGABYTE
+		val used = total - free
+		memoryIndicator.text = "$used of ${total}M"
 	}
 
 	abstract fun loadFile(it: File)
