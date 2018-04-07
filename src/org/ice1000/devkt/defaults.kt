@@ -39,6 +39,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("ToolTip.font", value)
 		}
 
+	const val defaultFontName = "DevKt Default"
 	val allFonts by lazy {
 		GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
 	}
@@ -50,7 +51,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 	fun loadFont() {
 		val mono = GlobalSettings.monoFontName.trim()
 		if (mono.isEmpty() or
-				mono.equals("DevKt Default", true)) {
+				mono.equals(defaultFontName, true)) {
 			val monoFontInputStream = javaClass.getResourceAsStream("/font/sarasa-mono-sc-regular.ttf")
 					?: javaClass.getResourceAsStream("/font/FiraCode-Regular.ttf")
 			if (null != monoFontInputStream)
@@ -62,7 +63,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		}
 		val gothic = GlobalSettings.gothicFontName.trim()
 		if (gothic.isEmpty() or
-				gothic.equals("DevKt Default", true)) {
+				gothic.equals(defaultFontName, true)) {
 			val gothicFontInputStream = javaClass.getResourceAsStream("/font/sarasa-gothic-sc-regular.ttf")
 			if (null != gothicFontInputStream)
 				gothicFont = Font

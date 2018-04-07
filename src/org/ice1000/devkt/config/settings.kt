@@ -1,5 +1,6 @@
 package org.ice1000.devkt.config
 
+import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.io.File
@@ -87,8 +88,8 @@ object GlobalSettings {
 		defaultOf(::javaClassName.name, "DevKtCompiled")
 		defaultOf(::jarName.name, "DevKtCompiled.jar")
 		defaultOf(::appName.name, "Dev Kt")
-		defaultOf(::monoFontName.name, "DevKt Default")
-		defaultOf(::gothicFontName.name, "DevKt Default")
+		defaultOf(::monoFontName.name, defaultFontName)
+		defaultOf(::gothicFontName.name, defaultFontName)
 		defaultOf(::colorKeywords.name, "#CC7832")
 		defaultOf(::colorString.name, "#6A8759")
 		defaultOf(::colorTemplateEntries.name, "#CC7832")

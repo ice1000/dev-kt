@@ -51,6 +51,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			addUndoableEditListener {
 				if (it.source !== this) return@addUndoableEditListener
 				undoManager.addEdit(it.edit)
+				edited = true
 			}
 			adjustFormat()
 		}

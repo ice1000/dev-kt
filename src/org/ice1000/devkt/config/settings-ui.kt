@@ -2,6 +2,7 @@ package org.ice1000.devkt.config
 
 import charlie.gensokyo.doNothingOnClose
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.allFonts
+import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import org.ice1000.devkt.ui.AbstractUI
 import org.ice1000.devkt.ui.Configuration
 import java.awt.Window
@@ -17,7 +18,12 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 		title = "Settings"
 		isModal = true
 		getRootPane().defaultButton = buttonOK
-		editorFontField.model = DefaultComboBoxModel(allFonts)
+		allFonts.forEach {
+			editorFontField.addItem(it)
+			uiFontField.addItem(it)
+		}
+		editorFontField.addItem(defaultFontName)
+		uiFontField.addItem(defaultFontName)
 		buttonOK.addActionListener { ok() }
 		buttonApply.addActionListener { apply() }
 		buttonCancel.addActionListener { dispose() }
