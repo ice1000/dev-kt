@@ -224,7 +224,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	abstract fun updateShowInFilesMenuItem()
 	fun runCommand(file: File) {
-		val java = "java -cp ${file.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
+		val java = "java -cp ${file.absolutePath}${File.pathSeparatorChar}$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
 		val processBuilder = when {
 			SystemInfo.isLinux -> {
 				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
