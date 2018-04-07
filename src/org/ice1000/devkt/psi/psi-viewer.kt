@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Window
 import javax.swing.JTree
-import javax.swing.tree.DefaultMutableTreeNode
+import javax.swing.tree.*
 
 typealias UINode = DefaultMutableTreeNode
 
@@ -20,7 +20,9 @@ class PsiViewerImpl(file: KtFile, owner: Window? = null) : PsiViewer(owner) {
 		title = "Psi Viewer"
 		isModal = true
 		rootPane.defaultButton = buttonClose
-		pane.setViewportView(JTree(mapAst2Display(file)))
+		val tree = JTree(mapAst2Display(file))
+		pane.setViewportView(tree)
+		expandAll.addActionListener { expandAll(tree, true) }
 		buttonClose.addActionListener { dispose() }
 		pack()
 	}
@@ -39,6 +41,33 @@ class PsiViewerImpl(file: KtFile, owner: Window? = null) : PsiViewer(owner) {
 			}.forEach { if (it !is PsiWhiteSpace) add(mapAst2Display(it)) }
 		}
 	}
+
+	private fun expandAll(tree: JTree, expand: Boolean) {
+		val root = tree.model.root as TreeNode
+		expandAll(tree, TreePath(root), expand)
+	}
+
+	/**
+	 * @return Whether an expandPath was called for the last node in the parent path
+	 */
+	private fun expandAll(tree: JTree, parent: TreePath, expand: Boolean): Boolean {
+		val node = parent.lastPathComponent as TreeNode
+		return if (node.childCount > 0) {
+			var childExpandCalled = false
+			val e = node.children()
+			while (e.hasMoreElements()) {
+				val n = e.nextElement() as TreeNode
+				val path = parent.pathByAddingChild(n)
+				childExpandCalled = expandAll(tree, path, expand) || childExpandCalled
+			}
+
+			if (!childExpandCalled) {
+				if (expand) tree.expandPath(parent) else tree.collapsePath(parent)
+			}
+			true
+		} else false
+	}
+
 
 	private fun prettyPrint(node: PsiElement) =
 			"${cutText(node.text, GlobalSettings.psiViewerMaxCodeLength)} => ${node.javaClass.simpleName}(${node.nodeType})"
