@@ -309,14 +309,15 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			edited && super.makeSureLeaveCurrentFile()
 
 	fun buildClassAndRun() {
-		buildAsClasses { if (it) runCommand() }
+		buildAsClasses { if (it) runCommand(Kotlin.targetDir) }
 	}
 
 	fun buildJarAndRun() {
-		buildAsJar { if (it) runCommand() }
+		buildAsJar { if (it) runCommand(Kotlin.targetJar) }
 	}
 
-	private fun runCommand(java: String = "java -cp ${Kotlin.targetDir.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt") {
+	private fun runCommand(file: File) {
+		val java = "java -cp ${file.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
 		val processBuilder = when {
 			SystemInfo.isLinux -> {
 				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")

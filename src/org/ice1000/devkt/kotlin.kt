@@ -66,7 +66,6 @@ object Kotlin {
 
 	fun compileJar(ktFile: KtFile) {
 		ensureTargetDirExists()
-		targetJar.deleteOnExit()
 		CompileEnvironmentUtil.writeToJar(
 				targetJar,
 				false,
@@ -81,6 +80,7 @@ object Kotlin {
 
 	private fun ensureTargetDirExists() {
 		if (!targetDir.isDirectory) targetDir.mkdirs()
+		targetDir.listFiles().forEach { it.deleteRecursively() }
 	}
 
 	// TODO incremental
