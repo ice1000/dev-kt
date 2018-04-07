@@ -42,7 +42,4 @@ public interface AllIcons {
 	@NotNull Icon IDEA = IconLoader.getIcon("/icon/icon_small_dark.png");
 	@NotNull Icon EMACS = IconLoader.getIcon("/icon/emacs25.png");
 	@NotNull Icon CLION = IconLoader.getIcon("/icon/clion.png");
-
-	@NotNull
-	Icon KOTLIN_BIG_ICON = IconLoader.getIcon("/icon/kotlin@288x288.png");
 }

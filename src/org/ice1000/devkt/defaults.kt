@@ -4,38 +4,36 @@
 
 package org.ice1000.devkt
 
-import charlie.gensokyo.doNothingOnClose
-import charlie.gensokyo.show
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
 import org.ice1000.devkt.lie.mac
-import org.ice1000.devkt.ui.UIImpl
+import org.ice1000.devkt.ui.DevKtFrame
 import java.awt.Font
-import java.awt.event.*
-import javax.swing.JFrame
 import javax.swing.UIManager
+import javax.swing.plaf.FontUIResource
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
 	var monoFont: Font
 		get() = UIManager.getFont("TextPane.font")
 		set(value) {
-			UIManager.put("TextPane.font", value)
+			UIManager.put("TextPane.font", FontUIResource(value))
 		}
 
 	var gothicFont: Font
 		get() = UIManager.getFont("Panel.font")
 		set(value) {
-			UIManager.put("Menu.font", value)
-			UIManager.put("MenuBar.font", value)
-			UIManager.put("MenuItem.font", value)
-			UIManager.put("Label.font", value)
-			UIManager.put("Spinner.font", value)
-			UIManager.put("FormattedTextField.font", value)
-			UIManager.put("TextField.font", value)
-			UIManager.put("Button.font", value)
-			UIManager.put("Panel.font", value)
-			UIManager.put("ToolTip.font", value)
+			val ui = FontUIResource(value)
+			UIManager.put("Menu.font", ui)
+			UIManager.put("MenuBar.font", ui)
+			UIManager.put("MenuItem.font", ui)
+			UIManager.put("Label.font", ui)
+			UIManager.put("Spinner.font", ui)
+			UIManager.put("FormattedTextField.font", ui)
+			UIManager.put("TextField.font", ui)
+			UIManager.put("Button.font", ui)
+			UIManager.put("Panel.font", ui)
+			UIManager.put("ToolTip.font", ui)
 		}
 
 	init {
@@ -80,43 +78,7 @@ val `{-# LANGUAGE GlobalSettings #-}`: Unit
 		GlobalSettings.load()
 	}
 
-object `{-# LANGUAGE DevKt #-}` : JFrame() {
-	val ui = UIImpl(this)
-
-	init {
-		GlobalSettings.windowIcon.second.also {
-			iconImage = it
-			if (mac) MacSpecific.app.dockIconImage = it
-		}
-		add(ui.mainPanel)
-		addWindowListener(object : WindowAdapter() {
-			override fun windowDeactivated(e: WindowEvent?) = GlobalSettings.save()
-			override fun windowLostFocus(e: WindowEvent?) = GlobalSettings.save()
-			override fun windowClosing(e: WindowEvent?) {
-				GlobalSettings.save()
-				ui.exit()
-			}
-		})
-		addComponentListener(object : ComponentAdapter() {
-			override fun componentMoved(e: ComponentEvent?) {
-				GlobalSettings.windowBounds = bounds
-			}
-
-			override fun componentResized(e: ComponentEvent?) {
-				super.componentResized(e)
-				GlobalSettings.windowBounds = bounds
-				ui.imageCache = null
-			}
-		})
-		bounds = GlobalSettings.windowBounds
-		doNothingOnClose
-		show
-		with(ui) {
-			postInit()
-			refreshTitle()
-		}
-	}
-}
+val `{-# LANGUAGE DevKt #-}` get() = DevKtFrame()
 
 val `{-# LANGUAGE MacSpecific #-}`: Unit
 	get() {

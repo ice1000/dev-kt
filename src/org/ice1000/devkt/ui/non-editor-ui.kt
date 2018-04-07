@@ -1,10 +1,11 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Kotlin
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.PsiViewerImpl
+import org.ice1000.devkt.selfLocation
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
@@ -21,7 +22,7 @@ fun JFrame.TODO() {
 			"Unfinished", 1, AllIcons.KOTLIN)
 }
 
-abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() {
+abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	init {
 		frame.jMenuBar = menuBar
 		scrollPane.viewport.isOpaque = false
@@ -103,7 +104,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 	fun settings() {
 		ConfigurationImpl(this, frame).show
-		reloadSettings()
+		restart()
 	}
 
 	fun viewPsi() {
@@ -123,7 +124,7 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 			showOpenDialog(mainPanel)
 		}.selectedFile ?: return
 		GlobalSettings.loadFile(file)
-		reloadSettings()
+		restart()
 	}
 
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
@@ -185,7 +186,12 @@ abstract class AbstractUI(protected val frame: `{-# LANGUAGE DevKt #-}`) : UI() 
 					AllIcons.KOTLIN)
 
 	abstract fun ktFile(): KtFile
-	abstract fun reloadSettings()
+	protected abstract fun reloadSettings()
+	fun restart() {
+		reloadSettings()
+		frame.dispose()
+		DevKtFrame()
+	}
 }
 
 /**

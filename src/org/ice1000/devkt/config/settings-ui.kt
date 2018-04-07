@@ -7,8 +7,7 @@ import java.awt.Window
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
-import javax.swing.JComponent
-import javax.swing.KeyStroke
+import javax.swing.*
 
 class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) : Configuration(parent) {
 	init {
@@ -57,6 +56,5 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 				return
 			}
 		}
-		uiImpl.reloadSettings()
 	}
 }

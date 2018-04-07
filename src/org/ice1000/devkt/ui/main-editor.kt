@@ -25,7 +25,7 @@ import javax.swing.undo.UndoManager
  * @author ice1000
  * @since v0.0.1
  */
-class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
+class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val undoManager = UndoManager()
 	private var edited = false
 		set(value) {
@@ -326,9 +326,9 @@ class UIImpl(frame: `{-# LANGUAGE DevKt #-}`) : AbstractUI(frame) {
 				currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 				processBuilder.start()
 			}
-			// FIXME @zxj5470 看下这个 https://superuser.com/a/308460
-			// 感觉这个比较靠谱，周围一圈人都说没问题
-			// 你这代码除了最后两行都别留
+		// FIXME @zxj5470 看下这个 https://superuser.com/a/308460
+		// 感觉这个比较靠谱，周围一圈人都说没问题
+		// 你这代码除了最后两行都别留
 			SystemInfo.isMac -> {
 				val javaExe = "/usr/bin/java"
 				val file = File("devKtBuild.sh").apply { setExecutable(true) }

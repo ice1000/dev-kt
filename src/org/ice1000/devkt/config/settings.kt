@@ -20,7 +20,7 @@ object GlobalSettings {
 	var backgroundAlpha: Int = 180
 	var fontSize: Float = 16F
 	var windowBounds = Rectangle(200, 100, 800, 600)
-	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin24@2x.png"))
+	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin@288x288.png"))
 	var backgroundImage: Pair<String, BufferedImage?> = "" to null
 	var useTab: Boolean = true
 	var highlightTokenBased: Boolean = true
