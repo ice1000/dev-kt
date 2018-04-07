@@ -52,7 +52,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				if (it.source !== this) return@addUndoableEditListener
 				undoManager.addEdit(it.edit)
 				edited = true
-				updateUndoMenuItems()
 			}
 			adjustFormat()
 		}
@@ -71,8 +70,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		//TODO 按下 `(` 后输入 `)` 会变成 `())`
 		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
-			val (offset, string, attr, move) = when (str) {
-				in paired -> Quad(offs, str + paired[str], a, -1)
+			val (offset, string, attr, move) = when {
+				str.length > 1 -> Quad(offs, str, a, 0)
+				str in paired -> Quad(offs, str + paired[str], a, -1)
 				else -> Quad(offs, str, a, 0)
 			}
 
@@ -291,6 +291,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
 			currentFile = it
 			val path = it.absolutePath.orEmpty()
+			document.remove(0, document.len)
 			document.insertString(0, it.readText(), null)
 			edited = false
 			GlobalSettings.lastOpenedFile = path

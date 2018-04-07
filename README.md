@@ -41,7 +41,7 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Deals with missing properties
 	+ [X] Smart auto saving
 	+ [X] Highlight color customization
-	+ [ ] Hot reload (Due to some limitations of Swing it's really hard to implement)
+	+ [X] Hot reload (Due to some limitations of Swing it's really hard to implement)
 	+ [X] Font customization
 		+ [X] Font size customization
 	+ [ ] Text style customization

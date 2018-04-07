@@ -3,8 +3,6 @@ package org.ice1000.devkt.ui
 import charlie.gensokyo.doNothingOnClose
 import charlie.gensokyo.show
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.lie.MacSpecific
-import org.ice1000.devkt.lie.mac
 import java.awt.event.*
 import javax.swing.JFrame
 
@@ -17,10 +15,7 @@ class DevKtFrame : JFrame() {
 
 	init {
 		instance = this
-		GlobalSettings.windowIcon.second.also {
-			iconImage = it
-			if (mac) MacSpecific.app.dockIconImage = it
-		}
+		iconImage = GlobalSettings.windowIcon.second
 		add(ui.mainPanel)
 		addWindowListener(object : WindowAdapter() {
 			override fun windowDeactivated(e: WindowEvent?) = GlobalSettings.save()
