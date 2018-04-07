@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
 import com.bulenkov.iconloader.util.SystemInfo
+import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.ColorScheme
@@ -242,6 +243,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	@JvmName("   ")
 	internal fun postInit() {
 		refreshLineNumber()
+		FileDrop(mainPanel) {
+			it.firstOrNull { it.canRead() }?.let {
+				loadFile(it)
+			}
+		}
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
 			edited = false
@@ -269,6 +275,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (!file.exists()) file.createNewFile()
 		GlobalSettings.recentFiles.add(file)
 		file.writeText(editor.text)
+		message("Saved to ${file.absolutePath}")
 		edited = false
 	}
 
@@ -286,7 +293,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	override fun loadFile(it: File) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
 			currentFile = it
-			message("Loaded ${it.name}")
+			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
 			document.remove(0, document.len)
 			document.insertString(0, it.readText(), null)

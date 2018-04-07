@@ -19,7 +19,7 @@ You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-k
 + Kotlin compiler integration (**100% correct parsing**)
 + JetBrains IDE icons
 + Build as jar/class files, run after build, just one click
-+ Cross platform (windows/macos/linux), just one jar file
++ Cross platform (windows/macos/linux), just an executable jar
 + One property-based configuration file, hackable
 
 Just a simple comparison:
@@ -54,14 +54,14 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Show in files
 	+ [X] Record recently opened files
 	+ [X] Create new files from templates (kts, kt, kt2js, android activity, multiplatform codes, etc.)
-	+ [ ] Drag file to open
+	+ [X] Drag file to open
 + Editor
 	+ [X] Lexer based highlights
 	+ [X] Undo and redo (by `javax.swing.undo.UndoManager.UndoManager`)
 	+ [X] Copy/paste/cut/select all
 	+ [X] Line number
 	+ [X] Background image
-	+ [X] Insert paired characters
+	+ [X] Insert/delete paired characters
 	+ [X] Semantic-based highlights
 		+ [ ] Highlight in daemon
 		+ [ ] Prioritized

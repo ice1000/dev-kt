@@ -161,6 +161,7 @@ dependencies {
 	compile(kotlin("compiler-embeddable", kotlinVersion))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
 	compile(files(Paths.get("lib", "darcula.jar")))
+	compile(files(Paths.get("lib", "filedrop.jar")))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile("junit", "junit", "4.12")
