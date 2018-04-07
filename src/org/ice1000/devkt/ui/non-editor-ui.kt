@@ -34,7 +34,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		set(value) {
 			val change = field != value
 			field = value
-			if (change) refreshTitle()
+			if (change) {
+				refreshTitle()
+				updateShowInFilesMenuItem()
+			}
 		}
 	protected var ktFileCache: KtFile? = null
 
@@ -192,6 +195,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		frame.dispose()
 		DevKtFrame()
 	}
+
+	abstract fun updateShowInFilesMenuItem()
 }
 
 /**

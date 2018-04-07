@@ -33,9 +33,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			if (change) refreshTitle()
 		}
 
-	internal lateinit var undoMenuItem: JMenuItem
 	internal lateinit var saveMenuItem: JMenuItem
-	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	private var lineNumber = 1
 	private val document: KtDocument
@@ -50,7 +48,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			addUndoableEditListener {
 				if (it.source !== this) return@addUndoableEditListener
 				undoManager.addEdit(it.edit)
-				edited = true
 			}
 			adjustFormat()
 		}
@@ -243,7 +240,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	 */
 	@JvmName("   ")
 	internal fun postInit() {
-		updateUndoMenuItems()
 		refreshLineNumber()
 		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
 		if (lastOpenedFile.canRead()) {
@@ -338,13 +334,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		processBuilder.start()
 	}
 
-	fun updateUndoMenuItems() {
-		undoMenuItem.isEnabled = undoManager.canUndo()
-		redoMenuItem.isEnabled = undoManager.canRedo()
-		saveMenuItem.isEnabled = edited
-	}
-
-	fun updateShowInFilesMenuItem() {
+	override fun updateShowInFilesMenuItem() {
 		showInFilesMenuItem.isEnabled = currentFile != null
 	}
 

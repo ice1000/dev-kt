@@ -12,7 +12,6 @@ import javax.swing.filechooser.FileFilter
 
 /**
  * DSL that initializes [menuBar]
- * as well as [UIImpl.undoMenuItem] and [UIImpl.redoMenuItem]
  *
  * @author ice1000
  * @since v0.0.1
@@ -97,11 +96,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	}
 	menuBar.subMenu("Edit") {
 		mnemonic = KeyEvent.VK_E
-		undoMenuItem = item("Undo") {
+		item("Undo") {
 			icon = AllIcons.UNDO
 			onAction { undo() }
 		}
-		redoMenuItem = item("Redo") {
+		item("Redo") {
 			icon = AllIcons.REDO
 			onAction { redo() }
 		}
