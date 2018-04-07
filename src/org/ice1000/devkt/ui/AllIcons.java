@@ -36,6 +36,7 @@ public interface AllIcons {
 	@NotNull Icon SYNCHRONIZE = IconLoader.getIcon("/icon/synchronizeFS.png");
 	@NotNull Icon REFRESH = IconLoader.getIcon("/icon/refresh.png");
 	@NotNull Icon JAR = IconLoader.getIcon("/icon/archive.png");
+	@NotNull Icon GRADLE = IconLoader.getIcon("/icon/gradle.png");
 
 	// Providers
 	@NotNull Icon ECLIPSE = IconLoader.getIcon("/icon/eclipse_dark.png");

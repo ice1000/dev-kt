@@ -33,6 +33,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 				icon = AllIcons.KOTLIN_ANDROID
 				onAction { createNewFile("activity.kt") }
 			}
+			item("Kotlin Gradle File") {
+				icon = AllIcons.GRADLE
+				onAction { createNewFile("build.gradle.kts") }
+			}
 			item("KotlinJS File") {
 				icon = AllIcons.KOTLIN_JS
 				onAction { createNewFile("js.kt") }
