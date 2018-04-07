@@ -32,7 +32,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		frame.jMenuBar = menuBar
 		scrollPane.viewport.isOpaque = false
 		memoryIndicator.addMouseListener(object : MouseAdapter() {
-			override fun mouseClicked(e: MouseEvent?) = System.gc()
+			override fun mouseClicked(e: MouseEvent?) {
+				System.gc()
+				refreshMemoryIndicator()
+			}
 		})
 	}
 
@@ -66,7 +69,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		}
 	}
 
-	private fun refreshMemoryIndicator() {
+	fun refreshMemoryIndicator() {
 		val runtime = Runtime.getRuntime()
 		val total = runtime.totalMemory() / MEGABYTE
 		val free = runtime.freeMemory() / MEGABYTE
