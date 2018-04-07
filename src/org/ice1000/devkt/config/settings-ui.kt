@@ -1,6 +1,7 @@
 package org.ice1000.devkt.config
 
 import charlie.gensokyo.doNothingOnClose
+import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.allFonts
 import org.ice1000.devkt.ui.AbstractUI
 import org.ice1000.devkt.ui.Configuration
 import java.awt.Window
@@ -16,6 +17,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 		title = "Settings"
 		isModal = true
 		getRootPane().defaultButton = buttonOK
+		editorFontField.model = DefaultComboBoxModel(allFonts)
 		buttonOK.addActionListener { ok() }
 		buttonApply.addActionListener { apply() }
 		buttonCancel.addActionListener { dispose() }
@@ -42,7 +44,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 
 	private fun reset() {
 		backgroundImageField.text = GlobalSettings.backgroundImage.first
-		editorFontField.text = GlobalSettings.monoFontName
+		editorFontField.selectedItem = GlobalSettings.monoFontName
 		uiFontField.text = GlobalSettings.gothicFontName
 		fontSizeSpinner.value = GlobalSettings.fontSize
 	}
@@ -54,7 +56,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 
 	private fun apply() {
 		with(GlobalSettings) {
-			monoFontName = editorFontField.text
+			monoFontName = editorFontField.selectedItem.toString()
 			gothicFontName = uiFontField.text
 			(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
 			backgroundImage = try {
