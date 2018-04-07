@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
+import java.awt.Font
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -408,5 +409,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			append(GlobalSettings.appName)
 		}
 	}
+
+	var editorFont: Font
+		set(value) {
+			editor.font = value
+		}
+		get() = editor.font
 
 }

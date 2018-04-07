@@ -5,7 +5,8 @@ import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.allFonts
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import org.ice1000.devkt.ui.AbstractUI
 import org.ice1000.devkt.ui.Configuration
-import java.awt.Window
+import org.ice1000.devkt.ui.DevKtFrame
+import java.awt.*
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
@@ -24,6 +25,25 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 		}
 		editorFontField.addItem(defaultFontName)
 		uiFontField.addItem(defaultFontName)
+
+		editorFontField.addItemListener {
+			(parent as? DevKtFrame)?.apply {
+				this.ui.editorFont = (Font(it.item.toString(), Font.PLAIN, GlobalSettings.fontSize.toInt()))
+			}
+		}
+
+		backgroundImageOpacitySlider.apply {
+			minimum = 0
+			maximum = 255
+			value = GlobalSettings.backgroundAlpha
+		}
+		backgroundImageOpacitySlider.addChangeListener {
+			GlobalSettings.backgroundAlpha = (it.source as JSlider).value
+			(parent as? DevKtFrame)?.apply {
+				this.ui.mainPanel.repaint()
+			}
+		}
+		uiFontField.model = DefaultComboBoxModel(allFonts)
 		buttonOK.addActionListener { ok() }
 		buttonApply.addActionListener { apply() }
 		buttonCancel.addActionListener { dispose() }
@@ -33,7 +53,8 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 			backgroundImageField.text = JFileChooser(if (old.exists()) old.parentFile else null).apply {
 				showOpenDialog(mainPanel)
 				fileSelectionMode = JFileChooser.FILES_ONLY
-			}.selectedFile.absolutePath
+				// selectedFile will be return null if JFileChooser was canceled
+			}.selectedFile?.absolutePath.orEmpty()
 		}
 		doNothingOnClose
 		addWindowListener(object : WindowAdapter() {
@@ -65,11 +86,24 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 			monoFontName = editorFontField.selectedItem.toString()
 			gothicFontName = uiFontField.selectedItem.toString()
 			(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
-			backgroundImage = try {
-				val path = backgroundImageField.text
-				path to ImageIO.read(File(path))
-			} catch (e: Exception) {
-				return
+
+			monoFontName.apply {
+				(parent as? DevKtFrame)?.let {
+					it.ui.editorFont = Font(this, Font.PLAIN, GlobalSettings.fontSize.toInt())
+				}
+			}
+			backgroundImage = backgroundImageField.text.let {
+				try {
+					it to ImageIO.read(File(it))
+				} catch (e: Exception) {
+					if (!it.isEmpty()) {
+						JOptionPane.showMessageDialog(contentPane,
+								"Image is invalid!",
+								"Message",
+								JOptionPane.ERROR_MESSAGE)
+					}
+					it to null
+				}
 			}
 		}
 	}
