@@ -324,7 +324,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun newLineBeforeCurrent() {
 		val index = editor.caretPosition
 		val text = editor.text
-		val startOfLineIndex = text.lastIndexOfOrNull('\n', index.takeIf { it > 0 }?.minus(1) ?: 0) ?: 0        //一行的开头
+		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
 		document.insertString(startOfLineIndex, "\n", null)
 		editor.caretPosition = startOfLineIndex + 1
 	}

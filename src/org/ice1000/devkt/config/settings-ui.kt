@@ -45,7 +45,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 	private fun reset() {
 		backgroundImageField.text = GlobalSettings.backgroundImage.first
 		editorFontField.selectedItem = GlobalSettings.monoFontName
-		uiFontField.text = GlobalSettings.gothicFontName
+		uiFontField.selectedItem = GlobalSettings.gothicFontName
 		fontSizeSpinner.value = GlobalSettings.fontSize
 	}
 
@@ -57,7 +57,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 	private fun apply() {
 		with(GlobalSettings) {
 			monoFontName = editorFontField.selectedItem.toString()
-			gothicFontName = uiFontField.text
+			gothicFontName = uiFontField.selectedItem.toString()
 			(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
 			backgroundImage = try {
 				val path = backgroundImageField.text

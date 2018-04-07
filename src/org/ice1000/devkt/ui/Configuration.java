@@ -13,7 +13,7 @@ public abstract class Configuration extends JDialog {
 	protected JButton buttonApply;
 	protected JTextField backgroundImageField;
 	protected JComboBox<String> editorFontField;
-	protected JTextField uiFontField;
+	protected JComboBox<String> uiFontField;
 	protected JSpinner fontSizeSpinner;
 	protected JButton backgroundBrowse;
 
