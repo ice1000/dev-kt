@@ -30,7 +30,10 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("MenuItem.acceleratorFont", value)
 			UIManager.put("FormattedTextField.font", value)
 			UIManager.put("TextField.font", value)
+			UIManager.put("FileChooser.font", value)
 			UIManager.put("Button.font", value)
+			UIManager.put("List.font", value)
+			UIManager.put("Table.font", value)
 			UIManager.put("Panel.font", value)
 			UIManager.put("ToolTip.font", value)
 		}
@@ -79,7 +82,7 @@ val `{-# LANGUAGE GlobalSettings #-}`: Unit
 
 val `{-# LANGUAGE DevKt #-}` get() = DevKtFrame()
 
-val `{-# LANGUAGE MacSpecific Must Before LookAndFeel Please Not change the order #-}`: Unit
+val `{-# LANGUAGE MacSpecific #-}`: Unit
 	get() {
 		if (mac) MacSpecific
 	}

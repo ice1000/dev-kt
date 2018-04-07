@@ -6,7 +6,7 @@ package org.ice1000.devkt
 @JvmName("main")
 fun benchmark(vararg args: String) {
 	val init = System.currentTimeMillis()
-	`{-# LANGUAGE MacSpecific Must Before LookAndFeel Please Not change the order #-}`
+	`{-# LANGUAGE MacSpecific #-}`
 	val time = System.currentTimeMillis()
 	`{-# LANGUAGE DarculaLookAndFeel #-}`
 	val time2 = System.currentTimeMillis()

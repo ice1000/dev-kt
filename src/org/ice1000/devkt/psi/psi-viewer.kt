@@ -17,6 +17,7 @@ typealias UINode = DefaultMutableTreeNode
 class PsiViewerImpl(file: KtFile, owner: Window? = null) : PsiViewer(owner) {
 	init {
 		contentPane = mainPanel
+		if (owner != null) setLocationRelativeTo(owner)
 		title = "Psi Viewer"
 		isModal = true
 		rootPane.defaultButton = buttonClose

@@ -12,6 +12,7 @@ import javax.swing.*
 class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
+		setLocationRelativeTo(uiImpl.mainPanel)
 		title = "Settings"
 		isModal = true
 		getRootPane().defaultButton = buttonOK
@@ -20,7 +21,8 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 		buttonCancel.addActionListener { dispose() }
 		buttonReset.addActionListener { reset() }
 		backgroundBrowse.addActionListener {
-			backgroundImageField.text = JFileChooser().apply {
+			val old = GlobalSettings.backgroundImage.first.let(::File)
+			backgroundImageField.text = JFileChooser(if (old.exists()) old.parentFile else null).apply {
 				showOpenDialog(mainPanel)
 				fileSelectionMode = JFileChooser.FILES_ONLY
 			}.selectedFile.absolutePath
