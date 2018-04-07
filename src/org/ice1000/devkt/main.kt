@@ -9,8 +9,8 @@ package org.ice1000.devkt
 @JvmName("main")
 fun devKt(vararg args: String) {
 	`{-# LANGUAGE GlobalSettings #-}`
+	`{-# LANGUAGE MacSpecific Must Before LookAndFeel Please Not change the order #-}`
 	`{-# LANGUAGE DarculaLookAndFeel #-}`
 	`{-# LANGUAGE SarasaGothicFont #-}`
 	`{-# LANGUAGE DevKt #-}`
-	`{-# LANGUAGE MacSpecific #-}`
 }
