@@ -39,6 +39,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	private var lineNumber = 1
 	private val document: KtDocument
+	private var selfMaintainedString = StringBuilder()
 
 	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
@@ -64,7 +65,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 					separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>")
 		}
 
-		override val text: String get() = editor.text
+		override val text: String get() = selfMaintainedString.toString()
 
 		//TODO 按下 `(` 后输入 `)` 会变成 `())`
 		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
@@ -76,6 +77,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 
 			super.insertString(offset, string, attr)
+			selfMaintainedString.insert(offset, string)
 			editor.caretPosition += move
 			reparse()
 			adjustFormat(offset, string.length)
@@ -276,7 +278,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
 		GlobalSettings.recentFiles.add(file)
-		file.writeText(editor.text)
+		file.writeText(document.text)
 		message("Saved to ${file.absolutePath}")
 		edited = false
 	}
@@ -309,7 +311,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	//这三个方法应该可以合并成一个方法吧
 	fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
-		val text = editor.text                //编辑器内容
+		val text = document.text                //编辑器内容
 		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.len
 		document.insertString(endOfLineIndex, "\n", null)
 		editor.caretPosition = endOfLineIndex + 1
@@ -323,13 +325,13 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	fun newLineBeforeCurrent() {
 		val index = editor.caretPosition
-		val text = editor.text
+		val text = document.text
 		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
 		document.insertString(startOfLineIndex, "\n", null)
 		editor.caretPosition = startOfLineIndex + 1
 	}
 
-	override fun ktFile() = ktFileCache ?: Kotlin.parse(editor.text)
+	override fun ktFile() = ktFileCache ?: Kotlin.parse(document.text)
 
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
