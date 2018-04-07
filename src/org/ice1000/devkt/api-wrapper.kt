@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -93,9 +94,8 @@ fun compileFiles(
 	).codegenFactory(
 			if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
 	).build()
-	if (analysisResult.shouldGenerateCode) {
+	if (analysisResult.shouldGenerateCode)
 		KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
-	}
 
 	// For JVM-specific errors
 	AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)

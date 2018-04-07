@@ -105,10 +105,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		private fun parse() {
 			SyntaxTraverser
-					.psiTraverser(Kotlin.parse(text).also {
-						it.name = GlobalSettings.javaClassName
-						ktFileCache = it
-					})
+					.psiTraverser(Kotlin.parse(text).also { ktFileCache = it })
 					.forEach { psi ->
 						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 					}

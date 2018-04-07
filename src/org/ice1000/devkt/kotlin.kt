@@ -4,6 +4,7 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
@@ -32,7 +33,8 @@ data class ASTToken(
 object Kotlin {
 	val targetDir = File("./build-cache")
 	val targetJar get() = targetDir.resolve(GlobalSettings.jarName)
-	private val environment: KotlinCoreEnvironment
+	private val jvmEnvironment: KotlinCoreEnvironment
+	private val jsEnvironment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
 	private val lexer: KotlinLexer
 
@@ -40,29 +42,36 @@ object Kotlin {
 		val compilerConfiguration = CompilerConfiguration()
 		compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 		compilerConfiguration.put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
-		environment = KotlinCoreEnvironment.createForProduction(Disposable {},
+		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_JAR, targetJar)
+		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, targetDir)
+		compilerConfiguration.addJvmClasspathRoot(File(selfLocation))
+		// compilerConfiguration.put(JVMConfigurationKeys.IR, true)
+		jvmEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
 				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-		val project = environment.project
+		jsEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
+				compilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+		val project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
 		val parserDef = KotlinParserDefinition.instance
 		lexer = parserDef.createLexer(project) as KotlinLexer
 	}
 
 	fun parse(text: String) = psiFileFactory
-			.createFileFromText(KotlinLanguage.INSTANCE, text) as KtFile
+			.createFileFromText(GlobalSettings.javaClassName, KotlinLanguage.INSTANCE, text) as KtFile
 
 	fun compileJvm(ktFile: KtFile) {
 		ensureTargetDirExists()
-		compileFileTo(ktFile, environment, targetDir)
+		compileFileTo(ktFile, jvmEnvironment, targetDir)
 	}
 
 	fun compileJar(ktFile: KtFile) {
 		ensureTargetDirExists()
+		targetJar.deleteOnExit()
 		CompileEnvironmentUtil.writeToJar(
 				targetJar,
 				false,
 				FqName.fromSegments(listOf("devkt", "${GlobalSettings.javaClassName}Kt")),
-				compileFile(ktFile, environment))
+				compileFile(ktFile, jvmEnvironment))
 	}
 
 	fun compileJs(ktFile: KtFile) {
