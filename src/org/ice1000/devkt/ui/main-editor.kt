@@ -58,7 +58,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		override fun adjustFormat(offs: Int, length: Int) {
 			if (length <= 0) return
 			setParagraphAttributesDoneBySettings(offs, length, colorScheme.tabSize, false)
-			val currentLineNumber = text.count { it == '\n' } + 1
+			val currentLineNumber = selfMaintainedString.count { it == '\n' } + 1
 			val change = currentLineNumber != lineNumber
 			lineNumber = currentLineNumber
 			if (change) lineNumberLabel.text = (1..currentLineNumber).joinToString(
@@ -96,7 +96,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 
 			super.remove(offset, length)
-			selfMaintainedString.removeRange(offset, offset + length)
+			selfMaintainedString.delete(offset, offset + length)
 			reparse()
 			adjustFormat(offset, length)
 		}
