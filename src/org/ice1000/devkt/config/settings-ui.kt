@@ -19,6 +19,12 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: Window? = null) 
 		buttonApply.addActionListener { apply() }
 		buttonCancel.addActionListener { dispose() }
 		buttonReset.addActionListener { reset() }
+		backgroundBrowse.addActionListener {
+			backgroundImageField.text = JFileChooser().apply {
+				showOpenDialog(mainPanel)
+				fileSelectionMode = JFileChooser.FILES_ONLY
+			}.selectedFile.absolutePath
+		}
 		doNothingOnClose
 		addWindowListener(object : WindowAdapter() {
 			override fun windowClosing(e: WindowEvent?) {

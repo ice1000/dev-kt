@@ -68,6 +68,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 			// dialogTitle = "Choose a Kotlin file"
 			fileFilter = kotlinFileFilter
 			showOpenDialog(mainPanel)
+			fileSelectionMode = JFileChooser.FILES_ONLY
 		}.selectedFile?.let {
 			loadFile(it)
 			GlobalSettings.recentFiles.add(it)

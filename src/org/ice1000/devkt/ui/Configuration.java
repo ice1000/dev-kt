@@ -15,6 +15,7 @@ public abstract class Configuration extends JDialog {
 	protected JTextField editorFontField;
 	protected JTextField uiFontField;
 	protected JSpinner fontSizeSpinner;
+	protected JButton backgroundBrowse;
 
 	public Configuration(@Nullable Window owner) {
 		super(owner);

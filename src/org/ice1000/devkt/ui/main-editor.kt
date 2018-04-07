@@ -260,6 +260,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun save() {
 		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
 			showSaveDialog(mainPanel)
+			fileSelectionMode = JFileChooser.FILES_ONLY
 		}.selectedFile ?: return
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
