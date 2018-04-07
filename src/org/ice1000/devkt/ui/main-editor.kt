@@ -96,6 +96,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 
 			super.remove(offset, length)
+			selfMaintainedString.removeRange(offset, offset + length)
 			reparse()
 			adjustFormat(offset, length)
 		}
