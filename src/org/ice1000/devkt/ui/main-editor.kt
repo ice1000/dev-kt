@@ -282,6 +282,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	override fun loadFile(it: File) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
 			currentFile = it
+			message("Loaded ${it.name}")
 			val path = it.absolutePath.orEmpty()
 			document.remove(0, document.len)
 			document.insertString(0, it.readText(), null)
@@ -340,6 +341,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	fun undo() {
 		if (undoManager.canUndo()) {
+			message("Undo!")
 			undoManager.undo()
 			edited = true
 		}
@@ -347,15 +349,31 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	fun redo() {
 		if (undoManager.canRedo()) {
+			message("Redo!")
 			undoManager.redo()
 			edited = true
 		}
 	}
 
-	fun selectAll() = editor.selectAll()
-	fun cut() = editor.cut()
-	fun copy() = editor.copy()
-	fun paste() = editor.paste()
+	fun selectAll() {
+		message("Select All")
+		editor.selectAll()
+	}
+
+	fun cut() {
+		message("Cut selection")
+		editor.cut()
+	}
+
+	fun copy() {
+		message("Copied selection")
+		editor.copy()
+	}
+
+	fun paste() {
+		message("Pasted to current position")
+		editor.paste()
+	}
 
 	override fun reloadSettings() {
 		frame.bounds = GlobalSettings.windowBounds

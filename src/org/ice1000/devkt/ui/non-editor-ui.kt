@@ -59,6 +59,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	abstract fun loadFile(it: File)
 
+	fun message(text: String) {
+		messageLabel.text = text
+	}
+
 	fun open() {
 		JFileChooser(currentFile?.parentFile).apply {
 			// dialogTitle = "Choose a Kotlin file"
@@ -81,18 +85,18 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	private fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
-		messageLabel.text = "Browsing $url"
+		message("Browsing $url")
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
-		messageLabel.text = "Failed to browse $url"
+		message("Failed to browse $url")
 	}
 
 	private fun open(file: File) = try {
 		Desktop.getDesktop().open(file)
-		messageLabel.text = "Opened $file"
+		message("Opened $file")
 	} catch (e: Exception) {
 		JOptionPane.showMessageDialog(mainPanel, "Error when opening ${file.absolutePath}:\n${e.message}")
-		messageLabel.text = "Failed to open $file"
+		message("Failed to open $file")
 	}
 
 	fun showInFiles() {
@@ -131,52 +135,72 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	}
 
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
+		val start = System.currentTimeMillis()
 		try {
-			startBuilding()
+			message("Build started…")
 			Kotlin.compileJar(ktFile())
-			buildSuccess()
-			SwingUtilities.invokeLater { callback(true) }
+			SwingUtilities.invokeLater {
+				message("Build finished in ${System.currentTimeMillis() - start}ms.")
+				callback(true)
+			}
 		} catch (e: Exception) {
-			buildFail(e)
-			SwingUtilities.invokeLater { callback(false) }
+			SwingUtilities.invokeLater {
+				message("Build failed in ${System.currentTimeMillis() - start}ms.")
+				JOptionPane.showMessageDialog(
+						mainPanel,
+						"Build failed: ${e.message}",
+						"Build As Jar",
+						JOptionPane.ERROR_MESSAGE,
+						AllIcons.KOTLIN)
+				callback(false)
+			}
 		}
 	}
 
 	inline fun buildAsJs(crossinline callback: (Boolean) -> Unit = { }) = thread {
+		val start = System.currentTimeMillis()
 		try {
-			startBuilding()
+			message("Build started…")
 			Kotlin.compileJs(ktFile())
-			buildSuccess()
-			SwingUtilities.invokeLater { callback(true) }
+			SwingUtilities.invokeLater {
+				message("Build finished in ${System.currentTimeMillis() - start}ms.")
+				callback(true)
+			}
 		} catch (e: Exception) {
-			buildFail(e)
-			SwingUtilities.invokeLater { callback(false) }
+			SwingUtilities.invokeLater {
+				message("Build failed in ${System.currentTimeMillis() - start}ms.")
+				JOptionPane.showMessageDialog(
+						mainPanel,
+						"Build failed: ${e.message}",
+						"Build As JS",
+						JOptionPane.ERROR_MESSAGE,
+						AllIcons.KOTLIN)
+				callback(false)
+			}
 		}
 	}
 
 	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
+		val start = System.currentTimeMillis()
 		try {
-			startBuilding()
+			message("Build started…")
 			Kotlin.compileJvm(ktFile())
-			buildSuccess()
-			SwingUtilities.invokeLater { callback(true) }
+			SwingUtilities.invokeLater {
+				message("Build finished in ${System.currentTimeMillis() - start}ms.")
+				callback(true)
+			}
 		} catch (e: Exception) {
-			buildFail(e)
-			SwingUtilities.invokeLater { callback(false) }
+			SwingUtilities.invokeLater {
+				message("Build failed in ${System.currentTimeMillis() - start}ms.")
+				JOptionPane.showMessageDialog(
+						mainPanel,
+						"Build failed: ${e.message}",
+						"Build As Classes",
+						JOptionPane.ERROR_MESSAGE,
+						AllIcons.KOTLIN)
+				callback(false)
+			}
 		}
-	}
-
-	fun buildSuccess() = SwingUtilities.invokeLater {
-		messageLabel.text = "Build successfully."
-	}
-
-	fun startBuilding() = SwingUtilities.invokeLater {
-		messageLabel.text = "Build started…"
-	}
-
-	fun buildFail(e: Exception) = SwingUtilities.invokeLater {
-		messageLabel.text = "Build failed."
-		JOptionPane.showMessageDialog(frame, "Build failed: ${e.message}", "Build As Classes", 1, AllIcons.KOTLIN)
 	}
 
 	open fun makeSureLeaveCurrentFile() = JOptionPane.YES_OPTION !=
