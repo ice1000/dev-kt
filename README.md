@@ -83,10 +83,13 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 	+ [X] Open alternative editors' download page in browser
 	+ [X] MacOS toolbar support
 	+ [X] PsiViewer
+	+ [X] Memory indicator
 	+ [ ] Built-in documentation
 
 # Build
 
 + (Optional) Download and decompress [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic/releases) font to `res/font`
   + As reference you can see [this shell script](./download-font.sh)
-+ Use `gradlew run` to run this application
++ Use `gradlew fatJar` to build this application
++ Run this application with `java -jar build/libs/devkt-[some unimportant text]-all.jar`
+
