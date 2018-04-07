@@ -8,7 +8,7 @@ import org.ice1000.devkt.ui.DevKtFrame.Companion.instance
 import java.awt.event.KeyEvent
 
 val mac = SystemInfo.isMac
-val ctrlOrMeta = if (!mac) KeyEvent.CTRL_DOWN_MASK else KeyEvent.META_DOWN_MASK
+val ctrlOrMeta = if (mac) KeyEvent.META_DOWN_MASK else KeyEvent.CTRL_DOWN_MASK
 
 object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	init {
@@ -16,7 +16,7 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
 	}
 
-	val app: Application = getApplication()
+	private val app: Application = getApplication()
 
 	init {
 		app.setPreferencesHandler(this)

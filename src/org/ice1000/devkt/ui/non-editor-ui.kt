@@ -1,6 +1,7 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
+import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Kotlin
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
@@ -222,6 +223,27 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	}
 
 	abstract fun updateShowInFilesMenuItem()
+	fun runCommand(file: File) {
+		val java = "java -cp ${file.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
+		val processBuilder = when {
+			SystemInfo.isLinux -> {
+				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
+			}
+			SystemInfo.isMac -> {
+				val lajiJava = "/usr/bin/$java"
+				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$lajiJava\"")
+			}
+			SystemInfo.isWindows -> {
+				ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", java)
+			}
+			else -> {
+				JOptionPane.showMessageDialog(mainPanel, "Unsupported OS!")
+				return
+			}
+		}
+		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
+		processBuilder.start()
+	}
 }
 
 /**

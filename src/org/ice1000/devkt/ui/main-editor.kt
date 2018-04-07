@@ -1,6 +1,5 @@
 package org.ice1000.devkt.ui
 
-import com.bulenkov.iconloader.util.SystemInfo
 import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
@@ -16,7 +15,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
-import javax.swing.*
+import javax.swing.JFileChooser
+import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
 import javax.swing.text.*
@@ -68,10 +68,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		//TODO 按下 `(` 后输入 `)` 会变成 `())`
 		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
+			val normalized = str.filterNot { it == '\r' }
 			val (offset, string, attr, move) = when {
-				str.length > 1 -> Quad(offs, str, a, 0)
-				str in paired -> Quad(offs, str + paired[str], a, -1)
-				else -> Quad(offs, str, a, 0)
+				normalized.length > 1 -> Quad(offs, normalized, a, 0)
+				normalized in paired -> Quad(offs, normalized + paired[normalized], a, -1)
+				else -> Quad(offs, normalized, a, 0)
 			}
 
 			super.insertString(offset, string, attr)
@@ -80,14 +81,15 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			adjustFormat(offset, string.length)
 		}
 
+		fun clear() = remove(0, len)
+
 		override fun remove(offs: Int, len: Int) {
 			val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
 			val (offset, length) = when {
 				delString in paired            //是否存在于字符对里
 						&& text.getOrNull(offs + 1)?.toString() == paired[delString] -> {
-					offs to 2        //
+					offs to 2
 				}
-
 				else -> offs to len
 			}
 
@@ -283,10 +285,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (!makeSureLeaveCurrentFile()) {
 			currentFile = null
 			edited = true
-			editor.text = javaClass
+			document.clear()
+			document.insertString(0, javaClass
 					.getResourceAsStream("/template/$templateName")
 					.reader()
-					.readText()
+					.readText(), null)
 		}
 	}
 
@@ -295,7 +298,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			currentFile = it
 			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
-			document.remove(0, document.len)
+			document.clear()
 			document.insertString(0, it.readText(), null)
 			edited = false
 			GlobalSettings.lastOpenedFile = path
@@ -339,30 +342,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		buildAsJar { if (it) runCommand(Kotlin.targetJar) }
 	}
 
-	private fun runCommand(file: File) {
-		val java = "java -cp ${file.absolutePath}:$selfLocation devkt.${GlobalSettings.javaClassName}Kt"
-		val processBuilder = when {
-			SystemInfo.isLinux -> {
-				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
-			}
-			SystemInfo.isMac -> {
-				val lajiJava = "/usr/bin/$java"
-				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$lajiJava\"")
-			}
-			SystemInfo.isWindows -> {
-				ProcessBuilder("cmd.exe", "/c", "start", "$java && pause")
-			}
-			else -> {
-				JOptionPane.showMessageDialog(mainPanel, "Unsupported OS!")
-				return
-			}
-		}
-		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
-		processBuilder.start()
-	}
-
 	override fun updateShowInFilesMenuItem() {
-		showInFilesMenuItem.isEnabled = currentFile != null
+		val currentFileNotNull = currentFile != null
+		showInFilesMenuItem.isEnabled = currentFileNotNull
+		saveMenuItem.isEnabled = currentFileNotNull
 	}
 
 	fun undo() {

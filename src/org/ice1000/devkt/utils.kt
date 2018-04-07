@@ -35,11 +35,10 @@ val paired = mapOf(
 )
 
 /**
- * `Ctrl` for Windows/Linux, `Meta` for MacOS
+ * <kbd>Ctrl</kbd> for Windows/Linux, <kbd>Meta</kbd> for MacOS
  * Replacement of [java.awt.Toolkit.getMenuShortcutKeyMask]
- * @param key Int
- * @sample KeyEvent.VK_S
+ * @param key like [KeyEvent.VK_S]
  */
 fun JMenuItem.controlKey(key: Int) {
-	this.accelerator = KeyStroke.getKeyStroke(key, ctrlOrMeta)
+	accelerator = KeyStroke.getKeyStroke(key, ctrlOrMeta)
 }
