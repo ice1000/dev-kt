@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import java.awt.event.KeyAdapter
 import java.awt.event.KeyEvent
 import java.io.File
@@ -253,6 +254,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Y) sync()
 				if (e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_Z) redo()
 				if (!e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) nextLine()
+				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) splitLine()
+				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) newLineBeforeCurrent()
 			}
 		})
 	}
@@ -293,12 +296,27 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		updateShowInFilesMenuItem()
 	}
 
+	//这三个方法应该可以合并成一个方法吧
 	fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
 		val text = editor.text                //编辑器内容
 		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.len
 		document.insertString(endOfLineIndex, "\n", null)
 		editor.caretPosition = endOfLineIndex + 1
+	}
+
+	fun splitLine() {
+		val index = editor.caretPosition        //光标所在位置
+		document.insertString(index, "\n", null)
+		editor.caretPosition = index
+	}
+
+	fun newLineBeforeCurrent() {
+		val index = editor.caretPosition
+		val text = editor.text
+		val startOfLineIndex = text.lastIndexOfOrNull('\n', index.takeIf { it > 0 }?.minus(1) ?: 0) ?: 0        //一行的开头
+		document.insertString(startOfLineIndex, "\n", null)
+		editor.caretPosition = startOfLineIndex + 1
 	}
 
 	override fun ktFile() = ktFileCache ?: Kotlin.parse(editor.text)

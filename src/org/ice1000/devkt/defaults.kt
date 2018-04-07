@@ -79,7 +79,7 @@ val `{-# LANGUAGE GlobalSettings #-}`: Unit
 
 val `{-# LANGUAGE DevKt #-}` get() = DevKtFrame()
 
-val `{-# LANGUAGE MacSpecific #-}`: Unit
+val `{-# LANGUAGE MacSpecific Must Before LookAndFeel Please Not change the order #-}`: Unit
 	get() {
 		if (mac) MacSpecific
 	}
