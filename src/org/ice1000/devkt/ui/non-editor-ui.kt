@@ -305,8 +305,7 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 		contentPane = mainPanel
 		title = "Go to Line/Column"
 		isModal = true
-		size(300, 100)
-
+		pack()
 		okButton.addActionListener { ok() }
 		cancelButton.addActionListener { dispose() }
 		lineColumn.text = editor.posToLineColumn(editor.caretPosition).let { (line, column) ->

@@ -1,6 +1,7 @@
 package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
+import org.ice1000.devkt.lie.ctrlOrMeta
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
@@ -9,24 +10,35 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.reflect.KMutableProperty
 
-data class ShortCut(val isControl: Boolean, val isAlt: Boolean, val isShift: Boolean, val keyCode: Int) {
+data class ShortCut(
+		val isControl: Boolean,
+		val isAlt: Boolean,
+		val isShift: Boolean,
+		val keyCode: Int) {
 	companion object {
+		/**
+		 * FIXME @HoshinoTented replace with "keyCode|modifier"
+		 */
 		fun parse(str: String): ShortCut? {
 			str.trim('(', ')').split(", ").run {
-				val isControl = getOrNull(0)?.toBoolean() ?: return null
-				val isAlt = getOrNull(1)?.toBoolean() ?: return null
-				val isShift = getOrNull(2)?.toBoolean() ?: return null
+				val isControl = getOrNull(0) == "true"
+				val isAlt = getOrNull(1) == "true"
+				val isShift = getOrNull(2) == "true"
 				val keyCode = getOrNull(3)?.toInt() ?: return null
 				return ShortCut(isControl, isAlt, isShift, keyCode)
 			}
 		}
 	}
 
-	fun check(e: KeyEvent) = e.isControlDown == isControl
-			&& e.isAltDown == isAlt
-			&& e.isShiftDown == isShift
-			&& e.keyCode == keyCode
+	val modifier = (if (isControl) ctrlOrMeta else 0) or
+			(if (isAlt) KeyEvent.ALT_DOWN_MASK else 0) or
+			(if (isShift) KeyEvent.SHIFT_DOWN_MASK else 0)
 
+	fun check(e: KeyEvent) = e.modifiers == modifier
+
+	/**
+	 * FIXME @HoshinoTented replace with "keyCode|modifier"
+	 */
 	override fun toString(): String = "($isControl, $isAlt, $isShift, $keyCode)"
 }
 
@@ -84,6 +96,7 @@ object GlobalSettings {
 	var shortcutRedo = ShortCut(true, false, true, KeyEvent.VK_Z)
 	var shortcutSync = ShortCut(true, true, false, KeyEvent.VK_Y)
 	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
+	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
 
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)

@@ -1,6 +1,8 @@
 package org.ice1000.devkt
 
+import org.ice1000.devkt.config.ShortCut
 import org.ice1000.devkt.lie.ctrlOrMeta
+import java.awt.MenuShortcut
 import java.awt.event.KeyEvent
 import javax.swing.JMenuItem
 import javax.swing.KeyStroke
@@ -39,6 +41,8 @@ val paired = mapOf(
  * Replacement of [java.awt.Toolkit.getMenuShortcutKeyMask]
  * @param key like [KeyEvent.VK_S]
  */
-fun JMenuItem.controlKey(key: Int) {
-	accelerator = KeyStroke.getKeyStroke(key, ctrlOrMeta)
+fun JMenuItem.keyMap(key: Int, modifiers: Int) {
+	accelerator = KeyStroke.getKeyStroke(key, modifiers)
 }
+
+fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.keyCode, shortcut.modifier)

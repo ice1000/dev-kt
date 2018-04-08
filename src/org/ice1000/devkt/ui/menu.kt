@@ -2,7 +2,8 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.*
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.controlKey
+import org.ice1000.devkt.keyMap
+import org.ice1000.devkt.lie.ctrlOrMeta
 import org.ice1000.devkt.lie.mac
 import java.awt.event.KeyEvent
 import java.io.File
@@ -52,7 +53,8 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		item("Open...") {
 			icon = AllIcons.OPEN
 			onAction { open() }
-			controlKey(KeyEvent.VK_O)
+			GlobalSettings.shortcutGoto.isAlt
+			keyMap(KeyEvent.VK_O, ctrlOrMeta)
 		}
 		showInFilesMenuItem = item("Show in Files") {
 			onAction { showInFiles() }
@@ -82,7 +84,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		saveMenuItem = item("Save") {
 			icon = AllIcons.SAVE
 			onAction { save() }
-			controlKey(KeyEvent.VK_S)
+			keyMap(GlobalSettings.shortcutOpen.keyCode, GlobalSettings.shortcutOpen.modifier)
 		}
 		item("Sync") {
 			icon = AllIcons.SYNCHRONIZE
@@ -99,6 +101,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		item("Undo") {
 			icon = AllIcons.UNDO
 			onAction { undo() }
+			keyMap(GlobalSettings.shortcutUndo.keyCode, GlobalSettings.shortcutUndo.modifier)
 		}
 		item("Redo") {
 			icon = AllIcons.REDO
