@@ -63,21 +63,24 @@ application {
 intellij {
 	instrumentCode = true
 	version = "2018.1"
-	when (System.getProperty("user.name")) {
-		"ice1000" -> localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/181.4203.550"
-		"hoshino" -> localPath = ext["ideaC_path"].toString()
-		else -> {
-			if (isCI) return@intellij
-			try {
-				val installed = JOptionPane.showConfirmDialog(null, "Have you installed IntelliJ IDEA?")
-				if (installed == JOptionPane.YES_OPTION) JFileChooser().apply {
-					dialogTitle = "Select IntelliJ IDEA installation path"
-					showOpenDialog(null)
-				}.selectedFile?.takeIf { it.isDirectory }?.let {
-					localPath = it.absolutePath
-				}
-			} catch (e: HeadlessException) {
+	val propertiesCache = ext["ideaC_path"]?.toString()
+	if (null != propertiesCache) {
+		localPath = propertiesCache
+	} else {
+		if (isCI) return@intellij
+		try {
+			val installed = JOptionPane.showConfirmDialog(null, "Have you installed IntelliJ IDEA?")
+			if (installed == JOptionPane.YES_OPTION) JFileChooser().apply {
+				dialogTitle = "Select IntelliJ IDEA installation path"
+				showOpenDialog(null)
+				fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+				isAcceptAllFileFilterUsed = false
+			}.currentDirectory?.takeIf { it.isDirectory }?.let {
+				localPath = it.absolutePath
+				ext["ideaC_path"] = it.absolutePath
 			}
+		} catch (e: HeadlessException) {
+			e.printStackTrace()
 		}
 	}
 }
