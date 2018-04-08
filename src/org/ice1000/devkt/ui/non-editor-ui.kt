@@ -21,6 +21,7 @@ import java.net.URL
 import java.util.regex.Pattern
 import javax.swing.*
 import javax.swing.text.AttributeSet
+import javax.swing.text.DefaultStyledDocument
 import kotlin.concurrent.thread
 
 fun JFrame.TODO() {
@@ -288,16 +289,22 @@ interface AnnotationHolder {
 	fun adjustFormat(offs: Int = 0, length: Int = len - offs)
 }
 
-fun JTextPane.goto(line: Int, column: Int = 0) {
+fun JTextPane.goto(line: Int, column: Int = 1) {
 	caretPosition = lineColumnToPos(line, column)
 }
 
+//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
-	TODO()
+	val textArea = textArea(text)
+	val lineStart = textArea.getLineStartOffset(line - 1)
+	return lineStart + column - 1
 }
 
 fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
-	TODO()
+	val textArea = textArea(text)
+	val line = textArea.getLineOfOffset(pos)
+	val column = pos - textArea.getLineStartOffset(line)
+	return line + 1 to column + 1
 }
 
 class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLine() {
@@ -316,7 +323,9 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 
 		OKButton.addActionListener { ok() }
 		cancelButton.addActionListener { dispose() }
-//		lineColumn.text = editor.			TODO 给lineColumn赋值(行:列)
+		lineColumn.text = editor.posToLineColumn(editor.caretPosition).let { (line, column) ->
+			"$line:$column"
+		}
 	}
 
 	private fun ok() {
