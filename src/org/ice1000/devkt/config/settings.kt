@@ -10,11 +10,32 @@ import java.util.*
 import javax.imageio.ImageIO
 import kotlin.reflect.KMutableProperty
 
-data class ShortCut(
-		val isControl: Boolean,
-		val isAlt: Boolean,
-		val isShift: Boolean,
-		val keyCode: Int) {
+class ShortCut {
+	val isControl: Boolean
+	val isAlt: Boolean
+	val isShift: Boolean
+	val keyCode: Int
+
+	val modifier: Int
+
+	constructor(isControl: Boolean, isAlt: Boolean, isShift: Boolean, keyCode: Int) {
+		this.isControl = isControl
+		this.isAlt = isAlt
+		this.isShift = isShift
+		this.keyCode = keyCode
+		this.modifier = (if (isControl) ctrlOrMeta else 0) or
+				(if (isAlt) KeyEvent.ALT_DOWN_MASK else 0) or
+				(if (isShift) KeyEvent.SHIFT_DOWN_MASK else 0)
+	}
+
+	constructor(modifier: Int, keyCode: Int) {
+		this.modifier = modifier
+		this.keyCode = keyCode
+		this.isControl = modifier and KeyEvent.CTRL_DOWN_MASK != 0
+		this.isShift = modifier and KeyEvent.SHIFT_DOWN_MASK != 0
+		this.isAlt = modifier and KeyEvent.ALT_DOWN_MASK != 0
+	}
+
 	companion object {
 		/**
 		 * FIXME @HoshinoTented replace with "keyCode|modifier"
@@ -29,10 +50,6 @@ data class ShortCut(
 			}
 		}
 	}
-
-	val modifier = (if (isControl) ctrlOrMeta else 0) or
-			(if (isAlt) KeyEvent.ALT_DOWN_MASK else 0) or
-			(if (isShift) KeyEvent.SHIFT_DOWN_MASK else 0)
 
 	fun check(e: KeyEvent) = e.modifiers == modifier
 
