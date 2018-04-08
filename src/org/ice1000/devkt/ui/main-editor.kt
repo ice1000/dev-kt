@@ -270,9 +270,13 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				if (GlobalSettings.shortcutNextLine.check(e)) nextLine()
 				if (GlobalSettings.shortcutSplitLine.check(e)) splitLine()
 				if (GlobalSettings.shortcutNewLineBeforeCurrent.check(e)) newLineBeforeCurrent()
-				if (GlobalSettings.shortcutGoto.check(e)) GoToLineDialog(this@UIImpl, editor).show
+				if (GlobalSettings.shortcutGoto.check(e)) gotoLine()
 			}
 		})
+	}
+
+	fun gotoLine() {
+		GoToLineDialog(this@UIImpl, editor).show
 	}
 
 	fun save() {

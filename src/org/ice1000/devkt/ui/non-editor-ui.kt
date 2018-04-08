@@ -2,7 +2,6 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
 import charlie.gensokyo.size
-import charlie.gensokyo.textArea
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Kotlin
 import org.ice1000.devkt.config.ConfigurationImpl
@@ -286,10 +285,6 @@ interface AnnotationHolder {
 	fun adjustFormat(offs: Int = 0, length: Int = len - offs)
 }
 
-fun JTextPane.goto(line: Int, column: Int = 1) {
-	caretPosition = lineColumnToPos(line, column)
-}
-
 //FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
 	val lineStart = document.defaultRootElement.getElement(line).startOffset
@@ -323,7 +318,7 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 		val input = lineColumn.text.split(':')
 		val line = input.firstOrNull()?.toIntOrNull() ?: return
 		val column = input.getOrNull(1)?.toIntOrNull() ?: 1
-		editor.goto(line, column)
+		editor.caretPosition = editor.lineColumnToPos(line, column)
 		dispose()
 	}
 }

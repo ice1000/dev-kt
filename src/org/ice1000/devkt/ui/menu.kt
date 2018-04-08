@@ -120,6 +120,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		item("Select All") { onAction { selectAll() } }
 		separator
 		item("Start New Line") { onAction { nextLine() } }
+		item("Go to Line") { onAction { gotoLine() } }
 	}
 	menuBar.subMenu("Build") {
 		mnemonic = KeyEvent.VK_B
