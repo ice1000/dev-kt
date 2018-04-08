@@ -1,6 +1,8 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
+import charlie.gensokyo.size
+import charlie.gensokyo.textArea
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Kotlin
 import org.ice1000.devkt.config.ConfigurationImpl
@@ -16,6 +18,7 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
 import java.net.URL
+import java.util.regex.Pattern
 import javax.swing.*
 import javax.swing.text.AttributeSet
 import kotlin.concurrent.thread
@@ -283,4 +286,46 @@ interface AnnotationHolder {
 			highlight(element.textRange, attributeSet)
 
 	fun adjustFormat(offs: Int = 0, length: Int = len - offs)
+}
+
+fun JTextPane.goto(line: Int, column: Int = 0) {
+	caretPosition = lineColumnToPos(line, column)
+}
+
+fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
+	TODO()
+}
+
+fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
+	TODO()
+}
+
+class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLine() {
+	companion object {
+		private val format = Pattern.compile("(\\d+)(:(\\d+))?")
+	}
+
+	init {
+		setLocationRelativeTo(uiImpl.mainPanel)
+		getRootPane().defaultButton = OKButton
+
+		contentPane = mainPanel
+		title = "Go to Line/Column"
+		isModal = true
+		size(300, 100)
+
+		OKButton.addActionListener { ok() }
+		cancelButton.addActionListener { dispose() }
+//		lineColumn.text = editor.			TODO 给lineColumn赋值(行:列)
+	}
+
+	private fun ok() {
+		val input = lineColumn.text
+		format.matcher(input).takeIf { it.matches() }?.let { matcher ->
+			val line = matcher.group(1)?.toIntOrNull() ?: return        //要是真写了那么多行...我...我立马融化
+			val column = matcher.group(3)?.toIntOrNull() ?: 1        //这个是可选的
+			editor.goto(line, column)
+			dispose()
+		}
+	}
 }

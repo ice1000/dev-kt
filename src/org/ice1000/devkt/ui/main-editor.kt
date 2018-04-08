@@ -1,5 +1,6 @@
 package org.ice1000.devkt.ui
 
+import charlie.gensokyo.show
 import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
@@ -269,6 +270,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				if (!e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) nextLine()
 				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) splitLine()
 				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) newLineBeforeCurrent()
+				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_G) GoToLineDialog(this@UIImpl, editor).show
 			}
 		})
 	}
