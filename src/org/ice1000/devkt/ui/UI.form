@@ -92,7 +92,6 @@
             <properties>
               <focusable value="true"/>
               <opaque value="false"/>
-              <text value="1 of 100M"/>
             </properties>
           </component>
         </children>

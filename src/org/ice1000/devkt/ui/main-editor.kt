@@ -242,25 +242,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		mainMenu(menuBar, frame)
 		document = KtDocument()
 		editor.document = document
-	}
-
-	/**
-	 * Should only be called once, extracted from the constructor
-	 * to shorten the startup time
-	 */
-	@JvmName("   ")
-	internal fun postInit() {
-		refreshLineNumber()
-		FileDrop(mainPanel) {
-			it.firstOrNull { it.canRead() }?.let {
-				loadFile(it)
-			}
-		}
-		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
-		if (lastOpenedFile.canRead()) {
-			edited = false
-			loadFile(lastOpenedFile)
-		}
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				if (GlobalSettings.shortcutUndo.check(e)) undo()
@@ -273,6 +254,25 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				if (GlobalSettings.shortcutGoto.check(e)) gotoLine()
 			}
 		})
+		FileDrop(mainPanel) {
+			it.firstOrNull { it.canRead() }?.let {
+				loadFile(it)
+			}
+		}
+	}
+
+	/**
+	 * Should only be called once, extracted from the constructor
+	 * to shorten the startup time
+	 */
+	@JvmName("   ")
+	internal fun postInit() {
+		init()
+		val lastOpenedFile = File(GlobalSettings.lastOpenedFile)
+		if (lastOpenedFile.canRead()) {
+			edited = false
+			loadFile(lastOpenedFile)
+		}
 	}
 
 	fun gotoLine() {
@@ -395,12 +395,20 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		editor.paste()
 	}
 
+	/**
+	 * Just to reuse some codes in [reloadSettings] and [postInit]
+	 */
+	private fun init() {
+		refreshLineNumber()
+		memoryIndicator.font = messageLabel.font.run { deriveFont(size2D - 4) }
+	}
+
 	override fun reloadSettings() {
 		frame.bounds = GlobalSettings.windowBounds
 		imageCache = null
 		loadFont()
 		refreshTitle()
-		refreshLineNumber()
+		init()
 		with(document) {
 			adjustFormat()
 			reparse()
