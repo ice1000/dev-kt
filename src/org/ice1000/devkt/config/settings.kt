@@ -2,11 +2,33 @@ package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import java.awt.Rectangle
+import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
 import kotlin.reflect.KMutableProperty
+
+data class ShortCut(val isControl: Boolean, val isAlt: Boolean, val isShift: Boolean, val keyCode: Int) {
+	companion object {
+		fun parse(str: String): ShortCut? {
+			str.trim('(', ')').split(", ").run {
+				val isControl = getOrNull(0)?.toBoolean() ?: return null
+				val isAlt = getOrNull(1)?.toBoolean() ?: return null
+				val isShift = getOrNull(2)?.toBoolean() ?: return null
+				val keyCode = getOrNull(3)?.toInt() ?: return null
+				return ShortCut(isControl, isAlt, isShift, keyCode)
+			}
+		}
+	}
+
+	fun check(e: KeyEvent) = e.isControlDown == isControl
+			&& e.isAltDown == isAlt
+			&& e.isShiftDown == isShift
+			&& e.keyCode == keyCode
+
+	override fun toString(): String = "($isControl, $isAlt, $isShift, $keyCode)"
+}
 
 /**
  * @author ice1000
@@ -57,6 +79,16 @@ object GlobalSettings {
 	var colorProperty: String by properties
 	var colorBackground: String by properties
 
+	var shortcutUndo = ShortCut(true, false, false, KeyEvent.VK_Z)
+	var shortcutSave = ShortCut(true, false, false, KeyEvent.VK_S)
+	var shortcutRedo = ShortCut(true, false, true, KeyEvent.VK_Z)
+	var shortcutSync = ShortCut(true, true, false, KeyEvent.VK_Y)
+	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
+
+	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
+	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
+	var shortcutNewLineBeforeCurrent = ShortCut(true, true, false, KeyEvent.VK_ENTER)
+
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value
 	}
@@ -75,6 +107,14 @@ object GlobalSettings {
 			try {
 				it.toIntOrNull()?.let { property.setter.call(it) }
 			} catch (ignored: Exception) {
+			}
+		}
+	}
+
+	private fun initShortCutProperty(property: KMutableProperty<ShortCut>) {
+		properties[property.name]?.toString()?.also {
+			ShortCut.parse(it)?.let {
+				property.setter.call(it)
 			}
 		}
 	}
@@ -136,6 +176,16 @@ object GlobalSettings {
 					.split(File.pathSeparatorChar)
 					.mapNotNullTo(recentFiles) { File(it).takeIf { it.exists() } }
 		}
+
+		initShortCutProperty(::shortcutUndo)
+		initShortCutProperty(::shortcutRedo)
+		initShortCutProperty(::shortcutSave)
+		initShortCutProperty(::shortcutSync)
+		initShortCutProperty(::shortcutGoto)
+
+		initShortCutProperty(::shortcutNextLine)
+		initShortCutProperty(::shortcutSplitLine)
+		initShortCutProperty(::shortcutNewLineBeforeCurrent)
 	}
 
 	fun save() {
@@ -150,6 +200,15 @@ object GlobalSettings {
 		properties[::windowBounds.name] = "${windowBounds.x},${windowBounds.y},${windowBounds.width},${windowBounds.height}"
 		properties[::windowIcon.name] = windowIcon.first
 		properties[::backgroundImage.name] = backgroundImage.first
+		properties[::shortcutUndo.name] = shortcutUndo.toString()
+		properties[::shortcutRedo.name] = shortcutRedo.toString()
+		properties[::shortcutSave.name] = shortcutSave.toString()
+		properties[::shortcutSync.name] = shortcutSync.toString()
+		properties[::shortcutGoto.name] = shortcutGoto.toString()
+		properties[::shortcutNextLine.name] = shortcutNextLine.toString()
+		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
+		properties[::shortcutNewLineBeforeCurrent.name] = shortcutNewLineBeforeCurrent.toString()
 		properties.store(configFile.outputStream(), null)
+
 	}
 }

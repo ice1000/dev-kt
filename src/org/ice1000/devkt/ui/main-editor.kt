@@ -263,14 +263,14 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 		editor.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
-				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Z) undo()
-				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_S) save()
-				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_Y) sync()
-				if (e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_Z) redo()
-				if (!e.isControlDown && !e.isAltDown && e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) nextLine()
-				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) splitLine()
-				if (e.isControlDown && e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_ENTER) newLineBeforeCurrent()
-				if (e.isControlDown && !e.isAltDown && !e.isShiftDown && e.keyCode == KeyEvent.VK_G) GoToLineDialog(this@UIImpl, editor).show
+				if (GlobalSettings.shortcutUndo.check(e)) undo()
+				if (GlobalSettings.shortcutSave.check(e)) save()
+				if (GlobalSettings.shortcutSync.check(e)) sync()
+				if (GlobalSettings.shortcutRedo.check(e)) redo()
+				if (GlobalSettings.shortcutNextLine.check(e)) nextLine()
+				if (GlobalSettings.shortcutSplitLine.check(e)) splitLine()
+				if (GlobalSettings.shortcutNewLineBeforeCurrent.check(e)) newLineBeforeCurrent()
+				if (GlobalSettings.shortcutGoto.check(e)) GoToLineDialog(this@UIImpl, editor).show
 			}
 		})
 	}
