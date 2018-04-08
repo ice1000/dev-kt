@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -262,6 +263,13 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		}
 		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 		processBuilder.start()
+	}
+
+	// TODO 错误处理
+	fun runScript() {
+		val currentFile = currentFile ?: return
+		val `class` = currentFile.let(Kotlin::compileScript) ?: return
+		tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
 	}
 }
 

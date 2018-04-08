@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import java.io.File
 
 data class ASTToken(
@@ -47,9 +48,9 @@ object Kotlin {
 		compilerConfiguration.addJvmClasspathRoot(File(selfLocation))
 		// compilerConfiguration.put(JVMConfigurationKeys.IR, true)
 		jvmEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
-				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+				compilerConfiguration.copy(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
 		jsEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
-				compilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
+				compilerConfiguration.copy(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 		val project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
 		val parserDef = KotlinParserDefinition.instance
@@ -62,6 +63,16 @@ object Kotlin {
 	fun compileJvm(ktFile: KtFile) {
 		ensureTargetDirExists()
 		compileFileTo(ktFile, jvmEnvironment, targetDir)
+	}
+
+	fun compileScript(scriptFile: File): Class<*>? {
+		val scriptEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
+				jvmEnvironment.configuration.copy(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+		val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(scriptEnvironment.project)
+		val error = scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)
+		if (error) return null
+		val state = KotlinToJVMBytecodeCompiler.compileScript(scriptEnvironment)
+		return state
 	}
 
 	fun compileJar(ktFile: KtFile) {

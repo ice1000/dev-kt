@@ -101,3 +101,7 @@ fun compileFiles(
 	AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
 	return state
 }
+
+fun compileScript(file: KtFile, configuration: CompilerConfiguration) {
+
+}
