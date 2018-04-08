@@ -62,10 +62,8 @@ application {
 
 intellij {
 	instrumentCode = true
-	version = "2018.1"
-	val propertiesCache = ext["ideaC_path"]?.toString()
-	if (null != propertiesCache) {
-		localPath = propertiesCache
+	if (ext.has("ideaC_path")) {
+		localPath = ext["ideaC_path"].toString()
 	} else {
 		if (isCI) return@intellij
 		try {
@@ -77,10 +75,11 @@ intellij {
 				isAcceptAllFileFilterUsed = false
 			}.currentDirectory?.takeIf { it.isDirectory }?.let {
 				localPath = it.absolutePath
-				ext["ideaC_path"] = it.absolutePath
-			}
+				file("gradle.properties").writeText("ideaC_path=${it.absolutePath}")
+			} ?: run { version = "2018.1" }
 		} catch (e: HeadlessException) {
 			e.printStackTrace()
+			version = "2018.1"
 		}
 	}
 }
