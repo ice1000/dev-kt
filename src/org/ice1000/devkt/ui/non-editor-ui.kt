@@ -136,7 +136,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 	fun settings() {
 		ConfigurationImpl(this, frame).show
-		restart()
 	}
 
 	fun viewPsi() {

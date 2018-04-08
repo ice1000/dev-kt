@@ -12,7 +12,7 @@ import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*
 
-class ConfigurationImpl(uiImpl: AbstractUI, parent: DevKtFrame? = null) : Configuration(parent) {
+class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
 		setLocationRelativeTo(uiImpl.mainPanel)
@@ -28,17 +28,6 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: DevKtFrame? = null) : Config
 		editorFontField.addItemListener {
 			parent?.ui?.editorFont = Font(it.item.toString(), Font.PLAIN, 16)
 					.deriveFont(GlobalSettings.fontSize)
-		}
-		backgroundImageAlphaSlider.apply {
-			minimum = 0
-			maximum = 255
-			inverted = true
-			addMouseListener(object : MouseAdapter() {
-				override fun mouseReleased(e: MouseEvent?) {
-					GlobalSettings.backgroundAlpha = backgroundImageAlphaSlider.extent
-					//uiImpl.mainPanel.repaint()
-				}
-			})
 		}
 		uiFontField.model = DefaultComboBoxModel(allFonts)
 		buttonOK.addActionListener { ok() }
@@ -71,7 +60,7 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: DevKtFrame? = null) : Config
 		editorFontField.selectedItem = GlobalSettings.monoFontName
 		uiFontField.selectedItem = GlobalSettings.gothicFontName
 		fontSizeSpinner.value = GlobalSettings.fontSize
-		backgroundImageAlphaSlider.extent = GlobalSettings.backgroundAlpha
+		backgroundImageAlphaSlider.value = GlobalSettings.backgroundAlpha
 	}
 
 	private fun ok() {
@@ -83,8 +72,8 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: DevKtFrame? = null) : Config
 		with(GlobalSettings) {
 			monoFontName = editorFontField.selectedItem.toString()
 			gothicFontName = uiFontField.selectedItem.toString()
-			GlobalSettings.backgroundAlpha = backgroundImageAlphaSlider.extent
 			(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
+			(backgroundImageAlphaSlider.value as? Number)?.let { GlobalSettings.backgroundAlpha = it.toInt() }
 			monoFontName.apply {
 				(parent as? DevKtFrame)?.let {
 					it.ui.editorFont = Font(this, Font.PLAIN, GlobalSettings.fontSize.toInt())
@@ -104,5 +93,6 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: DevKtFrame? = null) : Config
 				}
 			}
 		}
+		uiImpl.restart()
 	}
 }
