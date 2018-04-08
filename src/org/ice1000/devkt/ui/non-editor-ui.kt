@@ -18,10 +18,8 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
 import java.net.URL
-import java.util.regex.Pattern
 import javax.swing.*
 import javax.swing.text.AttributeSet
-import javax.swing.text.DefaultStyledDocument
 import kotlin.concurrent.thread
 
 fun JFrame.TODO() {
@@ -294,33 +292,27 @@ fun JTextPane.goto(line: Int, column: Int = 1) {
 
 //FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
-	val textArea = textArea(text)
-	val lineStart = textArea.getLineStartOffset(line - 1)
+	val lineStart = document.defaultRootElement.getElement(line).startOffset
 	return lineStart + column - 1
 }
 
 fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
-	val textArea = textArea(text)
-	val line = textArea.getLineOfOffset(pos)
-	val column = pos - textArea.getLineStartOffset(line)
+	val root = document.defaultRootElement
+	val line = root.getElementIndex(pos)
+	val column = pos - root.getElement(line).startOffset
 	return line + 1 to column + 1
 }
 
 class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLine() {
-	companion object {
-		private val format = Pattern.compile("(\\d+)(:(\\d+))?")
-	}
-
 	init {
 		setLocationRelativeTo(uiImpl.mainPanel)
-		getRootPane().defaultButton = OKButton
-
+		getRootPane().defaultButton = okButton
 		contentPane = mainPanel
 		title = "Go to Line/Column"
 		isModal = true
 		size(300, 100)
 
-		OKButton.addActionListener { ok() }
+		okButton.addActionListener { ok() }
 		cancelButton.addActionListener { dispose() }
 		lineColumn.text = editor.posToLineColumn(editor.caretPosition).let { (line, column) ->
 			"$line:$column"
@@ -328,12 +320,10 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 	}
 
 	private fun ok() {
-		val input = lineColumn.text
-		format.matcher(input).takeIf { it.matches() }?.let { matcher ->
-			val line = matcher.group(1)?.toIntOrNull() ?: return        //要是真写了那么多行...我...我立马融化
-			val column = matcher.group(3)?.toIntOrNull() ?: 1        //这个是可选的
-			editor.goto(line, column)
-			dispose()
-		}
+		val input = lineColumn.text.split(':')
+		val line = input.firstOrNull()?.toIntOrNull() ?: return
+		val column = input.getOrNull(1)?.toIntOrNull() ?: 1
+		editor.goto(line, column)
+		dispose()
 	}
 }
