@@ -54,7 +54,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = AllIcons.OPEN
 			onAction { open() }
 			GlobalSettings.shortcutGoto.isAlt
-			keyMap(KeyEvent.VK_O, ctrlOrMeta)
+			keyMap(GlobalSettings.shortcutOpen)
 		}
 		showInFilesMenuItem = item("Show in Files") {
 			onAction { showInFiles() }
@@ -84,11 +84,12 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		saveMenuItem = item("Save") {
 			icon = AllIcons.SAVE
 			onAction { save() }
-			keyMap(GlobalSettings.shortcutOpen.keyCode, GlobalSettings.shortcutOpen.modifier)
+			keyMap(GlobalSettings.shortcutSave)
 		}
 		item("Sync") {
 			icon = AllIcons.SYNCHRONIZE
 			onAction { sync() }
+			keyMap(GlobalSettings.shortcutSync)
 		}
 		separator
 		if (!mac) item("Exit") {
@@ -101,11 +102,12 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		item("Undo") {
 			icon = AllIcons.UNDO
 			onAction { undo() }
-			keyMap(GlobalSettings.shortcutUndo.keyCode, GlobalSettings.shortcutUndo.modifier)
+			keyMap(GlobalSettings.shortcutUndo)
 		}
 		item("Redo") {
 			icon = AllIcons.REDO
 			onAction { redo() }
+			keyMap(GlobalSettings.shortcutRedo)
 		}
 		separator
 		item("Cut") {
@@ -122,8 +124,14 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		item("Select All") { onAction { selectAll() } }
 		separator
-		item("Start New Line") { onAction { nextLine() } }
-		item("Go to Line") { onAction { gotoLine() } }
+		item("Start New Line") {
+			onAction { nextLine() }
+			keyMap(GlobalSettings.shortcutNextLine)
+		}
+		item("Go to Line") {
+			keyMap(GlobalSettings.shortcutGoto)
+			onAction { gotoLine() }
+		}
 	}
 	menuBar.subMenu("Build") {
 		mnemonic = KeyEvent.VK_B
