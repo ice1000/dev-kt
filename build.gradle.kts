@@ -5,10 +5,12 @@ import org.gradle.internal.deployment.RunApplication
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.awt.HeadlessException
 import java.io.*
 import java.nio.file.*
 import java.util.concurrent.*
 import java.util.stream.Collectors
+import javax.swing.*
 
 val commitHash by lazy {
 	val process: Process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
@@ -60,10 +62,23 @@ application {
 
 intellij {
 	instrumentCode = true
+	version = "2018.1"
 	when (System.getProperty("user.name")) {
 		"ice1000" -> localPath = "/home/ice1000/.local/share/JetBrains/Toolbox/apps/IDEA-U/ch-0/181.4203.550"
 		"hoshino" -> localPath = ext["ideaC_path"].toString()
-		else -> version = "2018.1"
+		else -> {
+			if (isCI) return@intellij
+			try {
+				val installed = JOptionPane.showConfirmDialog(null, "Have you installed IntelliJ IDEA?")
+				if (installed == JOptionPane.YES_OPTION) JFileChooser().apply {
+					dialogTitle = "Select IntelliJ IDEA installation path"
+					showOpenDialog(null)
+				}.selectedFile?.takeIf { it.isDirectory }?.let {
+					localPath = it.absolutePath
+				}
+			} catch (e: HeadlessException) {
+			}
+		}
 	}
 }
 
