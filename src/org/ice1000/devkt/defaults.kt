@@ -11,7 +11,17 @@ import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtFrame
 import java.awt.Font
 import java.awt.GraphicsEnvironment
+import java.io.OutputStream
+import java.io.PrintStream
 import javax.swing.UIManager
+
+val `{-# LANGUAGE RedirectStdio #-}`: Unit
+	get() {
+		System.setOut(PrintStream(object : OutputStream() {
+			override fun write(b: Int) {
+			}
+		}))
+	}
 
 object `{-# LANGUAGE SarasaGothicFont #-}` {
 	var monoFont: Font
