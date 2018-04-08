@@ -12,7 +12,7 @@ import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*
 
-class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configuration(parent) {
+class ConfigurationImpl(uiImpl: AbstractUI, parent: DevKtFrame? = null) : Configuration(parent) {
 	init {
 		contentPane = mainPanel
 		setLocationRelativeTo(uiImpl.mainPanel)
@@ -25,23 +25,20 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 		}
 		editorFontField.addItem(defaultFontName)
 		uiFontField.addItem(defaultFontName)
-
 		editorFontField.addItemListener {
-			(parent as? DevKtFrame)?.apply {
-				this.ui.editorFont = (Font(it.item.toString(), Font.PLAIN, GlobalSettings.fontSize.toInt()))
-			}
+			parent?.ui?.editorFont = Font(it.item.toString(), Font.PLAIN, 16)
+					.deriveFont(GlobalSettings.fontSize)
 		}
-
-		backgroundImageOpacitySlider.apply {
+		backgroundImageAlphaSlider.apply {
 			minimum = 0
 			maximum = 255
-			value = GlobalSettings.backgroundAlpha
-		}
-		backgroundImageOpacitySlider.addChangeListener {
-			GlobalSettings.backgroundAlpha = (it.source as JSlider).value
-			(parent as? DevKtFrame)?.apply {
-				this.ui.mainPanel.repaint()
-			}
+			inverted = true
+			addMouseListener(object : MouseAdapter() {
+				override fun mouseReleased(e: MouseEvent?) {
+					GlobalSettings.backgroundAlpha = backgroundImageAlphaSlider.extent
+					//uiImpl.mainPanel.repaint()
+				}
+			})
 		}
 		uiFontField.model = DefaultComboBoxModel(allFonts)
 		buttonOK.addActionListener { ok() }
@@ -56,7 +53,6 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 				// selectedFile will be return null if JFileChooser was canceled
 			}.selectedFile?.absolutePath.orEmpty()
 		}
-		doNothingOnClose
 		addWindowListener(object : WindowAdapter() {
 			override fun windowClosing(e: WindowEvent?) {
 				dispose()
@@ -65,6 +61,7 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 		mainPanel.registerKeyboardAction({ dispose() },
 				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+		doNothingOnClose
 		pack()
 		reset()
 	}
@@ -74,6 +71,7 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 		editorFontField.selectedItem = GlobalSettings.monoFontName
 		uiFontField.selectedItem = GlobalSettings.gothicFontName
 		fontSizeSpinner.value = GlobalSettings.fontSize
+		backgroundImageAlphaSlider.extent = GlobalSettings.backgroundAlpha
 	}
 
 	private fun ok() {
@@ -85,8 +83,8 @@ class ConfigurationImpl(uiImpl: AbstractUI, parent: Window? = null) : Configurat
 		with(GlobalSettings) {
 			monoFontName = editorFontField.selectedItem.toString()
 			gothicFontName = uiFontField.selectedItem.toString()
+			GlobalSettings.backgroundAlpha = backgroundImageAlphaSlider.extent
 			(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
-
 			monoFontName.apply {
 				(parent as? DevKtFrame)?.let {
 					it.ui.editorFont = Font(this, Font.PLAIN, GlobalSettings.fontSize.toInt())
