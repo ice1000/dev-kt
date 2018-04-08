@@ -19,6 +19,8 @@ val `{-# LANGUAGE RedirectStdio #-}`: Unit
 	get() {
 		System.setOut(PrintStream(object : OutputStream() {
 			override fun write(b: Int) {
+				if (b.toChar() == '\n') DevKtFrame.instance.ui.messageLabel.text = ""
+				else DevKtFrame.instance.ui.messageLabel.run { text = "$text${b.toChar()}" }
 			}
 		}))
 	}

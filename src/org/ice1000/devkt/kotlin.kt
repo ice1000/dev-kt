@@ -9,15 +9,15 @@ import org.jetbrains.kotlin.com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
+import org.jetbrains.kotlin.script.*
 import java.io.File
 
 data class ASTToken(
@@ -42,15 +42,16 @@ object Kotlin {
 	init {
 		val compilerConfiguration = CompilerConfiguration()
 		compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
-		compilerConfiguration.put(JVMConfigurationKeys.INCLUDE_RUNTIME, true)
 		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_JAR, targetJar)
 		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, targetDir)
 		compilerConfiguration.addJvmClasspathRoot(File(selfLocation))
 		// compilerConfiguration.put(JVMConfigurationKeys.IR, true)
 		jvmEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
-				compilerConfiguration.copy(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+		val jsCompilerConfiguration = CompilerConfiguration()
+		jsCompilerConfiguration.put(JSConfigurationKeys.OUTPUT_DIR, targetDir)
 		jsEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
-				compilerConfiguration.copy(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+				jsCompilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
 		val project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
 		val parserDef = KotlinParserDefinition.instance
@@ -66,12 +67,16 @@ object Kotlin {
 	}
 
 	fun compileScript(scriptFile: File): Class<*>? {
+		val configuration = jvmEnvironment.configuration.copy()
+		configuration.addKotlinSourceRoot(scriptFile.absolutePath)
+		configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
+		configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, KotlinScriptDefinition(Any::class))
 		val scriptEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
-				jvmEnvironment.configuration.copy(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+				configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 		val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(scriptEnvironment.project)
 		val error = scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)
 		if (error) return null
-		val state = KotlinToJVMBytecodeCompiler.compileScript(scriptEnvironment)
+		val state = KotlinToJVMBytecodeCompiler.compileScript(scriptEnvironment, javaClass.classLoader)
 		return state
 	}
 

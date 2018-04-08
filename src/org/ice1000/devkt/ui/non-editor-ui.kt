@@ -1,7 +1,6 @@
 package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
-import charlie.gensokyo.size
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Kotlin
 import org.ice1000.devkt.config.ConfigurationImpl

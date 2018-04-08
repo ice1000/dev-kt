@@ -7,9 +7,9 @@ import javax.swing.*;
  */
 public abstract class UI {
 	public JPanel mainPanel;
+	public JLabel messageLabel;
 	protected JMenuBar menuBar;
 	protected JTextPane editor;
-	protected JLabel messageLabel;
 	protected JLabel lineNumberLabel;
 	protected JScrollPane scrollPane;
 	protected JButton memoryIndicator;
