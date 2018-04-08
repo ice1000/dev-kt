@@ -287,7 +287,7 @@ interface AnnotationHolder {
 
 //FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
-	val lineStart = document.defaultRootElement.getElement(line).startOffset
+	val lineStart = document.defaultRootElement.getElement(line - 1).startOffset
 	return lineStart + column - 1
 }
 
