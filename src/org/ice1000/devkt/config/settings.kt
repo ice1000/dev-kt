@@ -106,9 +106,7 @@ object GlobalSettings {
 	var shortcutSync = ShortCut(true, true, false, KeyEvent.VK_Y)
 	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
 	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
-
-	var shortcutBuildRunAsClass = ShortCut(KeyEvent.CTRL_DOWN_MASK, KeyEvent.VK_R)
-
+	var shortcutBuildRunAsClass = ShortCut(true, false, false, KeyEvent.VK_R)
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBeforeCurrent = ShortCut(true, true, false, KeyEvent.VK_ENTER)
@@ -203,6 +201,7 @@ object GlobalSettings {
 
 		initShortCutProperty(::shortcutUndo)
 		initShortCutProperty(::shortcutRedo)
+		initShortCutProperty(::shortcutOpen)
 		initShortCutProperty(::shortcutSave)
 		initShortCutProperty(::shortcutSync)
 		initShortCutProperty(::shortcutGoto)
@@ -225,6 +224,7 @@ object GlobalSettings {
 		properties[::windowIcon.name] = windowIcon.first
 		properties[::backgroundImage.name] = backgroundImage.first
 		properties[::shortcutUndo.name] = shortcutUndo.toString()
+		properties[::shortcutOpen.name] = shortcutOpen.toString()
 		properties[::shortcutRedo.name] = shortcutRedo.toString()
 		properties[::shortcutSave.name] = shortcutSave.toString()
 		properties[::shortcutSync.name] = shortcutSync.toString()
@@ -233,6 +233,5 @@ object GlobalSettings {
 		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
 		properties[::shortcutNewLineBeforeCurrent.name] = shortcutNewLineBeforeCurrent.toString()
 		properties.store(configFile.outputStream(), null)
-
 	}
 }

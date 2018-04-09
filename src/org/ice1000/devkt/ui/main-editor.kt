@@ -242,18 +242,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		mainMenu(menuBar, frame)
 		document = KtDocument()
 		editor.document = document
-		editor.addKeyListener(object : KeyAdapter() {
-			override fun keyPressed(e: KeyEvent) {
-				if (GlobalSettings.shortcutUndo.check(e)) undo()
-				if (GlobalSettings.shortcutSave.check(e)) save()
-				if (GlobalSettings.shortcutSync.check(e)) sync()
-				if (GlobalSettings.shortcutRedo.check(e)) redo()
-				if (GlobalSettings.shortcutNextLine.check(e)) nextLine()
-				if (GlobalSettings.shortcutSplitLine.check(e)) splitLine()
-				if (GlobalSettings.shortcutNewLineBeforeCurrent.check(e)) newLineBeforeCurrent()
-				if (GlobalSettings.shortcutGoto.check(e)) gotoLine()
-			}
-		})
 		FileDrop(mainPanel) {
 			it.firstOrNull { it.canRead() }?.let {
 				loadFile(it)
