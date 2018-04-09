@@ -77,6 +77,7 @@ object Kotlin {
 		val error = scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)
 		if (error) return null
 		val state = KotlinToJVMBytecodeCompiler.compileScript(scriptEnvironment, javaClass.classLoader)
+		println(state?.javaClass)
 		return state
 	}
 

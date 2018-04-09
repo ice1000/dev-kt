@@ -37,26 +37,18 @@ class ShortCut {
 	}
 
 	companion object {
-		/**
-		 * FIXME @HoshinoTented replace with "keyCode|modifier"
-		 */
 		fun parse(str: String): ShortCut? {
-			str.trim('(', ')').split(", ").run {
-				val isControl = getOrNull(0) == "true"
-				val isAlt = getOrNull(1) == "true"
-				val isShift = getOrNull(2) == "true"
-				val keyCode = getOrNull(3)?.toInt() ?: return null
-				return ShortCut(isControl, isAlt, isShift, keyCode)
+			str.split("|").run {
+				val keyCode = firstOrNull()?.toIntOrNull() ?: return null
+				val modifier = getOrNull(1)?.toIntOrNull() ?: return null
+				return ShortCut(modifier, keyCode)
 			}
 		}
 	}
 
 	fun check(e: KeyEvent) = e.modifiers == modifier
 
-	/**
-	 * FIXME @HoshinoTented replace with "keyCode|modifier"
-	 */
-	override fun toString(): String = "($isControl, $isAlt, $isShift, $keyCode)"
+	override fun toString(): String = "$keyCode|$modifier"
 }
 
 /**
