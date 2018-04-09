@@ -169,6 +169,7 @@ java.sourceSets {
 	"test" {
 		java.setSrcDirs(listOf("test"))
 		kotlin.setSrcDirs(listOf("test"))
+		resources.setSrcDirs(listOf("testRes"))
 	}
 }
 
@@ -190,5 +191,5 @@ dependencies {
 	testCompile("junit", "junit", "4.12")
 	testCompile(kotlin("test-junit", kotlinVersion))
 	testCompile(kotlin("stdlib-jdk8", kotlinVersion))
-	configurations.testCompileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
+	configurations.runtime.extendsFrom(configurations.testCompileOnly)
 }

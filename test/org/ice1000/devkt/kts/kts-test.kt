@@ -9,35 +9,44 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import org.junit.Assert
 import java.io.File
+import kotlin.script.templates.ScriptTemplateDefinition
+
+@ScriptTemplateDefinition
+open class AbstractScriptTemplate(val args: Array<String>)
+
+@ScriptTemplateDefinition
+open class ScriptTemplate(args: Array<String>) : AbstractScriptTemplate(args)
 
 class ScriptTest : KtUsefulTestCase() {
 	fun testStandardScriptWithParams() {
-		val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
-		Assert.assertNotNull(aClass)
-		val out = captureOut {
-			val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
-			Assert.assertNotNull(anObj)
-		}
-		assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
+//		val aClass = compileScript("die_home_guy_so_disgusting.kts", StandardScriptDefinition)
+//		Assert.assertNotNull(aClass)
+//		val out = captureOut {
+//			val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
+//			Assert.assertNotNull(anObj)
+//		}
+//		assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
 	}
 
 	fun testStandardScriptWithoutParams() {
-		val aClass = compileScript("fib_std.kts", StandardScriptDefinition)
-		Assert.assertNotNull(aClass)
+		val aClass = compileScript("die_home_guy_so_disgusting.kts",
+				KotlinScriptDefinition(ScriptTemplate::class))!!
 		val out = captureOut {
-			val anObj = tryConstructClassFromStringArgs(aClass!!, emptyList())
+			val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
 			Assert.assertNotNull(anObj)
 		}
-		assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out)
+		assertEqualsTrimmed("我永远喜欢灵乌路空", out)
 	}
 
 	fun testUseCompilerInternals() {
-		val scriptClass = compileScript("use_compiler_internals.kts", StandardScriptDefinition)!!
+		val scriptClass = compileScript("use_compiler_internals.kts",
+				KotlinScriptDefinition(ScriptTemplate::class), false)!!
 		assertEquals("OK", captureOut {
-			tryConstructClassFromStringArgs(scriptClass, emptyList())!!
+			tryConstructClassFromStringArgs(scriptClass, emptyList())
 		})
 	}
 
@@ -51,34 +60,26 @@ class ScriptTest : KtUsefulTestCase() {
 		val messageCollector =
 				if (suppressOutput) MessageCollector.NONE
 				else PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
-
 		val rootDisposable = Disposer.newDisposable()
 		try {
 			val configuration = newConfiguration()
 			configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-			configuration.addKotlinSourceRoot("compiler/testData/script/$scriptPath")
+			configuration.addKotlinSourceRoot("testRes/script/$scriptPath")
 			configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, scriptDefinition)
 			configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-			if (saveClassesDir != null) {
-				configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
-			}
-
+			if (saveClassesDir != null) configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, saveClassesDir)
 			val environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-
-			try {
-				return KotlinToJVMBytecodeCompiler.compileScript(environment, this::class.java.classLoader.takeUnless { runIsolated })
-			}
-			catch (e: CompilationException) {
+			return try {
+				KotlinToJVMBytecodeCompiler.compileScript(environment, javaClass.classLoader.takeUnless { runIsolated })
+			} catch (e: CompilationException) {
 				messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
 						MessageUtil.psiElementToMessageLocation(e.element))
-				return null
-			}
-			catch (t: Throwable) {
+				null
+			} catch (t: Throwable) {
 				MessageCollectorUtil.reportException(messageCollector, t)
 				throw t
 			}
-		}
-		finally {
+		} finally {
 			Disposer.dispose(rootDisposable)
 		}
 	}

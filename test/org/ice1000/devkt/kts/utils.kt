@@ -30,7 +30,7 @@ fun newConfiguration(): CompilerConfiguration {
 		configuration.languageVersionSettings = CompilerTestLanguageVersionSettings(emptyMap(),
 				LanguageVersionSettingsImpl.DEFAULT.apiVersion,
 				LanguageVersionSettingsImpl.DEFAULT.languageVersion,
-				emptyMap<AnalysisFlag<*>, Any>())
+				emptyMap())
 	}
 
 	configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, object : MessageCollector {

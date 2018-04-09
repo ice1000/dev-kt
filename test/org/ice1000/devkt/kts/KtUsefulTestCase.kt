@@ -24,7 +24,6 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class KtUsefulTestCase : TestCase() {
-	private lateinit var application: Application
 	private val myTestRootDisposable = TestDisposable()
 	private lateinit var myTempDir: String
 	private var oldDisposerDebug: Boolean = false
@@ -41,10 +40,7 @@ abstract class KtUsefulTestCase : TestCase() {
 
 	@Throws(Exception::class)
 	override fun setUp() {
-		application = ApplicationManager.getApplication()
-
 		super.setUp()
-
 		var testName = FileUtil.sanitizeFileName(name)
 		if (StringUtil.isEmptyOrSpaces(testName)) testName = ""
 		testName = File(testName).name // in case the test name contains file separators
@@ -70,8 +66,6 @@ abstract class KtUsefulTestCase : TestCase() {
 
 		UIUtil.removeLeakingAppleListeners()
 		super.tearDown()
-
-		resetApplicationToNull(application)
 	}
 
 	@Throws(Throwable::class)
