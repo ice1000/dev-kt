@@ -159,6 +159,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			item("Classes") {
 				icon = AllIcons.CLASS
 				onAction { buildClassAndRun() }
+				keyMap(GlobalSettings.shortcutBuildRunAsClass)
 			}
 		}
 		subMenu("Run As") {

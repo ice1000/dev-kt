@@ -249,8 +249,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
 			}
 			SystemInfo.isMac -> {
-				val lajiJava = "/usr/bin/$java"
-				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$lajiJava\"")
+				val trashJava = "/usr/bin/${java.replaceFirst(" devkt.", " ")}"// Why Kotlin has no String.replaceLast
+				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$trashJava\"")
 			}
 			SystemInfo.isWindows -> {
 				ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", java)

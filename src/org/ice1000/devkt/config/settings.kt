@@ -15,15 +15,20 @@ class ShortCut {
 	val isAlt: Boolean
 	val isShift: Boolean
 	val keyCode: Int
+	var forceControl: Boolean = false
 
 	val modifier: Int
 
-	constructor(isControl: Boolean, isAlt: Boolean, isShift: Boolean, keyCode: Int) {
+	/**
+	 * @param forceControl
+	 */
+	constructor(isControl: Boolean, isAlt: Boolean, isShift: Boolean, keyCode: Int, forceControl: Boolean = false) {
 		this.isControl = isControl
 		this.isAlt = isAlt
 		this.isShift = isShift
 		this.keyCode = keyCode
-		this.modifier = (if (isControl) ctrlOrMeta else 0) or
+		this.forceControl = forceControl
+		this.modifier = (if (forceControl) KeyEvent.CTRL_DOWN_MASK else ctrlOrMeta) or
 				(if (isAlt) KeyEvent.ALT_DOWN_MASK else 0) or
 				(if (isShift) KeyEvent.SHIFT_DOWN_MASK else 0)
 	}
@@ -46,7 +51,8 @@ class ShortCut {
 				val isAlt = getOrNull(1) == "true"
 				val isShift = getOrNull(2) == "true"
 				val keyCode = getOrNull(3)?.toInt() ?: return null
-				return ShortCut(isControl, isAlt, isShift, keyCode)
+				val forceControl = getOrNull(4) == "true"
+				return ShortCut(isControl, isAlt, isShift, keyCode, forceControl)
 			}
 		}
 	}
@@ -56,7 +62,7 @@ class ShortCut {
 	/**
 	 * FIXME @HoshinoTented replace with "keyCode|modifier"
 	 */
-	override fun toString(): String = "($isControl, $isAlt, $isShift, $keyCode)"
+	override fun toString(): String = "($isControl, $isAlt, $isShift, $keyCode, $forceControl)"
 }
 
 /**
@@ -114,6 +120,8 @@ object GlobalSettings {
 	var shortcutSync = ShortCut(true, true, false, KeyEvent.VK_Y)
 	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
 	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
+
+	var shortcutBuildRunAsClass = ShortCut(true, false, false, KeyEvent.VK_R, true)
 
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
