@@ -32,23 +32,23 @@ class ScriptTest : KtUsefulTestCase() {
 //		assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
 	}
 
-//	fun testStandardScriptWithoutParams() {
-//		val aClass = compileScript("die_home_guy_so_disgusting.kts",
-//				KotlinScriptDefinition(ScriptTemplate::class))!!
-//		val out = captureOut {
-//			val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
-//			Assert.assertNotNull(anObj)
-//		}
-//		assertEqualsTrimmed("我永远喜欢灵乌路空", out)
-//	}
-//
-//	fun testUseCompilerInternals() {
-//		val scriptClass = compileScript("use_compiler_internals.kts",
-//				KotlinScriptDefinition(ScriptTemplate::class), false)!!
-//		assertEquals("OK", captureOut {
-//			tryConstructClassFromStringArgs(scriptClass, emptyList())
-//		})
-//	}
+	fun testStandardScriptWithoutParams() {
+		val aClass = compileScript("die_home_guy_so_disgusting.kts",
+				KotlinScriptDefinition(ScriptTemplate::class))!!
+		val out = captureOut {
+			val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+			Assert.assertNotNull(anObj)
+		}
+		assertEqualsTrimmed("我永远喜欢灵乌路空", out)
+	}
+
+	fun testUseCompilerInternals() {
+		val scriptClass = compileScript("use_compiler_internals.kts",
+				KotlinScriptDefinition(ScriptTemplate::class), false)!!
+		assertEquals("OK", captureOut {
+			tryConstructClassFromStringArgs(scriptClass, emptyList())
+		})
+	}
 
 	private fun compileScript(
 			scriptPath: String,
