@@ -166,7 +166,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = AllIcons.EXECUTE
 			item("Kotlin Script") {
 				icon = AllIcons.KOTLIN_FILE
-				onAction { runScript() }
+				onAction { frame.TODO() }
 			}
 		}
 	}
