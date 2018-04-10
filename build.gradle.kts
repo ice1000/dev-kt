@@ -67,16 +67,12 @@ intellij {
 	} else {
 		if (isCI) return@intellij
 		try {
-			val installed = JOptionPane.showConfirmDialog(null, "Have you installed IntelliJ IDEA?")
-			if (installed == JOptionPane.YES_OPTION) JFileChooser().apply {
-				dialogTitle = "Select IntelliJ IDEA installation path"
-				showOpenDialog(null)
-				fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-				isAcceptAllFileFilterUsed = false
-			}.currentDirectory?.takeIf { it.isDirectory }?.let {
-				localPath = it.absolutePath
-				file("gradle.properties").writeText("ideaC_path=${it.absolutePath}")
-			} ?: run { version = "2018.1" }
+			println("Please specify your IntelliJ IDEA installation path:")
+			val line = readLine()?.trim()
+			if (null != line && Files.exists(Paths.get(line))) {
+				localPath = line
+				file("gradle.properties").writeText("ideaC_path=$line")
+			} else version = "2018.1"
 		} catch (e: HeadlessException) {
 			e.printStackTrace()
 			version = "2018.1"
