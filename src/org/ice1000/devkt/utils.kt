@@ -1,8 +1,6 @@
 package org.ice1000.devkt
 
 import org.ice1000.devkt.config.ShortCut
-import org.ice1000.devkt.lie.ctrlOrMeta
-import java.awt.MenuShortcut
 import java.awt.event.KeyEvent
 import javax.swing.JMenuItem
 import javax.swing.KeyStroke
