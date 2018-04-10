@@ -78,7 +78,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				normalized in paired -> Quad(offs, normalized + paired[normalized], a, -1)
 				normalized in paired.values -> {
 					val another = paired.keys.first { paired[it] == normalized }
-					if (offs != 0 && editor.document.getText(offs - 1, 1) == another) {
+					if (offs != 0
+							&& editor.document.getText(offs - 1, 1) == another
+							&& editor.document.getText(offs, 1) == normalized) {
 						Quad(offs, "", a, 1)
 					} else Quad(offs, normalized, a, 0)
 				}
