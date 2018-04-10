@@ -128,6 +128,14 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { nextLine() }
 			keyMap(GlobalSettings.shortcutNextLine)
 		}
+		item("Split Line") {
+			onAction { splitLine() }
+			keyMap(GlobalSettings.shortcutSplitLine)
+		}
+		item("New Line Before Current") {
+			onAction { newLineBeforeCurrent() }
+			keyMap(GlobalSettings.shortcutNewLineBeforeCurrent)
+		}
 		item("Go to Line") {
 			keyMap(GlobalSettings.shortcutGoto)
 			onAction { gotoLine() }

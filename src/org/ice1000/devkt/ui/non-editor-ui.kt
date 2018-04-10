@@ -305,7 +305,7 @@ fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
 fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
 	val root = document.defaultRootElement
 	val line = root.getElementIndex(pos)
-	val column = pos - root.getElement(line - 1).startOffset
+	val column = pos - root.getElement(line).startOffset
 	return line + 1 to column + 1
 }
 
