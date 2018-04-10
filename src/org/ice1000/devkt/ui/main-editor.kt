@@ -70,12 +70,20 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		override val text: String get() = selfMaintainedString.toString()
 
-		//TODO 按下 `(` 后输入 `)` 会变成 `())`
+		//FIXME 输入两个 `"` 仍然会变成 `""""`
 		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
 			val normalized = str.filterNot { it == '\r' }
 			val (offset, string, attr, move) = when {
 				normalized.length > 1 -> Quad(offs, normalized, a, 0)
 				normalized in paired -> Quad(offs, normalized + paired[normalized], a, -1)
+				normalized in paired.values -> {
+					val another = paired.keys.first { paired[it] == normalized }
+					if (offs != 0
+							&& editor.document.getText(offs - 1, 1) == another
+							&& editor.document.getText(offs, 1) == normalized) {
+						Quad(offs, "", a, 1)
+					} else Quad(offs, normalized, a, 0)
+				}
 				else -> Quad(offs, normalized, a, 0)
 			}
 
