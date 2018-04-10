@@ -31,7 +31,11 @@ private const val MEGABYTE = 1024 * 1024
 abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	init {
 		frame.jMenuBar = menuBar
-		scrollPane.viewport.isOpaque = false
+		with(scrollPane) {
+			viewport.isOpaque = false
+			verticalScrollBar.unitIncrement = 16
+		}
+
 		memoryIndicator.addMouseListener(object : MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent?) {
 				System.gc()
