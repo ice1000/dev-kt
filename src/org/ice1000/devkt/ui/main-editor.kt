@@ -79,8 +79,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				normalized in paired.values -> {
 					val another = paired.keys.first { paired[it] == normalized }
 					if (offs != 0
-							&& editor.document.getText(offs - 1, 1) == another
-							&& editor.document.getText(offs, 1) == normalized) {
+							&& getText(offs - 1, 1) == another
+							&& getText(offs, 1) == normalized) {
 						Quad(offs, "", a, 1)
 					} else Quad(offs, normalized, a, 0)
 				}
@@ -283,7 +283,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
 		GlobalSettings.recentFiles.add(file)
-		file.writeText(document.text)
+		file.writeText(editor.text) // here, it is better to use `editor.text` instead of `document.text`
 		message("Saved to ${file.absolutePath}")
 		edited = false
 	}
@@ -352,7 +352,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	override fun updateShowInFilesMenuItem() {
 		val currentFileNotNull = currentFile != null
 		showInFilesMenuItem.isEnabled = currentFileNotNull
-		saveMenuItem.isEnabled = currentFileNotNull
+		// saveMenuItem.isEnabled = currentFileNotNull
 	}
 
 	fun undo() {

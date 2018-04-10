@@ -249,7 +249,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	fun runCommand(file: File) {
 		val ktFile = ktFile()
 		val className = ktFile.packageFqName.asString().let {
-			if (it.isEmpty()) GlobalSettings.javaClassName else "$it.${GlobalSettings.javaClassName}Kt"
+			if (it.isEmpty()) "${GlobalSettings.javaClassName}Kt" else "$it.${GlobalSettings.javaClassName}Kt"
 		}
 		val java = "java -cp ${file.absolutePath}${File.pathSeparatorChar}$selfLocation $className"
 		val processBuilder = when {
