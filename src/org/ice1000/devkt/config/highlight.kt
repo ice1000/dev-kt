@@ -3,11 +3,14 @@
 package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`
-import sun.font.FontDesignMetrics
 import java.awt.Color
+import java.awt.GraphicsEnvironment
+import java.awt.font.FontRenderContext
 import javax.swing.text.*
 
-class ColorScheme(settings: GlobalSettings, context: AbstractDocument.AttributeContext = StyleContext.getDefaultStyleContext()) {
+class ColorScheme(
+		settings: GlobalSettings,
+		context: AbstractDocument.AttributeContext = StyleContext.getDefaultStyleContext()) {
 	val keywords = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorKeywords))
 	val string = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorString))
 	val templateEntries = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorTemplateEntries))
@@ -33,12 +36,19 @@ class ColorScheme(settings: GlobalSettings, context: AbstractDocument.AttributeC
 	val tabSize = createTabSizeAttributes(settings.tabSize)
 }
 
+private fun createFrc() = FontRenderContext(GraphicsEnvironment
+		.getLocalGraphicsEnvironment()
+		.defaultScreenDevice
+		.defaultConfiguration
+		.defaultTransform
+		, false, false)
+
 /**
  * See https://stackoverflow.com/a/33557782/7083401
  * Modified a little
  */
 fun createTabSizeAttributes(tabSize: Int): SimpleAttributeSet {
-	val spaceSize = FontDesignMetrics.getMetrics(`{-# LANGUAGE SarasaGothicFont #-}`.monoFont).charWidth(' ')
+	val spaceSize = `{-# LANGUAGE SarasaGothicFont #-}`.monoFont.getStringBounds(" ", createFrc()).width
 	val tabWidth = spaceSize * tabSize
 	val tabs = (1..300).map { TabStop((it * tabWidth).toFloat()) }
 	val tabSet = TabSet(tabs.toTypedArray())
