@@ -24,7 +24,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginShortVersion = "v1.0"
+val pluginShortVersion = "v1.1"
 val packageName = "org.ice1000.devkt"
 val kotlinVersion: String by extra
 val pluginCalculatedVersion = if (isCI) "$pluginShortVersion-$commitHash" else pluginShortVersion
