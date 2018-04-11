@@ -67,12 +67,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		override val text: String get() = selfMaintainedString.toString()
 
-		//FIXME 输入两个 `"` 仍然会变成 `""""`
 		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
 			val normalized = str.filterNot { it == '\r' }
 			val (offset, string, attr, move) = when {
 				normalized.length > 1 -> Quad(offs, normalized, a, 0)
-				normalized in paired -> Quad(offs, normalized + paired[normalized], a, -1)
 				normalized in paired.values -> {
 					val another = paired.keys.first { paired[it] == normalized }
 					if (offs != 0
@@ -81,6 +79,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 						Quad(offs, "", a, 1)
 					} else Quad(offs, normalized, a, 0)
 				}
+				normalized in paired -> Quad(offs, normalized + paired[normalized], a, -1)
 				else -> Quad(offs, normalized, a, 0)
 			}
 
@@ -108,14 +107,14 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 
 		private fun lex() {
-			val tokens = Analyzer.lex(selfMaintainedString.toString())
+			val tokens = Analyzer.lex(text)
 			for ((start, end, _, type) in tokens)
 				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
 		private fun parse() {
 			SyntaxTraverser
-					.psiTraverser(Analyzer.parseKotlin(selfMaintainedString.toString()).also { ktFileCache = it })
+					.psiTraverser(Analyzer.parseKotlin(text).also { ktFileCache = it })
 					.forEach { psi ->
 						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 					}
