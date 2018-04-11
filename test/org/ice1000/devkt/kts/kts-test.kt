@@ -1,6 +1,6 @@
 package org.ice1000.devkt.kts
 
-import org.ice1000.devkt.Kotlin
+import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
-import org.junit.Assert
 import java.io.File
 import kotlin.script.templates.ScriptTemplateDefinition
 
@@ -88,7 +86,7 @@ class ScriptTest : KtUsefulTestCase() {
 fun main(args: Array<String>) {
 	val file = File("res/template/script.kts")
 	GlobalSettings.load()
-	Kotlin.compileScript(file)
+	Analyzer.compileScript(file)
 }
 
 

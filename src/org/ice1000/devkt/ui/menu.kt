@@ -33,7 +33,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 				icon = AllIcons.KOTLIN_ANDROID
 				onAction { createNewFile("activity.kt") }
 			}
-			item("Kotlin Gradle File") {
+			item("Analyzer Gradle File") {
 				icon = AllIcons.GRADLE
 				onAction { createNewFile("build.gradle.kts") }
 			}
@@ -172,7 +172,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		subMenu("Run As") {
 			icon = AllIcons.EXECUTE
-			item("Kotlin Script") {
+			item("Analyzer Script") {
 				icon = AllIcons.KOTLIN_FILE
 				onAction { frame.TODO() }
 			}

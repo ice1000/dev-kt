@@ -1,5 +1,5 @@
 /**
- * Copied from the tests in Kotlin compiler
+ * Copied from the tests in Analyzer compiler
  * @author ice1000
  */
 package org.ice1000.devkt

@@ -24,10 +24,10 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val pluginShortVersion = "v1.1"
+val shortVersion = "v1.2-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
 val kotlinVersion: String by extra
-val pluginCalculatedVersion = if (isCI) "$pluginShortVersion-$commitHash" else pluginShortVersion
+val pluginCalculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
 
 group = packageName
 version = pluginCalculatedVersion
@@ -56,7 +56,7 @@ plugins {
 
 application {
 	if (SystemInfo.isMac)
-		applicationDefaultJvmArgs = arrayListOf("-Xdock:name=Dev-Kt")
+		applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
 	mainClassName = "org.ice1000.devkt.Main"
 }
 
@@ -111,6 +111,7 @@ idea {
 		excludeDirs = excludeDirs +
 				file("pinpoint_piggy") +
 				file("build-cache") +
+				file(".build-cache") +
 				Paths.get("res", "template").toFile()
 	}
 }

@@ -5,8 +5,9 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
+import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.*
@@ -31,8 +32,8 @@ data class ASTToken(
  * @author ice1000
  * @since v0.0.1
  */
-object Kotlin {
-	val targetDir = File("./build-cache")
+object Analyzer {
+	val targetDir = File("./.build-cache")
 	val targetJar get() = targetDir.resolve(GlobalSettings.jarName)
 	private val jvmEnvironment: KotlinCoreEnvironment
 	private val jsEnvironment: KotlinCoreEnvironment
@@ -58,8 +59,11 @@ object Kotlin {
 		lexer = parserDef.createLexer(project) as KotlinLexer
 	}
 
-	fun parse(text: String) = psiFileFactory
+	fun parseKotlin(text: String) = psiFileFactory
 			.createFileFromText(GlobalSettings.javaClassName, KotlinLanguage.INSTANCE, text) as KtFile
+
+	fun parseJava(text: String) = psiFileFactory
+			.createFileFromText(GlobalSettings.javaClassName, JavaLanguage.INSTANCE, text) as PsiJavaFile
 
 	fun compileJvm(ktFile: KtFile) {
 		ensureTargetDirExists()

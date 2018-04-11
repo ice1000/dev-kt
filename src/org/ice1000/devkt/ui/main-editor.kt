@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import java.awt.Font
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.JMenuItem
@@ -113,14 +111,14 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 
 		private fun lex() {
-			val tokens = Kotlin.lex(text)
+			val tokens = Analyzer.lex(text)
 			for ((start, end, _, type) in tokens)
 				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
 		private fun parse() {
 			SyntaxTraverser
-					.psiTraverser(Kotlin.parse(text).also { ktFileCache = it })
+					.psiTraverser(Analyzer.parseKotlin(text).also { ktFileCache = it })
 					.forEach { psi ->
 						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 					}
@@ -336,17 +334,17 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		editor.caretPosition = startOfLineIndex + 1
 	}
 
-	override fun ktFile() = ktFileCache ?: Kotlin.parse(document.text)
+	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(document.text)
 
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
 
 	fun buildClassAndRun() {
-		buildAsClasses { if (it) runCommand(Kotlin.targetDir) }
+		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
 	}
 
 	fun buildJarAndRun() {
-		buildAsJar { if (it) runCommand(Kotlin.targetJar) }
+		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
 	}
 
 	override fun updateShowInFilesMenuItem() {

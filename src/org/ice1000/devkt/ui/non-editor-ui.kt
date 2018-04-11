@@ -2,7 +2,7 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
 import com.bulenkov.iconloader.util.SystemInfo
-import org.ice1000.devkt.Kotlin
+import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.psi.PsiViewerImpl
@@ -90,7 +90,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	fun open() {
 		JFileChooser(currentFile?.parentFile).apply {
-			// dialogTitle = "Choose a Kotlin file"
+			// dialogTitle = "Choose a Analyzer file"
 			fileFilter = kotlinFileFilter
 			showOpenDialog(mainPanel)
 			fileSelectionMode = JFileChooser.FILES_ONLY
@@ -163,7 +163,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		val start = System.currentTimeMillis()
 		try {
 			message("Build started…")
-			Kotlin.compileJar(ktFile())
+			Analyzer.compileJar(ktFile())
 			SwingUtilities.invokeLater {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
@@ -186,7 +186,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		val start = System.currentTimeMillis()
 		try {
 			message("Build started…")
-			Kotlin.compileJs(ktFile())
+			Analyzer.compileJs(ktFile())
 			SwingUtilities.invokeLater {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
@@ -209,7 +209,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		val start = System.currentTimeMillis()
 		try {
 			message("Build started…")
-			Kotlin.compileJvm(ktFile())
+			Analyzer.compileJvm(ktFile())
 			SwingUtilities.invokeLater {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
@@ -257,7 +257,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
 			}
 			SystemInfo.isMac -> {
-				val trashJava = "/usr/bin/${java.replaceFirst(" devkt.", " ")}"// Why Kotlin has no String.replaceLast
+				val trashJava = "/usr/bin/${java.replaceFirst(" devkt.", " ")}"// Why Analyzer has no String.replaceLast
 				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$trashJava\"")
 			}
 			SystemInfo.isWindows -> {
@@ -275,7 +275,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	// TODO 错误处理
 	fun runScript() {
 		val currentFile = currentFile ?: return
-		val `class` = currentFile.let(Kotlin::compileScript) ?: return
+		val `class` = currentFile.let(Analyzer::compileScript) ?: return
 		tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
 	}
 }

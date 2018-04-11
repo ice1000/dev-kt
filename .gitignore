@@ -7,4 +7,5 @@ pinpoint_piggy
 res/font/*.ttf
 config.properties
 build-cache
+.build-cache
 gradle.properties
