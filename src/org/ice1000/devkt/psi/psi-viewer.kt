@@ -2,9 +2,7 @@ package org.ice1000.devkt.psi
 
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.PsiViewer
-import org.jetbrains.kotlin.com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.com.intellij.psi.*
 import java.awt.Window
 import javax.swing.JTree
 import javax.swing.tree.*
@@ -14,7 +12,7 @@ typealias UINode = DefaultMutableTreeNode
 /**
  * @author ice1000
  */
-class PsiViewerImpl(file: KtFile, owner: Window? = null) : PsiViewer(owner) {
+class PsiViewerImpl(file: PsiFile, owner: Window? = null) : PsiViewer(owner) {
 	init {
 		contentPane = mainPanel
 		if (owner != null) setLocationRelativeTo(owner)
@@ -24,6 +22,7 @@ class PsiViewerImpl(file: KtFile, owner: Window? = null) : PsiViewer(owner) {
 		val tree = JTree(mapAst2Display(file))
 		pane.setViewportView(tree)
 		expandAll.addActionListener { expandAll(tree, true) }
+		collapseAll.addActionListener { expandAll(tree, false) }
 		buttonClose.addActionListener { dispose() }
 		pack()
 	}

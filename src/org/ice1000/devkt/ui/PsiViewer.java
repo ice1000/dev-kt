@@ -15,6 +15,7 @@ public abstract class PsiViewer extends JDialog {
 	protected JButton buttonClose;
 	protected JScrollPane pane;
 	protected JButton expandAll;
+	protected JButton collapseAll;
 
 	public PsiViewer(@Nullable Window owner) {
 		super(owner);
