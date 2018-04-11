@@ -26,24 +26,11 @@ val isCI = !System.getenv("CI").isNullOrBlank()
 
 val shortVersion = "v1.2-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
-val kotlinVersion: String by extra
+val kotlinVersion = "1.2.31"
 val pluginCalculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
 
 group = packageName
 version = pluginCalculatedVersion
-
-buildscript {
-	var kotlinVersion: String by extra
-	kotlinVersion = "1.2.31"
-
-	repositories {
-		mavenCentral()
-	}
-
-	dependencies {
-		classpath(kotlin("gradle-plugin", kotlinVersion))
-	}
-}
 
 plugins {
 	idea
@@ -78,11 +65,6 @@ intellij {
 			version = "2018.1"
 		}
 	}
-}
-
-apply {
-	plugin("kotlin")
-	plugin("de.undercouch.download")
 }
 
 val disabledTasks = listOf("assembleDist",
