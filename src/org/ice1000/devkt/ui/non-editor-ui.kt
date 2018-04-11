@@ -285,7 +285,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
  */
 interface AnnotationHolder {
 	val text: String
-	val len: Int
+	fun getLength(): Int
 	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
 
 	fun highlight(range: TextRange, attributeSet: AttributeSet) =
@@ -296,21 +296,6 @@ interface AnnotationHolder {
 
 	fun highlight(element: PsiElement, attributeSet: AttributeSet) =
 			highlight(element.textRange, attributeSet)
-
-	fun adjustFormat(offs: Int = 0, length: Int = len - offs)
-}
-
-//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
-fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
-	val lineStart = document.defaultRootElement.getElement(line - 1).startOffset
-	return lineStart + column - 1
-}
-
-fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
-	val root = document.defaultRootElement
-	val line = root.getElementIndex(pos)
-	val column = pos - root.getElement(line).startOffset
-	return line + 1 to column + 1
 }
 
 class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLine() {

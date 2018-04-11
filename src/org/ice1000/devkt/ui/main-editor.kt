@@ -41,11 +41,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val document: KtDocument
 	private var selfMaintainedString = StringBuilder()
 
-	private inner class KtDocument : DefaultStyledDocument(), AnnotationHolder {
-		private val highlightCache = ArrayList<AttributeSet?>(5000)
+	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument {
 		private val colorScheme = ColorScheme(GlobalSettings, attributeContext)
 		private val annotator = KotlinAnnotator()
-		override val len: Int get() = length
+		private val highlightCache = ArrayList<AttributeSet?>(5000)
 
 		init {
 			addUndoableEditListener {
@@ -92,8 +91,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			adjustFormat(offset, string.length)
 		}
 
-		fun clear() = remove(0, len)
-
 		override fun remove(offs: Int, len: Int) {
 			val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
 			val (offset, length) = when {
@@ -111,20 +108,20 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 
 		private fun lex() {
-			val tokens = Analyzer.lex(text)
+			val tokens = Analyzer.lex(selfMaintainedString.toString())
 			for ((start, end, _, type) in tokens)
 				attributesOf(type)?.let { highlight(start, end, it) }
 		}
 
 		private fun parse() {
 			SyntaxTraverser
-					.psiTraverser(Analyzer.parseKotlin(text).also { ktFileCache = it })
+					.psiTraverser(Analyzer.parseKotlin(selfMaintainedString.toString()).also { ktFileCache = it })
 					.forEach { psi ->
 						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
 					}
 		}
 
-		fun reparse() {
+		override fun reparse() {
 			while (highlightCache.size <= length) highlightCache.add(null)
 			// val time = System.currentTimeMillis()
 			if (GlobalSettings.highlightTokenBased) lex()
@@ -352,7 +349,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
 		val text = document.text                //编辑器内容
-		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.len
+		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
 		document.insertString(endOfLineIndex, "\n", null)
 		editor.caretPosition = endOfLineIndex + 1
 	}
