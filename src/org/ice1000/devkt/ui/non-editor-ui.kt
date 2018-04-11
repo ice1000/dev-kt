@@ -5,7 +5,7 @@ import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.psi.PsiViewerImpl
+import org.ice1000.devkt.lang.PsiViewerImpl
 import org.ice1000.devkt.selfLocation
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange

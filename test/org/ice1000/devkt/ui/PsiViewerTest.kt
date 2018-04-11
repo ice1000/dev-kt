@@ -2,7 +2,7 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
 import org.ice1000.devkt.Analyzer
-import org.ice1000.devkt.psi.PsiViewerImpl
+import org.ice1000.devkt.lang.PsiViewerImpl
 import org.junit.Assert.assertFalse
 import java.io.IOException
 import java.nio.file.Files

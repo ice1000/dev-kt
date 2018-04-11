@@ -6,7 +6,7 @@ import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.psi.KotlinAnnotator
+import org.ice1000.devkt.lang.KotlinAnnotator
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType

@@ -1,4 +1,4 @@
-package org.ice1000.devkt.psi
+package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.ui.AnnotationHolder
@@ -14,13 +14,30 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
  * @see com.intellij.lang.annotation.Annotator
  * TODO move to daemon instead of running in ui thread
  */
-class KotlinAnnotator {
+interface Annotator {
 	/**
 	 * @param element the [PsiElement] to be highlighted
 	 * @param document similar to [com.intellij.lang.annotation.AnnotationHolder]
 	 * @param colorScheme current color scheme, initialized in [org.ice1000.devkt.config.GlobalSettings]
 	 */
-	fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme) {
+	fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme)
+}
+
+/**
+ * @author ice1000
+ * @since v1.1
+ */
+class JavaAnnotator : Annotator {
+	override fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme) {
+	}
+}
+
+/**
+ * @author ice1000
+ * @since v0.0.1
+ */
+class KotlinAnnotator : Annotator {
+	override fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme) {
 		if (element.nodeType in KtTokens.SOFT_KEYWORDS) {
 			document.highlight(element, colorScheme.keywords)
 			return
@@ -72,3 +89,5 @@ class KotlinAnnotator {
 		document.highlight(start, end, colorScheme.annotations)
 	}
 }
+
+

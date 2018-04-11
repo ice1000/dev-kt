@@ -187,7 +187,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	menuBar.subMenu("Help") {
 		mnemonic = KeyEvent.VK_H
 		item("View Psi...") {
-			icon = DevKtIcons.KOTLIN
+			icon = DevKtIcons.DUMP
 			onAction { viewPsi() }
 		}
 		subMenu("Alternatives") {
