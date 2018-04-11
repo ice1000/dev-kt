@@ -28,6 +28,11 @@ class ShortCut {
 				(if (isShift) KeyEvent.SHIFT_DOWN_MASK else 0)
 	}
 
+	/**
+	 * @param modifier Int
+	 * @param keyCode Int
+	 * @constructor use this constructor to prevent `ctrl` being transformed into `meta` in Mac
+	 */
 	constructor(modifier: Int, keyCode: Int) {
 		this.modifier = modifier
 		this.keyCode = keyCode
@@ -106,7 +111,8 @@ object GlobalSettings {
 	var shortcutSync = ShortCut(true, true, false, KeyEvent.VK_Y)
 	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
 	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
-	var shortcutBuildRunAsClass = ShortCut(true, false, false, KeyEvent.VK_R)
+	// Build | Run As | Class, force to use ctrl + R even though it is in Mac.
+	var shortcutBuildRunAsClass = ShortCut(KeyEvent.CTRL_DOWN_MASK, KeyEvent.VK_R)    // Mac
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBeforeCurrent = ShortCut(true, true, false, KeyEvent.VK_ENTER)
