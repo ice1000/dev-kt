@@ -269,23 +269,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 	}
 
-	fun gotoLine() {
-		GoToLineDialog(this@UIImpl, editor).show
-	}
-
-	fun save() {
-		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
-			showSaveDialog(mainPanel)
-			fileSelectionMode = JFileChooser.FILES_ONLY
-		}.selectedFile ?: return
-		currentFile = file
-		if (!file.exists()) file.createNewFile()
-		GlobalSettings.recentFiles.add(file)
-		file.writeText(editor.text) // here, it is better to use `editor.text` instead of `document.text`
-		message("Saved to ${file.absolutePath}")
-		edited = false
-	}
-
 	fun createNewFile(templateName: String) {
 		if (!makeSureLeaveCurrentFile()) {
 			currentFile = null
@@ -311,48 +294,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		updateShowInFilesMenuItem()
 	}
 
-	//这三个方法应该可以合并成一个方法吧
-	fun nextLine() {
-		val index = editor.caretPosition        //光标所在位置
-		val text = document.text                //编辑器内容
-		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.len
-		document.insertString(endOfLineIndex, "\n", null)
-		editor.caretPosition = endOfLineIndex + 1
-	}
-
-	fun splitLine() {
-		val index = editor.caretPosition        //光标所在位置
-		document.insertString(index, "\n", null)
-		editor.caretPosition = index
-	}
-
-	fun newLineBeforeCurrent() {
-		val index = editor.caretPosition
-		val text = document.text
-		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
-		document.insertString(startOfLineIndex, "\n", null)
-		editor.caretPosition = startOfLineIndex + 1
-	}
-
-	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(document.text)
-
-	override fun makeSureLeaveCurrentFile() =
-			edited && super.makeSureLeaveCurrentFile()
-
-	fun buildClassAndRun() {
-		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
-	}
-
-	fun buildJarAndRun() {
-		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
-	}
-
-	override fun updateShowInFilesMenuItem() {
-		val currentFileNotNull = currentFile != null
-		showInFilesMenuItem.isEnabled = currentFileNotNull
-		// saveMenuItem.isEnabled = currentFileNotNull
-	}
-
+	//Shortcuts ↓↓↓
 	fun undo() {
 		if (undoManager.canUndo()) {
 			message("Undo!")
@@ -389,6 +331,79 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		editor.paste()
 	}
 
+	fun gotoLine() {
+		GoToLineDialog(this@UIImpl, editor).show
+	}
+
+	fun save() {
+		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
+			showSaveDialog(mainPanel)
+			fileSelectionMode = JFileChooser.FILES_ONLY
+		}.selectedFile ?: return
+		currentFile = file
+		if (!file.exists()) file.createNewFile()
+		GlobalSettings.recentFiles.add(file)
+		file.writeText(editor.text) // here, it is better to use `editor.text` instead of `document.text`
+		message("Saved to ${file.absolutePath}")
+		edited = false
+	}
+
+	//这三个方法应该可以合并成一个方法吧
+	fun nextLine() {
+		val index = editor.caretPosition        //光标所在位置
+		val text = document.text                //编辑器内容
+		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.len
+		document.insertString(endOfLineIndex, "\n", null)
+		editor.caretPosition = endOfLineIndex + 1
+	}
+
+	fun splitLine() {
+		val index = editor.caretPosition        //光标所在位置
+		document.insertString(index, "\n", null)
+		editor.caretPosition = index
+	}
+
+	fun newLineBeforeCurrent() {
+		val index = editor.caretPosition
+		val text = document.text
+		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
+		document.insertString(startOfLineIndex, "\n", null)
+		editor.caretPosition = startOfLineIndex + 1
+	}
+
+	//TODO 暂时还不支持多行注释 QAQ
+	fun comment() {
+		val offs = editor.caretPosition
+		val root = editor.document.defaultRootElement
+		val lineCount = root.getElementIndex(offs)
+		val lineStart = root.getElement(lineCount).startOffset
+		val lineEnd = root.getElement(lineCount).endOffset
+		val currentLineText = editor.document.getText(lineStart, lineEnd - lineStart)
+		if (currentLineText.startsWith("//")) document.remove(lineStart, 2)
+		else document.insertString(lineStart, "//", null)
+	}
+
+	//Shortcuts ↑↑↑
+
+	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(document.text)
+
+	override fun makeSureLeaveCurrentFile() =
+			edited && super.makeSureLeaveCurrentFile()
+
+	fun buildClassAndRun() {
+		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
+	}
+
+	fun buildJarAndRun() {
+		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
+	}
+
+	override fun updateShowInFilesMenuItem() {
+		val currentFileNotNull = currentFile != null
+		showInFilesMenuItem.isEnabled = currentFileNotNull
+		// saveMenuItem.isEnabled = currentFileNotNull
+	}
+
 	/**
 	 * Just to reuse some codes in [reloadSettings] and [postInit]
 	 */
@@ -423,5 +438,4 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			editor.font = value
 		}
 		get() = editor.font
-
 }

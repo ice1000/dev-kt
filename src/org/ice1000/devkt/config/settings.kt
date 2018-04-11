@@ -116,6 +116,7 @@ object GlobalSettings {
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBeforeCurrent = ShortCut(true, true, false, KeyEvent.VK_ENTER)
+	var shortcutComment = ShortCut(true, false, false, KeyEvent.VK_SLASH)
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value

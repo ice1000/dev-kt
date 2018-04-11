@@ -140,6 +140,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			keyMap(GlobalSettings.shortcutGoto)
 			onAction { gotoLine() }
 		}
+		item("Add/Remove Comment") {
+			keyMap(GlobalSettings.shortcutComment)
+			onAction { comment() }
+		}
 	}
 	menuBar.subMenu("Build") {
 		mnemonic = KeyEvent.VK_B
