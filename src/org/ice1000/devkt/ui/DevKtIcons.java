@@ -11,7 +11,7 @@ import javax.swing.*;
  * @author ice1000
  * @since v0.0.1
  */
-public interface AllIcons {
+public interface DevKtIcons {
 	// Kotlin related
 	@NotNull Icon KOTLIN = IconLoader.getIcon("/icon/kotlin.png");
 	@NotNull Icon KOTLIN_JS = IconLoader.getIcon("/icon/kotlin_js.png");
@@ -36,6 +36,7 @@ public interface AllIcons {
 	@NotNull Icon SYNCHRONIZE = IconLoader.getIcon("/icon/synchronizeFS.png");
 	@NotNull Icon REFRESH = IconLoader.getIcon("/icon/refresh.png");
 	@NotNull Icon JAR = IconLoader.getIcon("/icon/archive.png");
+	@NotNull Icon SELECT_ALL = IconLoader.getIcon("/icon/selectall_dark.png");
 	@NotNull Icon GRADLE = IconLoader.getIcon("/icon/gradle.png");
 
 	// Providers

@@ -3,7 +3,6 @@ package org.ice1000.devkt.ui
 import charlie.gensokyo.*
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.keyMap
-import org.ice1000.devkt.lie.ctrlOrMeta
 import org.ice1000.devkt.lie.mac
 import java.awt.event.KeyEvent
 import java.io.File
@@ -22,36 +21,36 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		mnemonic = KeyEvent.VK_F
 		subMenu("New") {
 			item("Executable File") {
-				icon = AllIcons.KOTLIN_FILE
+				icon = DevKtIcons.KOTLIN_FILE
 				onAction { createNewFile("file.kt") }
 			}
 			item("Script") {
-				icon = AllIcons.KOTLIN_FILE
+				icon = DevKtIcons.KOTLIN_FILE
 				onAction { createNewFile("script.kts") }
 			}
 			item("Android Activity") {
-				icon = AllIcons.KOTLIN_ANDROID
+				icon = DevKtIcons.KOTLIN_ANDROID
 				onAction { createNewFile("activity.kt") }
 			}
 			item("Analyzer Gradle File") {
-				icon = AllIcons.GRADLE
+				icon = DevKtIcons.GRADLE
 				onAction { createNewFile("build.gradle.kts") }
 			}
 			item("KotlinJS File") {
-				icon = AllIcons.KOTLIN_JS
+				icon = DevKtIcons.KOTLIN_JS
 				onAction { createNewFile("js.kt") }
 			}
 			item("Multiplatform (Common)") {
-				icon = AllIcons.KOTLIN_MP
+				icon = DevKtIcons.KOTLIN_MP
 				onAction { createNewFile("mp-common.kt") }
 			}
 			item("Multiplatform (Implementation)") {
-				icon = AllIcons.KOTLIN_MP
+				icon = DevKtIcons.KOTLIN_MP
 				onAction { createNewFile("mp-impl.kt") }
 			}
 		}
 		item("Open...") {
-			icon = AllIcons.OPEN
+			icon = DevKtIcons.OPEN
 			onAction { open() }
 			GlobalSettings.shortcutGoto.isAlt
 			keyMap(GlobalSettings.shortcutOpen)
@@ -70,59 +69,62 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		separator
 		if (!mac) item("Settings...") {
-			icon = AllIcons.SETTINGS
+			icon = DevKtIcons.SETTINGS
 			onAction { settings() }
 		}
 		item("Import Settings...") {
 			onAction { importSettings() }
 		}
 		item("Sync Settings") {
-			icon = AllIcons.REFRESH
+			icon = DevKtIcons.REFRESH
 			onAction { restart() }
 		}
 		separator
 		saveMenuItem = item("Save") {
-			icon = AllIcons.SAVE
+			icon = DevKtIcons.SAVE
 			onAction { save() }
 			keyMap(GlobalSettings.shortcutSave)
 		}
 		item("Sync") {
-			icon = AllIcons.SYNCHRONIZE
+			icon = DevKtIcons.SYNCHRONIZE
 			onAction { sync() }
 			keyMap(GlobalSettings.shortcutSync)
 		}
 		separator
 		if (!mac) item("Exit") {
-			icon = AllIcons.EXIT
+			icon = DevKtIcons.EXIT
 			onAction { exit() }
 		}
 	}
 	menuBar.subMenu("Edit") {
 		mnemonic = KeyEvent.VK_E
 		item("Undo") {
-			icon = AllIcons.UNDO
+			icon = DevKtIcons.UNDO
 			onAction { undo() }
 			keyMap(GlobalSettings.shortcutUndo)
 		}
 		item("Redo") {
-			icon = AllIcons.REDO
+			icon = DevKtIcons.REDO
 			onAction { redo() }
 			keyMap(GlobalSettings.shortcutRedo)
 		}
 		separator
 		item("Cut") {
-			icon = AllIcons.CUT
+			icon = DevKtIcons.CUT
 			onAction { cut() }
 		}
 		item("Copy") {
-			icon = AllIcons.COPY
+			icon = DevKtIcons.COPY
 			onAction { copy() }
 		}
 		item("Paste") {
-			icon = AllIcons.PASTE
+			icon = DevKtIcons.PASTE
 			onAction { paste() }
 		}
-		item("Select All") { onAction { selectAll() } }
+		item("Select All") {
+			icon = DevKtIcons.SELECT_ALL
+			onAction { selectAll() }
+		}
 		separator
 		item("Start New Line") {
 			onAction { nextLine() }
@@ -140,7 +142,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			keyMap(GlobalSettings.shortcutGoto)
 			onAction { gotoLine() }
 		}
-		item("Add/Remove Comment") {
+		item("Toggle Comment") {
 			keyMap(GlobalSettings.shortcutComment)
 			onAction { comment() }
 		}
@@ -148,36 +150,36 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	menuBar.subMenu("Build") {
 		mnemonic = KeyEvent.VK_B
 		subMenu("Build As") {
-			icon = AllIcons.COMPILE
+			icon = DevKtIcons.COMPILE
 			item("Jar") {
-				icon = AllIcons.JAR
+				icon = DevKtIcons.JAR
 				onAction { buildAsJar() }
 			}
 			item("Classes") {
-				icon = AllIcons.CLASS
+				icon = DevKtIcons.CLASS
 				onAction { buildAsClasses() }
 			}
 			item("JavaScript Module") {
-				icon = AllIcons.KOTLIN_JS
+				icon = DevKtIcons.KOTLIN_JS
 				onAction { buildAsJs() }
 			}
 		}
 		subMenu("Build and Run As") {
-			icon = AllIcons.EXECUTE
+			icon = DevKtIcons.EXECUTE
 			item("Jar") {
-				icon = AllIcons.JAR
+				icon = DevKtIcons.JAR
 				onAction { buildJarAndRun() }
 			}
 			item("Classes") {
-				icon = AllIcons.CLASS
+				icon = DevKtIcons.CLASS
 				onAction { buildClassAndRun() }
 				keyMap(GlobalSettings.shortcutBuildRunAsClass)
 			}
 		}
 		subMenu("Run As") {
-			icon = AllIcons.EXECUTE
+			icon = DevKtIcons.EXECUTE
 			item("Analyzer Script") {
-				icon = AllIcons.KOTLIN_FILE
+				icon = DevKtIcons.KOTLIN_FILE
 				onAction { frame.TODO() }
 			}
 		}
@@ -185,24 +187,24 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	menuBar.subMenu("Help") {
 		mnemonic = KeyEvent.VK_H
 		item("View Psi...") {
-			icon = AllIcons.KOTLIN
+			icon = DevKtIcons.KOTLIN
 			onAction { viewPsi() }
 		}
 		subMenu("Alternatives") {
 			item("IntelliJ IDEA") {
-				icon = AllIcons.IDEA
+				icon = DevKtIcons.IDEA
 				onAction { idea() }
 			}
 			item("CLion") {
-				icon = AllIcons.CLION
+				icon = DevKtIcons.CLION
 				onAction { clion() }
 			}
 			item("Eclipse") {
-				icon = AllIcons.ECLIPSE
+				icon = DevKtIcons.ECLIPSE
 				onAction { eclipse() }
 			}
 			item("Emacs") {
-				icon = AllIcons.EMACS
+				icon = DevKtIcons.EMACS
 				onAction { emacs() }
 			}
 		}

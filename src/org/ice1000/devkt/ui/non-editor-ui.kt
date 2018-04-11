@@ -23,7 +23,7 @@ import kotlin.concurrent.thread
 
 fun JFrame.TODO() {
 	JOptionPane.showMessageDialog(this, "This feature is TODO.",
-			"Unfinished", 1, AllIcons.KOTLIN)
+			"Unfinished", 1, DevKtIcons.KOTLIN)
 }
 
 private const val MEGABYTE = 1024 * 1024
@@ -176,7 +176,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 						"Build failed: ${e.message}",
 						"Build As Jar",
 						JOptionPane.ERROR_MESSAGE,
-						AllIcons.KOTLIN)
+						DevKtIcons.KOTLIN)
 				callback(false)
 			}
 		}
@@ -199,7 +199,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 						"Build failed: ${e.message}",
 						"Build As JS",
 						JOptionPane.ERROR_MESSAGE,
-						AllIcons.KOTLIN)
+						DevKtIcons.KOTLIN)
 				callback(false)
 			}
 		}
@@ -222,7 +222,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 						"Build failed: ${e.message}",
 						"Build As Classes",
 						JOptionPane.ERROR_MESSAGE,
-						AllIcons.KOTLIN)
+						DevKtIcons.KOTLIN)
 				callback(false)
 			}
 		}
@@ -235,7 +235,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 					UIManager.getString("OptionPane.titleText"),
 					JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE,
-					AllIcons.KOTLIN)
+					DevKtIcons.KOTLIN)
 
 	abstract fun ktFile(): KtFile
 	protected abstract fun reloadSettings()

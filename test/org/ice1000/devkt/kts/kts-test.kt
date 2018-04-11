@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.*
+import org.junit.Assert
 import java.io.File
 import kotlin.script.templates.ScriptTemplateDefinition
 
@@ -20,32 +21,32 @@ open class AbstractScriptTemplate(val args: Array<String>)
 open class ScriptTemplate(args: Array<String>) : AbstractScriptTemplate(args)
 
 class ScriptTest : KtUsefulTestCase() {
-	fun testStandardScriptWithParams() {
-//		val aClass = compileScript("die_home_guy_so_disgusting.kts", StandardScriptDefinition)
-//		Assert.assertNotNull(aClass)
-//		val out = captureOut {
-//			val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
-//			Assert.assertNotNull(anObj)
-//		}
-//		assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
+	private fun testStandardScriptWithParams() {
+		val aClass = compileScript("die_home_guy_so_disgusting.kts", StandardScriptDefinition)
+		Assert.assertNotNull(aClass)
+		val out = captureOut {
+			val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
+			Assert.assertNotNull(anObj)
+		}
+		// 	assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
 	}
 
-	fun testStandardScriptWithoutParams() {
-//		val aClass = compileScript("die_home_guy_so_disgusting.kts",
-//				KotlinScriptDefinition(ScriptTemplate::class))!!
-//		val out = captureOut {
-//			val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
-//			Assert.assertNotNull(anObj)
-//		}
-//		assertEqualsTrimmed("我永远喜欢灵乌路空", out)
+	private fun testStandardScriptWithoutParams() {
+		val aClass = compileScript("die_home_guy_so_disgusting.kts",
+				KotlinScriptDefinition(ScriptTemplate::class))!!
+		val out = captureOut {
+			val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+			Assert.assertNotNull(anObj)
+		}
+		assertEqualsTrimmed("我永远喜欢灵乌路空", out)
 	}
 
-	fun testUseCompilerInternals() {
-//		val scriptClass = compileScript("use_compiler_internals.kts",
-//				KotlinScriptDefinition(ScriptTemplate::class), false)!!
-//		assertEquals("OK", captureOut {
-//			tryConstructClassFromStringArgs(scriptClass, emptyList())
-//		})
+	private fun testUseCompilerInternals() {
+		val scriptClass = compileScript("use_compiler_internals.kts",
+				KotlinScriptDefinition(ScriptTemplate::class), false)!!
+		assertEquals("OK", captureOut {
+			tryConstructClassFromStringArgs(scriptClass, emptyList())
+		})
 	}
 
 	private fun compileScript(
