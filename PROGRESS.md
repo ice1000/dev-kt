@@ -40,6 +40,8 @@
 	+ [ ] Auto indent
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
++ Plugin system
+    + [X] Load language support plugin
 + Build and run (Kotlin specific)
 	+ Build
 		+ [X] Build as class files

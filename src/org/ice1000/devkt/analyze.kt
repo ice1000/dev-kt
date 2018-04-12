@@ -41,13 +41,15 @@ data class ASTToken(
  * @author ice1000
  * @since v0.0.1
  */
-object Analyzer {
+object Analyzer : Disposable {
 	val targetDir = File("./.build-cache")
 	val targetJar get() = targetDir.resolve(GlobalSettings.jarName)
 	private val jvmEnvironment: KotlinCoreEnvironment
 	private val jsEnvironment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
 	val project: Project
+
+	override fun dispose() = Unit
 
 	init {
 		val compilerConfiguration = CompilerConfiguration()
@@ -56,11 +58,11 @@ object Analyzer {
 		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, targetDir)
 		compilerConfiguration.addJvmClasspathRoot(File(selfLocation))
 		// compilerConfiguration.put(JVMConfigurationKeys.IR, true)
-		jvmEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
+		jvmEnvironment = KotlinCoreEnvironment.createForProduction(this,
 				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 		val jsCompilerConfiguration = CompilerConfiguration()
 		jsCompilerConfiguration.put(JSConfigurationKeys.OUTPUT_DIR, targetDir)
-		jsEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
+		jsEnvironment = KotlinCoreEnvironment.createForProduction(this,
 				jsCompilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
 		project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
@@ -83,9 +85,6 @@ object Analyzer {
 	fun registerLanguage(
 			language: Language, parserDefinition: ParserDefinition) {
 		LanguageParserDefinitions.INSTANCE.addExplicitExtension(language, parserDefinition)
-		language.putUserData(
-				Key.create("EXTENSIONS_IN_LANGUAGE_org.jetbrains.kotlin.com.intellij.lang.parserDefinition"),
-				parserDefinition)
 		Disposer.register(project, Disposable {
 			LanguageParserDefinitions.INSTANCE.removeExplicitExtension(language, parserDefinition)
 		})
