@@ -1,10 +1,12 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
+import org.ice1000.devkt.paired
 import org.jetbrains.kotlin.com.intellij.psi.*
+import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import javax.swing.JTextPane
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
@@ -117,10 +119,13 @@ class DevKtDocumentHandler<in TextAttributes>(
 
 	private fun lex(language: ProgrammingLanguage<TextAttributes>) {
 		val tokens = Analyzer.lex(text, language.lexer)
-		for ((start, end, _, type) in tokens)
-			currentLanguage?.attributesOf(type, colorScheme)?.let {
+		tokens
+				.filter { it.type !in TokenSet.WHITE_SPACE }
+				.forEach { (start, end, _, type) ->
+			language.attributesOf(type, colorScheme)?.let {
 				highlight(start, end, it)
 			}
+		}
 	}
 
 	/**
@@ -135,7 +140,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 		SyntaxTraverser
 				.psiTraverser(Analyzer.parse(text, language.language).also { psiFileCache = it })
 				.forEach { psi ->
-					if (psi !is PsiWhiteSpace) currentLanguage?.annotate(psi, this, colorScheme)
+					if (psi !is PsiWhiteSpace) language.annotate(psi, this, colorScheme)
 				}
 	}
 
