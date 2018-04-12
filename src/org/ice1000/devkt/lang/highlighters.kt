@@ -56,7 +56,10 @@ class JavaSyntaxHighlighter<TextAttributes> : SyntaxHighlighter<TextAttributes> 
 		JavaTokenType.COLON -> colorScheme.colon
 		JavaTokenType.COMMA -> colorScheme.comma
 		JavaDocElementType.DOC_COMMENT -> colorScheme.docComments
-		JavaTokenType.INTEGER_LITERAL, JavaTokenType.FLOAT_LITERAL -> colorScheme.numbers
+		JavaTokenType.INTEGER_LITERAL,
+		JavaTokenType.LONG_LITERAL,
+		JavaTokenType.DOUBLE_LITERAL,
+		JavaTokenType.FLOAT_LITERAL -> colorScheme.numbers
 		JavaTokenType.LPARENTH, JavaTokenType.RPARENTH -> colorScheme.parentheses
 		JavaTokenType.LBRACE, JavaTokenType.RBRACE -> colorScheme.braces
 		JavaTokenType.LBRACKET, JavaTokenType.RBRACKET -> colorScheme.brackets

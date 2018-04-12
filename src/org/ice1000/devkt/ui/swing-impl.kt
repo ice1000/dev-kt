@@ -6,10 +6,10 @@ import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
+import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
-import javax.swing.JFileChooser
-import javax.swing.JMenuItem
+import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
 import javax.swing.text.*
@@ -30,6 +30,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
+	internal lateinit var buildMenuBar: JMenu
 	private val document: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
@@ -248,8 +249,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	override fun updateShowInFilesMenuItem() {
-		val currentFileNotNull = currentFile != null
-		showInFilesMenuItem.isEnabled = currentFileNotNull
+		showInFilesMenuItem.isEnabled = currentFile != null
+		buildMenuBar.isVisible = document.psiFile is KtFile
 		// saveMenuItem.isEnabled = currentFileNotNull
 	}
 

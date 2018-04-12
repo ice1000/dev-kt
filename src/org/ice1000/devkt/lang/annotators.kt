@@ -39,6 +39,7 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			is PsiAnnotation -> annotation(element, document, colorScheme)
 			is PsiTypeElement -> typeElement(element, document, colorScheme)
 			is PsiMethod -> method(element, document, colorScheme)
+			is PsiField -> field(element, document, colorScheme)
 		}
 	}
 
@@ -49,11 +50,19 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 		element.nameIdentifier?.let { document.highlight(it, colorScheme.function) }
 	}
 
+	private fun field(
+			element: PsiField,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		document.highlight(element.nameIdentifier, colorScheme.property)
+	}
+
 	private fun typeElement(
 			element: PsiElement,
 			document: AnnotationHolder<TextAttributes>,
 			colorScheme: ColorScheme<TextAttributes>) {
-		document.highlight(element, colorScheme.userTypeRef)
+		if (element.firstChild !is PsiKeyword)
+			document.highlight(element, colorScheme.userTypeRef)
 	}
 
 	private fun annotation(

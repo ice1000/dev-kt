@@ -147,7 +147,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { comment() }
 		}
 	}
-	menuBar.subMenu("Build") {
+	buildMenuBar = menuBar.subMenu("Build") {
 		mnemonic = KeyEvent.VK_B
 		subMenu("Build As") {
 			icon = DevKtIcons.COMPILE
@@ -178,7 +178,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		subMenu("Run As") {
 			icon = DevKtIcons.EXECUTE
-			item("Analyzer Script") {
+			item("Kotlin Script") {
 				icon = DevKtIcons.KOTLIN_FILE
 				onAction { frame.TODO() }
 			}
