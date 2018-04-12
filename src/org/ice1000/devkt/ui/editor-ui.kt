@@ -3,9 +3,10 @@ package org.ice1000.devkt.ui
 import javax.swing.JTextPane
 
 interface DevKtDocument : AnnotationHolder {
-	fun adjustFormat(offs: Int = 0, length: Int = getLength() - offs)
-	fun clear() = remove(0, getLength())
+	fun adjustFormat(offs: Int = 0, len: Int = length - offs)
+	fun clear() = remove(0, length)
 	fun remove(offs: Int, len: Int)
+	fun insert(offs: Int, str: String)
 	fun reparse()
 }
 

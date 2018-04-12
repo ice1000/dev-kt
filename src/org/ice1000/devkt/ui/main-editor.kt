@@ -55,18 +55,20 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			adjustFormat()
 		}
 
-		override fun adjustFormat(offs: Int, length: Int) {
-			if (length <= 0) return
-			setParagraphAttributesDoneBySettings(offs, length, colorScheme.tabSize, false)
+		override fun adjustFormat(offs: Int, len: Int) {
+			if (len <= 0) return
+			setParagraphAttributesDoneBySettings(offs, len, colorScheme.tabSize, false)
 			val currentLineNumber = selfMaintainedString.count { it == '\n' } + 1
 			val change = currentLineNumber != lineNumber
 			lineNumber = currentLineNumber
+			//language=HTML
 			if (change) lineNumberLabel.text = (1..currentLineNumber).joinToString(
 					separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>")
 		}
 
 		override val text: String get() = selfMaintainedString.toString()
 
+		override fun insert(offs: Int, str: String) = insertString(offs, str, null)
 		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
 			val normalized = str.filterNot { it == '\r' }
 			val (offset, string, attr, move) = when {
@@ -270,10 +272,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			currentFile = null
 			edited = true
 			document.clear()
-			document.insertString(0, javaClass
+			document.insert(0, javaClass
 					.getResourceAsStream("/template/$templateName")
 					.reader()
-					.readText(), null)
+					.readText())
 		}
 	}
 
@@ -283,7 +285,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
 			document.clear()
-			document.insertString(0, it.readText(), null)
+			document.insert(0, it.readText())
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 		}
@@ -349,13 +351,13 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val index = editor.caretPosition        //光标所在位置
 		val text = document.text                //编辑器内容
 		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
-		document.insertString(endOfLineIndex, "\n", null)
+		document.insert(endOfLineIndex, "\n")
 		editor.caretPosition = endOfLineIndex + 1
 	}
 
 	fun splitLine() {
 		val index = editor.caretPosition        //光标所在位置
-		document.insertString(index, "\n", null)
+		document.insert(index, "\n")
 		editor.caretPosition = index
 	}
 
@@ -363,7 +365,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val index = editor.caretPosition
 		val text = document.text
 		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
-		document.insertString(startOfLineIndex, "\n", null)
+		document.insert(startOfLineIndex, "\n")
 		editor.caretPosition = startOfLineIndex + 1
 	}
 
@@ -376,7 +378,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val lineEnd = root.getElement(lineCount).endOffset
 		val currentLineText = editor.document.getText(lineStart, lineEnd - lineStart)
 		if (currentLineText.startsWith("//")) document.remove(lineStart, 2)
-		else document.insertString(lineStart, "//", null)
+		else document.insert(lineStart, "//")
 	}
 
 	//Shortcuts ↑↑↑
