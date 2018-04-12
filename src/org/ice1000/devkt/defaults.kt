@@ -15,7 +15,7 @@ import java.io.OutputStream
 import java.io.PrintStream
 import javax.swing.UIManager
 
-val `{-# LANGUAGE RedirectStdio #-}`: Unit
+val `{-# LANGUAGE RedirectStdout #-}`: Unit
 	get() {
 		System.setOut(PrintStream(object : OutputStream() {
 			override fun write(b: Int) {
