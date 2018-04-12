@@ -1,13 +1,16 @@
 package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
+import org.ice1000.devkt.lang.ExtendedProgrammingLanguage
 import org.ice1000.devkt.lie.ctrlOrMeta
+import org.jetbrains.kotlin.js.inline.util.toIdentitySet
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
-import java.io.File
+import java.io.*
 import java.util.*
 import javax.imageio.ImageIO
+import javax.swing.JOptionPane
 import kotlin.reflect.KMutableProperty
 
 class ShortCut {
@@ -75,6 +78,7 @@ object GlobalSettings {
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
 	var recentFiles = hashSetOf<File>()
+	var languageExtensions = hashSetOf<Class<out ExtendedProgrammingLanguage<*>>>()
 
 	var javaClassName: String by properties
 	var jarName: String by properties
@@ -216,6 +220,25 @@ object GlobalSettings {
 		initShortCutProperty(::shortcutNextLine)
 		initShortCutProperty(::shortcutSplitLine)
 		initShortCutProperty(::shortcutNewLineBefore)
+
+		try {
+			properties[::languageExtensions.name].toString().split(',').mapTo(languageExtensions) {
+				Class.forName(it) as Class<out ExtendedProgrammingLanguage<*>>
+			}
+		} catch (e: Throwable) {
+			val text = StringBuilder()
+			e.printStackTrace(PrintStream(object : OutputStream() {
+				override fun write(byte: Int) {
+					text.append(byte.toChar())
+				}
+			}))
+			JOptionPane.showMessageDialog(
+					null,
+					text,
+					"Failed to load plugin",
+					JOptionPane.ERROR_MESSAGE
+			)
+		}
 	}
 
 	fun save() {

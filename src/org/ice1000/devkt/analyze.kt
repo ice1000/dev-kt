@@ -65,11 +65,15 @@ object Analyzer {
 		psiFileFactory = PsiFileFactory.getInstance(project)
 	}
 
-//	private fun <Extension> registerExtensionPoint(
-//			extensionPoint: ExtensionPointName<Extension>,
-//			instance: Extension) {
-//		Extensions.getRootArea().getExtensionPoint(extensionPoint).registerExtension(instance)
-//	}
+	private fun <Extension> registerExtensionPoint(
+			extensionPoint: LanguageExtension<Extension>,
+			language: Language,
+			instance: Extension) {
+		extensionPoint.addExplicitExtension(language, instance)
+		Disposer.register(project, Disposable {
+			extensionPoint.removeExplicitExtension(language, instance)
+		})
+	}
 
 //	private fun <Extension> registerExtensionPoint(
 //			extensionPoint: ExtensionPointName<Extension>,

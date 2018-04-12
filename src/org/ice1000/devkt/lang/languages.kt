@@ -26,6 +26,10 @@ abstract class ProgrammingLanguage<TextAttributes> internal constructor(
 	abstract fun satisfies(fileName: String): Boolean
 }
 
+/**
+ * @author ice1000
+ * @since v1.2
+ */
 abstract class ExtendedProgrammingLanguage<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
