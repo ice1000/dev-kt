@@ -232,16 +232,30 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun splitLine() = document.splitLine()
 	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 
-	//TODO 暂时还不支持多行注释 QAQ
-	fun comment() {
-		val offs = editor.caretPosition
+	fun commentCurrent() {
 		val root = editor.document.defaultRootElement
-		val lineCount = root.getElementIndex(offs)
-		val lineStart = root.getElement(lineCount).startOffset
-		val lineEnd = root.getElement(lineCount).endOffset
-		val currentLineText = editor.document.getText(lineStart, lineEnd - lineStart)
-		if (currentLineText.startsWith("//")) document.delete(lineStart, 2)
-		else document.insert(lineStart, "//")
+		val start = root.getElementIndex(editor.selectionStart)
+		val end = root.getElementIndex(editor.selectionEnd)
+		comment(start..end)
+	}
+
+	fun comment(lines: IntRange) {
+		val root = editor.document.defaultRootElement
+		val add = lines.any {
+			val element = root.getElement(it)
+			val lineStart = element.startOffset
+			val lineEnd = element.endOffset
+			val lineText = editor.document.getText(lineStart, lineEnd - lineStart)
+			!lineText.startsWith("//")        //只要有一行开头不为 `//` 就进行添加注释操作
+		}
+		//这上面和下面感觉可以优化emmmm
+		lines.forEach {
+			val element = root.getElement(it)
+			val lineStart = element.startOffset
+			if (add) {
+				document.insert(lineStart, "//")
+			} else document.delete(lineStart, 2)
+		}
 	}
 
 	//Shortcuts ↑↑↑

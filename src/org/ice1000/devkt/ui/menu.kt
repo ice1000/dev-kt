@@ -144,7 +144,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		item("Toggle Comment") {
 			keyMap(GlobalSettings.shortcutComment)
-			onAction { comment() }
+			onAction { commentCurrent() }
 		}
 	}
 	buildMenuBar = menuBar.subMenu("Build") {
