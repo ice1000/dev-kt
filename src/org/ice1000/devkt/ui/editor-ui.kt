@@ -2,12 +2,17 @@ package org.ice1000.devkt.ui
 
 import javax.swing.JTextPane
 
-interface DevKtDocument : AnnotationHolder {
+interface DevKtDocument<in TextAttributes> : AnnotationHolder<TextAttributes> {
 	fun adjustFormat(offs: Int = 0, len: Int = length - offs)
 	fun clear() = remove(0, length)
 	fun remove(offs: Int, len: Int)
 	fun insert(offs: Int, str: String)
 	fun reparse()
+}
+
+class DevKtDocumentHandler<TextAttributes>(private val document: DevKtDocument<TextAttributes>) {
+	fun insert(offs: Int, len: Int) {
+	}
 }
 
 //FIXME: tab会被当做1个字符, 不知道有没有什么解决办法

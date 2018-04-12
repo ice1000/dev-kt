@@ -8,33 +8,38 @@ import java.awt.GraphicsEnvironment
 import java.awt.font.FontRenderContext
 import javax.swing.text.*
 
-class ColorScheme(
-		settings: GlobalSettings,
-		context: AbstractDocument.AttributeContext = StyleContext.getDefaultStyleContext()) {
-	val keywords = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorKeywords))
-	val string = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorString))
-	val templateEntries = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorTemplateEntries))
-	val charLiteral = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorCharLiteral))
-	val lineComments = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorLineComments))
-	val blockComments = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorBlockComments))
-	val docComments = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorDocComments))
-	val operators = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorOperators))
-	val parentheses = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorParentheses))
-	val braces = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorBraces))
-	val brackets = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorBrackets))
-	val semicolon = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorSemicolon))
-	val numbers = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorNumbers))
-	val identifiers = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorIdentifiers))
-	val annotations = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorAnnotations))
-	val colon = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorColon))
-	val comma = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorComma))
-	val variable = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorVariable))
-	val function = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorFunction))
-	val typeParam = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorTypeParam))
-	val userTypeRef = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorUserTypeRef))
-	val property = context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(settings.colorProperty))
+class ColorScheme<out TextAttributes>(settings: GlobalSettings, wrapColor: (String) -> TextAttributes) {
+	val keywords = wrapColor(settings.colorKeywords)
+	val string = wrapColor(settings.colorString)
+	val templateEntries = wrapColor(settings.colorTemplateEntries)
+	val charLiteral = wrapColor(settings.colorCharLiteral)
+	val lineComments = wrapColor(settings.colorLineComments)
+	val blockComments = wrapColor(settings.colorBlockComments)
+	val docComments = wrapColor(settings.colorDocComments)
+	val operators = wrapColor(settings.colorOperators)
+	val parentheses = wrapColor(settings.colorParentheses)
+	val braces = wrapColor(settings.colorBraces)
+	val brackets = wrapColor(settings.colorBrackets)
+	val semicolon = wrapColor(settings.colorSemicolon)
+	val numbers = wrapColor(settings.colorNumbers)
+	val identifiers = wrapColor(settings.colorIdentifiers)
+	val annotations = wrapColor(settings.colorAnnotations)
+	val colon = wrapColor(settings.colorColon)
+	val comma = wrapColor(settings.colorComma)
+	val variable = wrapColor(settings.colorVariable)
+	val function = wrapColor(settings.colorFunction)
+	val typeParam = wrapColor(settings.colorTypeParam)
+	val userTypeRef = wrapColor(settings.colorUserTypeRef)
+	val property = wrapColor(settings.colorProperty)
 	val tabSize = createTabSizeAttributes(settings.tabSize)
 }
+
+fun swingColorScheme(
+		settings: GlobalSettings,
+		context: AbstractDocument.AttributeContext = StyleContext.getDefaultStyleContext()) =
+		ColorScheme<AttributeSet>(settings) {
+			context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(it))
+		}
 
 private fun createFrc() = FontRenderContext(GraphicsEnvironment
 		.getLocalGraphicsEnvironment()

@@ -283,17 +283,17 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 /**
  * @author ice1000
  */
-interface AnnotationHolder : LengthOwner {
+interface AnnotationHolder<in TextAttributes> : LengthOwner {
 	val text: String
-	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet)
+	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: TextAttributes)
 
-	fun highlight(range: TextRange, attributeSet: AttributeSet) =
+	fun highlight(range: TextRange, attributeSet: TextAttributes) =
 			highlight(range.startOffset, range.endOffset, attributeSet)
 
-	fun highlight(astNode: ASTNode, attributeSet: AttributeSet) =
+	fun highlight(astNode: ASTNode, attributeSet: TextAttributes) =
 			highlight(astNode.textRange, attributeSet)
 
-	fun highlight(element: PsiElement, attributeSet: AttributeSet) =
+	fun highlight(element: PsiElement, attributeSet: TextAttributes) =
 			highlight(element.textRange, attributeSet)
 }
 

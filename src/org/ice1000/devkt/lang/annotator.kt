@@ -14,21 +14,28 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
  * @see com.intellij.lang.annotation.Annotator
  * TODO move to daemon instead of running in ui thread
  */
-interface Annotator {
+interface Annotator<TextAttributes> {
 	/**
 	 * @param element the [PsiElement] to be highlighted
 	 * @param document similar to [com.intellij.lang.annotation.AnnotationHolder]
 	 * @param colorScheme current color scheme, initialized in [org.ice1000.devkt.config.GlobalSettings]
 	 */
-	fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme)
+	fun annotate(
+			element: PsiElement,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>)
 }
 
 /**
  * @author ice1000
  * @since v1.1
  */
-class JavaAnnotator : Annotator {
-	override fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme) {
+class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
+	override fun annotate(
+			element: PsiElement,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		// TODO
 	}
 }
 
@@ -36,8 +43,11 @@ class JavaAnnotator : Annotator {
  * @author ice1000
  * @since v0.0.1
  */
-class KotlinAnnotator : Annotator {
-	override fun annotate(element: PsiElement, document: AnnotationHolder, colorScheme: ColorScheme) {
+class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
+	override fun annotate(
+			element: PsiElement,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
 		if (element.nodeType in KtTokens.SOFT_KEYWORDS) {
 			document.highlight(element, colorScheme.keywords)
 			return
@@ -52,14 +62,18 @@ class KotlinAnnotator : Annotator {
 	}
 
 	private fun property(
-			element: KtProperty, document: AnnotationHolder, colorScheme: ColorScheme) {
+			element: KtProperty,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
 		element.nameIdentifier?.let {
 			document.highlight(it, colorScheme.property)
 		}
 	}
 
 	private fun typeReference(
-			element: KtTypeReference, document: AnnotationHolder, colorScheme: ColorScheme) {
+			element: KtTypeReference,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
 		if (element.parent !is KtConstructorCalleeExpression)
 			document.highlight(element.firstChild
 					?.takeIf { it is KtUserType || it is KtNullableType }
@@ -67,14 +81,18 @@ class KotlinAnnotator : Annotator {
 	}
 
 	private fun namedFunction(
-			element: KtNamedFunction, document: AnnotationHolder, colorScheme: ColorScheme) {
+			element: KtNamedFunction,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
 		element.nameIdentifier?.let {
 			document.highlight(it, colorScheme.function)
 		}
 	}
 
 	private fun typeParameter(
-			element: KtTypeParameter, document: AnnotationHolder, colorScheme: ColorScheme) {
+			element: KtTypeParameter,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
 		document.highlight(element, colorScheme.typeParam)
 		element.references.forEach {
 			val refTo = it.element ?: return@forEach
@@ -83,7 +101,9 @@ class KotlinAnnotator : Annotator {
 	}
 
 	private fun annotationEntry(
-			element: KtAnnotationEntry, document: AnnotationHolder, colorScheme: ColorScheme) {
+			element: KtAnnotationEntry,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
 		val start = element.startOffset
 		val end = element.typeReference?.endOffset ?: start
 		document.highlight(start, end, colorScheme.annotations)

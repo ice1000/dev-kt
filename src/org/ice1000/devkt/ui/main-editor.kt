@@ -4,8 +4,7 @@ import charlie.gensokyo.show
 import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.*
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
-import org.ice1000.devkt.config.ColorScheme
-import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.config.*
 import org.ice1000.devkt.lang.KotlinAnnotator
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
@@ -41,9 +40,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val document: KtDocument
 	private var selfMaintainedString = StringBuilder()
 
-	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument {
-		private val colorScheme = ColorScheme(GlobalSettings, attributeContext)
-		private val annotator = KotlinAnnotator()
+	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
+		private val colorScheme: ColorScheme<AttributeSet> = swingColorScheme(GlobalSettings, attributeContext)
+		private val annotator = KotlinAnnotator<AttributeSet>()
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
 
 		init {
