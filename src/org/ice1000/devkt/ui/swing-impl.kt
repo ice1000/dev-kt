@@ -50,11 +50,14 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
 		override fun lockWrite() = writeLock()
 		override fun unlockWrite() = writeUnlock()
+		override fun insert(offs: Int, str: String) = insertString(offs, str, null)
 		override fun resetLineNumberLabel(str: String) {
 			lineNumberLabel.text = str
 		}
 
-		override fun insert(offs: Int, str: String) = insertString(offs, str, null)
+		override fun message(text: String) {
+			messageLabel.text = text
+		}
 
 		/**
 		 * Re-implement of [setCharacterAttributes], invoke [fireUndoableEditUpdate] with
@@ -212,9 +215,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		edited = false
 	}
 
-	//这三个方法应该可以合并成一个方法吧
 	fun nextLine() = document.nextLine()
-
 	fun splitLine() = document.splitLine()
 	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 

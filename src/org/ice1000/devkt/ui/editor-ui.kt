@@ -21,6 +21,7 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 	fun resetLineNumberLabel(str: String)
 	fun lockWrite()
 	fun unlockWrite()
+	fun message(text: String)
 }
 
 class DevKtDocumentHandler<in TextAttributes>(
@@ -173,6 +174,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	fun nextLine() {
+		document.message("Started new line")
 		val index = document.caretPosition
 		val endOfLineIndex = selfMaintainedString.indexOf('\n', index)
 		document.insert(if (endOfLineIndex < 0) document.length else endOfLineIndex, "\n")
@@ -180,12 +182,14 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	fun splitLine() {
+		document.message("Split new line")
 		val index = document.caretPosition
 		document.insert(index, "\n")
 		document.caretPosition = index
 	}
 
 	fun newLineBeforeCurrent() {
+		document.message("Started new line before current line")
 		val index = document.caretPosition
 		val startOfLineIndex = selfMaintainedString.lastIndexOf('\n', (index - 1).coerceAtLeast(0)).coerceAtLeast(0)
 		document.insert(startOfLineIndex, "\n")
@@ -205,4 +209,3 @@ fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
 	val column = pos - root.getElement(line).startOffset
 	return line + 1 to column + 1
 }
-
