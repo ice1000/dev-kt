@@ -55,7 +55,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 				updateShowInFilesMenuItem()
 			}
 		}
-	protected var ktFileCache: KtFile? = null
 
 	final override fun createUIComponents() {
 		mainPanel = object : JPanel() {
