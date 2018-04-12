@@ -5,7 +5,6 @@ import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.ui.swing.AnnotationHolder
-import org.jetbrains.kotlin.com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 
@@ -22,7 +21,7 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 	fun message(text: String)
 }
 
-class DevKtDocumentHandler<in TextAttributes>(
+class DevKtDocumentHandler<TextAttributes>(
 		private val document: DevKtDocument<TextAttributes>,
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		AnnotationHolder<TextAttributes> {
@@ -43,7 +42,6 @@ class DevKtDocumentHandler<in TextAttributes>(
 
 	private var currentLanguage: ProgrammingLanguage<TextAttributes>? = null
 	private var psiFileCache: PsiFile? = null
-	private var virtualFileCache: VirtualFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
 
@@ -51,8 +49,11 @@ class DevKtDocumentHandler<in TextAttributes>(
 	override fun getLength() = document.length
 
 	fun switchLanguage(fileName: String) {
-		currentLanguage = languages.firstOrNull { it.satisfies(fileName) }
+		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
+	}
 
+	fun switchLanguage(language: ProgrammingLanguage<TextAttributes>?) {
+		currentLanguage = language
 	}
 
 	val psiFile: PsiFile?
@@ -127,8 +128,8 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	private fun lex(language: ProgrammingLanguage<TextAttributes>) {
-		val tokens = Analyzer.lex(text, language.lexer)
-		tokens
+		Analyzer
+				.lex(text, language.lexer)
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { (start, end, _, type) ->
 					language.attributesOf(type, colorScheme)?.let {

@@ -40,7 +40,15 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			is PsiTypeElement -> typeElement(element, document, colorScheme)
 			is PsiMethod -> method(element, document, colorScheme)
 			is PsiField -> field(element, document, colorScheme)
+			is PsiVariable -> variable(element, document, colorScheme)
 		}
+	}
+
+	private fun variable(
+			element: PsiVariable,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		element.nameIdentifier?.let { document.highlight(it, colorScheme.variable) }
 	}
 
 	private fun method(
