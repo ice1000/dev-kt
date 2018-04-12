@@ -5,7 +5,6 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.keyMap
 import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtIcons
-import org.ice1000.devkt.ui.TODO
 import java.awt.event.KeyEvent
 import java.io.File
 import javax.swing.JFrame

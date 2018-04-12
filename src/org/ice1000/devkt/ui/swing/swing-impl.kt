@@ -6,7 +6,8 @@ import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
-import org.ice1000.devkt.ui.*
+import org.ice1000.devkt.ui.DevKtDocument
+import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
@@ -129,9 +130,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		editor.document = ktDocument
 		document = ktDocument.createHandler()
 		FileDrop(mainPanel) {
-			it.firstOrNull { it.canRead() }?.let {
-				loadFile(it)
-			}
+			it.firstOrNull { it.canRead() }?.let(::loadFile)
 		}
 	}
 

@@ -4,6 +4,7 @@ import org.ice1000.devkt.*
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
+import org.ice1000.devkt.ui.swing.AnnotationHolder
 import org.jetbrains.kotlin.com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
@@ -23,7 +24,8 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 
 class DevKtDocumentHandler<in TextAttributes>(
 		private val document: DevKtDocument<TextAttributes>,
-		private val colorScheme: ColorScheme<TextAttributes>) : AnnotationHolder<TextAttributes> {
+		private val colorScheme: ColorScheme<TextAttributes>) :
+		AnnotationHolder<TextAttributes> {
 	private var selfMaintainedString = StringBuilder()
 	private val languages: MutableList<ProgrammingLanguage<TextAttributes>> = arrayListOf(
 			Java(JavaAnnotator(), JavaSyntaxHighlighter()),

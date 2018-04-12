@@ -22,6 +22,7 @@ You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-k
 + Cross platform (windows/macos/linux), just an executable jar
 + One property-based configuration file, hackable
 + Experimental Java support
++ Plugin system
 
 Just a simple comparison:
 
@@ -30,6 +31,10 @@ DevKt<br/><br/>Correct|<img width=200 src="https://user-images.githubusercontent
 IntelliJ IDEA<br/><br/>Correct,<br/>with inspections|<img width=200 src="https://user-images.githubusercontent.com/16398479/38292918-2ec81974-3818-11e8-8eb7-3648cd747ee5.png">
 Emacs<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
 VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
+
+# Plugin development guide
+
+See [covscript/covscript-devkt](https://github.com/covscript/covscript-devkt).
 
 # Screenshots
 
