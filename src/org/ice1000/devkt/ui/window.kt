@@ -3,6 +3,7 @@ package org.ice1000.devkt.ui
 import charlie.gensokyo.doNothingOnClose
 import charlie.gensokyo.show
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.ui.swing.UIImpl
 import java.awt.event.*
 import javax.swing.JFrame
 

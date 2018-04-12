@@ -4,9 +4,9 @@ import charlie.gensokyo.doNothingOnClose
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.allFonts
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import org.ice1000.devkt.ui.AbstractUI
-import org.ice1000.devkt.ui.Configuration
 import org.ice1000.devkt.ui.DevKtFrame
-import java.awt.*
+import org.ice1000.devkt.ui.swing.Configuration
+import java.awt.Font
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
