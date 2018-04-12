@@ -1,6 +1,8 @@
 package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
+import org.ice1000.devkt.handleException
+import org.ice1000.devkt.ignoreException
 import org.ice1000.devkt.lang.ExtendedProgrammingLanguage
 import org.ice1000.devkt.lie.ctrlOrMeta
 import org.jetbrains.kotlin.js.inline.util.toIdentitySet
@@ -78,7 +80,7 @@ object GlobalSettings {
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
 	var recentFiles = hashSetOf<File>()
-	var languageExtensions = hashSetOf<Class<out ExtendedProgrammingLanguage<*>>>()
+	var languageExtensions = hashSetOf<ExtendedProgrammingLanguage<*>>()
 
 	var javaClassName: String by properties
 	var jarName: String by properties
@@ -127,28 +129,24 @@ object GlobalSettings {
 	}
 
 	private fun initImageProperty(property: KMutableProperty<Pair<String, BufferedImage?>>) {
-		properties[property.name]?.toString()?.also {
-			try {
+		ignoreException {
+			properties[property.name]?.toString()?.also {
 				property.setter.call(it to ImageIO.read(File(it)))
-			} catch (ignored: Exception) {
 			}
 		}
 	}
 
 	private fun initIntProperty(property: KMutableProperty<Int>) {
-		properties[property.name]?.toString()?.also {
-			try {
+		handleException {
+			properties[property.name]?.toString()?.also {
 				it.toIntOrNull()?.let { property.setter.call(it) }
-			} catch (ignored: Exception) {
 			}
 		}
 	}
 
 	private fun initShortCutProperty(property: KMutableProperty<ShortCut>) {
 		properties[property.name]?.toString()?.also {
-			ShortCut.parse(it)?.let {
-				property.setter.call(it)
-			}
+			ShortCut.parse(it)?.let { property.setter.call(it) }
 		}
 	}
 
@@ -221,23 +219,15 @@ object GlobalSettings {
 		initShortCutProperty(::shortcutSplitLine)
 		initShortCutProperty(::shortcutNewLineBefore)
 
-		try {
-			properties[::languageExtensions.name].toString().split(',').mapTo(languageExtensions) {
-				Class.forName(it) as Class<out ExtendedProgrammingLanguage<*>>
-			}
-		} catch (e: Throwable) {
-			val text = StringBuilder()
-			e.printStackTrace(PrintStream(object : OutputStream() {
-				override fun write(byte: Int) {
-					text.append(byte.toChar())
-				}
-			}))
-			JOptionPane.showMessageDialog(
-					null,
-					text,
-					"Failed to load plugin",
-					JOptionPane.ERROR_MESSAGE
-			)
+		handleException {
+			properties[::languageExtensions.name]
+					?.toString()
+					.orEmpty()
+					.split(',')
+					.filter { it.isNotBlank() }
+					.mapTo(languageExtensions) {
+						Class.forName(it).newInstance() as ExtendedProgrammingLanguage<*>
+					}
 		}
 	}
 
@@ -262,6 +252,7 @@ object GlobalSettings {
 		properties[::shortcutNextLine.name] = shortcutNextLine.toString()
 		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
 		properties[::shortcutNewLineBefore.name] = shortcutNewLineBefore.toString()
+		properties[::languageExtensions.name] = languageExtensions.joinToString()
 		properties.store(configFile.outputStream(), null)
 	}
 }

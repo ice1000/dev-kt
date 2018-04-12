@@ -2,10 +2,37 @@ package org.ice1000.devkt
 
 import org.ice1000.devkt.config.ShortCut
 import java.awt.event.KeyEvent
-import javax.swing.JMenuItem
-import javax.swing.KeyStroke
+import java.io.OutputStream
+import java.io.PrintStream
+import javax.swing.*
 
 data class Quad<out A, out B, out C, out D>(val first: A, val second: B, val third: C, val fourth: D)
+
+inline fun ignoreException(lambda: () -> Unit) {
+	try {
+		lambda()
+	} catch (ignored: Exception) {
+	}
+}
+
+inline fun handleException(lambda: () -> Unit) {
+	try {
+		lambda()
+	} catch (e: Throwable) {
+		val text = StringBuilder()
+		e.printStackTrace(PrintStream(object : OutputStream() {
+			override fun write(byte: Int) {
+				text.append(byte.toChar())
+			}
+		}))
+		JOptionPane.showMessageDialog(
+				null,
+				text,
+				"Failed to load plugin",
+				JOptionPane.ERROR_MESSAGE
+		)
+	}
+}
 
 val selfLocation: String = Analyzer::class.java.protectionDomain.codeSource.location.file
 

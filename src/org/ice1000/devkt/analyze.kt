@@ -63,6 +63,7 @@ object Analyzer {
 				jsCompilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
 		project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
+		GlobalSettings.languageExtensions.forEach(::registerLanguage)
 	}
 
 	private fun <Extension> registerExtensionPoint(
@@ -86,6 +87,11 @@ object Analyzer {
 			LanguageParserDefinitions.INSTANCE.removeExplicitExtension(language, parserDefinition)
 		})
 	}
+
+	fun registerLanguage(
+			extendedProgrammingLanguage: ExtendedProgrammingLanguage<*>) = registerLanguage(
+			extendedProgrammingLanguage.language,
+			extendedProgrammingLanguage.parserDefinition)
 
 	fun parseKotlin(text: String) = parse(text, KotlinLanguage.INSTANCE) as KtFile
 	fun parseJava(text: String) = parse(text, JavaLanguage.INSTANCE) as PsiJavaFile

@@ -34,16 +34,12 @@ abstract class ExtendedProgrammingLanguage<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
 		language: Language,
-		parserDefinition: ParserDefinition
+		val parserDefinition: ParserDefinition
 ) : ProgrammingLanguage<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
 		parserDefinition.createLexer(Analyzer.project),
-		language) {
-	init {
-		Analyzer.registerLanguage(language, parserDefinition)
-	}
-}
+		language)
 
 /**
  * @author ice1000
