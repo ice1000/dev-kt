@@ -165,6 +165,8 @@ dependencies {
 	compile(group = "com.github.ice1k", name = "darcula", version = "2018.1")
 	compile(group = "com.intellij", name = "forms_rt", version = "7.0.3")
 	compile(files(Paths.get("lib", "filedrop.jar")))
+	val covscript = Paths.get("lib", "covscript-devkt-1.0.jar")
+	if (Files.exists(covscript)) compile(files(covscript))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile("junit", "junit", "4.12")

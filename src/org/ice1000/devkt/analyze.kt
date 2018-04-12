@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.extensions.ExtensionPointName
 import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
@@ -63,7 +64,6 @@ object Analyzer {
 				jsCompilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
 		project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
-		GlobalSettings.languageExtensions.forEach(::registerLanguage)
 	}
 
 	private fun <Extension> registerExtensionPoint(
@@ -83,6 +83,9 @@ object Analyzer {
 	fun registerLanguage(
 			language: Language, parserDefinition: ParserDefinition) {
 		LanguageParserDefinitions.INSTANCE.addExplicitExtension(language, parserDefinition)
+		language.putUserData(
+				Key.create("EXTENSIONS_IN_LANGUAGE_org.jetbrains.kotlin.com.intellij.lang.parserDefinition"),
+				parserDefinition)
 		Disposer.register(project, Disposable {
 			LanguageParserDefinitions.INSTANCE.removeExplicitExtension(language, parserDefinition)
 		})

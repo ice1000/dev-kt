@@ -25,15 +25,19 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 class DevKtDocumentHandler<in TextAttributes>(
 		private val document: DevKtDocument<TextAttributes>,
 		private val colorScheme: ColorScheme<TextAttributes>) : AnnotationHolder<TextAttributes> {
+	private var selfMaintainedString = StringBuilder()
+	private val languages: MutableList<ProgrammingLanguage<TextAttributes>> = arrayListOf(
+			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
+			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter())
+	)
+
 	init {
 		adjustFormat()
+		GlobalSettings.languageExtensions.forEach {
+			Analyzer.registerLanguage(it)
+			languages += it as ProgrammingLanguage<TextAttributes>
+		}
 	}
-
-	private var selfMaintainedString = StringBuilder()
-	private val languages = listOf(
-			Java<TextAttributes>(JavaAnnotator(), JavaSyntaxHighlighter()),
-			Kotlin<TextAttributes>(KotlinAnnotator(), KotlinSyntaxHighlighter())
-	)
 
 	private var currentLanguage: ProgrammingLanguage<TextAttributes>? = null
 	private var psiFileCache: PsiFile? = null

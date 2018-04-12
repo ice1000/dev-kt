@@ -252,7 +252,7 @@ object GlobalSettings {
 		properties[::shortcutNextLine.name] = shortcutNextLine.toString()
 		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
 		properties[::shortcutNewLineBefore.name] = shortcutNewLineBefore.toString()
-		properties[::languageExtensions.name] = languageExtensions.joinToString()
+		properties[::languageExtensions.name] = languageExtensions.joinToString { it.javaClass.canonicalName }
 		properties.store(configFile.outputStream(), null)
 	}
 }
