@@ -41,7 +41,7 @@
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
 + Plugin system
-    + [X] Load language support plugin
+    + [X] Load support plugin
 + Build and run (Kotlin specific)
 	+ Build
 		+ [X] Build as class files

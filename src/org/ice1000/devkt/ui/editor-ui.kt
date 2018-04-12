@@ -90,6 +90,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	fun insert(offs: Int, str: String?) {
+		if (offs < 0) return
 		val normalized = str.orEmpty().filterNot { it == '\r' }
 		val (offset, string, move) = when {
 			normalized.length > 1 -> Triple(offs, normalized, 0)
