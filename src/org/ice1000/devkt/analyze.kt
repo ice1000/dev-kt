@@ -1,15 +1,20 @@
 package org.ice1000.devkt
 
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.lang.ExtendedProgrammingLanguage
 import org.ice1000.devkt.lang.ProgrammingLanguage
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.com.intellij.lang.Language
+import org.jetbrains.kotlin.com.intellij.lang.*
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.com.intellij.openapi.extensions.ExtensionPointName
+import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions
+import org.jetbrains.kotlin.com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
@@ -41,6 +46,7 @@ object Analyzer {
 	private val jvmEnvironment: KotlinCoreEnvironment
 	private val jsEnvironment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
+	val project: Project
 
 	init {
 		val compilerConfiguration = CompilerConfiguration()
@@ -55,8 +61,26 @@ object Analyzer {
 		jsCompilerConfiguration.put(JSConfigurationKeys.OUTPUT_DIR, targetDir)
 		jsEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
 				jsCompilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
-		val project = jvmEnvironment.project
+		project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
+	}
+
+//	private fun <Extension> registerExtensionPoint(
+//			extensionPoint: ExtensionPointName<Extension>,
+//			instance: Extension) {
+//		Extensions.getRootArea().getExtensionPoint(extensionPoint).registerExtension(instance)
+//	}
+
+//	private fun <Extension> registerExtensionPoint(
+//			extensionPoint: ExtensionPointName<Extension>,
+//			clazz: Class<Extension>) = registerExtensionPoint(extensionPoint, clazz.newInstance())
+
+	fun registerLanguage(
+			language: Language, parserDefinition: ParserDefinition) {
+		LanguageParserDefinitions.INSTANCE.addExplicitExtension(language, parserDefinition)
+		Disposer.register(project, Disposable {
+			LanguageParserDefinitions.INSTANCE.removeExplicitExtension(language, parserDefinition)
+		})
 	}
 
 	fun parseKotlin(text: String) = parse(text, KotlinLanguage.INSTANCE) as KtFile

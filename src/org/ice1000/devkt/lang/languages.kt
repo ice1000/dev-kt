@@ -1,6 +1,8 @@
 package org.ice1000.devkt.lang
 
+import org.ice1000.devkt.Analyzer
 import org.jetbrains.kotlin.com.intellij.lang.Language
+import org.jetbrains.kotlin.com.intellij.lang.ParserDefinition
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
 import org.jetbrains.kotlin.com.intellij.lexer.EmptyLexer
@@ -15,13 +17,28 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
  * @since v1.2
  * @see Language
  */
-abstract class ProgrammingLanguage<TextAttributes>(
+abstract class ProgrammingLanguage<TextAttributes> internal constructor(
 		private val annotator: Annotator<TextAttributes>,
 		private val syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
 		val lexer: Lexer,
 		val language: Language
 ) : Annotator<TextAttributes> by annotator, SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
 	abstract fun satisfies(fileName: String): Boolean
+}
+
+abstract class ExtendedProgrammingLanguage<TextAttributes>(
+		annotator: Annotator<TextAttributes>,
+		syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
+		language: Language,
+		parserDefinition: ParserDefinition
+) : ProgrammingLanguage<TextAttributes>(
+		annotator,
+		syntaxHighlighter,
+		parserDefinition.createLexer(Analyzer.project),
+		language) {
+	init {
+		Analyzer.registerLanguage(language, parserDefinition)
+	}
 }
 
 /**

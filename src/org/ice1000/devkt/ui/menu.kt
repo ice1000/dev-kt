@@ -132,7 +132,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		item("New Line Before") {
 			onAction { newLineBeforeCurrent() }
-			keyMap(GlobalSettings.shortcutNewLineBeforeCurrent)
+			keyMap(GlobalSettings.shortcutNewLineBefore)
 		}
 		item("Split Line") {
 			onAction { splitLine() }

@@ -63,7 +63,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 
 	fun clear() = delete(0, document.length)
 	fun delete(offs: Int, len: Int) {
-		val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
+		val delString = selfMaintainedString.substring(offs, offs + len)        //即将被删除的字符串
 		val (offset, length) = when {
 			delString in paired            //是否存在于字符对里
 					&& text.getOrNull(offs + 1)?.toString() == paired[delString] -> {

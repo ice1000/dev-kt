@@ -115,7 +115,7 @@ object GlobalSettings {
 	var shortcutBuildRunAsClass = ShortCut(KeyEvent.CTRL_DOWN_MASK, KeyEvent.VK_R)    // Mac
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
-	var shortcutNewLineBeforeCurrent = ShortCut(true, true, false, KeyEvent.VK_ENTER)
+	var shortcutNewLineBefore = ShortCut(true, true, false, KeyEvent.VK_ENTER)
 	var shortcutComment = ShortCut(true, false, false, KeyEvent.VK_SLASH)
 
 	private fun defaultOf(name: String, value: String) {
@@ -179,7 +179,7 @@ object GlobalSettings {
 		defaultOf(::colorVariable.name, "#BCA5C4")
 		defaultOf(::colorFunction.name, "#FFC66D")
 		defaultOf(::colorTypeParam.name, "#6897BB")
-		defaultOf(::colorUserTypeRef.name, "#62ABF0")
+		defaultOf(::colorUserTypeRef.name, "#B5B6E3")
 		defaultOf(::colorProperty.name, "#9876AA")
 		defaultOf(::colorBackground.name, "#2B2B2B")
 		initImageProperty(::windowIcon)
@@ -215,7 +215,7 @@ object GlobalSettings {
 
 		initShortCutProperty(::shortcutNextLine)
 		initShortCutProperty(::shortcutSplitLine)
-		initShortCutProperty(::shortcutNewLineBeforeCurrent)
+		initShortCutProperty(::shortcutNewLineBefore)
 	}
 
 	fun save() {
@@ -238,7 +238,7 @@ object GlobalSettings {
 		properties[::shortcutGoto.name] = shortcutGoto.toString()
 		properties[::shortcutNextLine.name] = shortcutNextLine.toString()
 		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
-		properties[::shortcutNewLineBeforeCurrent.name] = shortcutNewLineBeforeCurrent.toString()
+		properties[::shortcutNewLineBefore.name] = shortcutNewLineBefore.toString()
 		properties.store(configFile.outputStream(), null)
 	}
 }
