@@ -1,10 +1,12 @@
 package org.ice1000.devkt
 
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.lang.ProgrammingLanguage
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
+import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.com.intellij.psi.*
@@ -18,7 +20,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.*
+import org.jetbrains.kotlin.script.KotlinScriptDefinition
+import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import java.io.File
 
 data class ASTToken(
@@ -59,11 +62,11 @@ object Analyzer {
 		lexer = parserDef.createLexer(project) as KotlinLexer
 	}
 
-	fun parseKotlin(text: String) = psiFileFactory
-			.createFileFromText(GlobalSettings.javaClassName, KotlinLanguage.INSTANCE, text) as KtFile
-
-	fun parseJava(text: String) = psiFileFactory
-			.createFileFromText(GlobalSettings.javaClassName, JavaLanguage.INSTANCE, text) as PsiJavaFile
+	fun parseKotlin(text: String) = parse(text, KotlinLanguage.INSTANCE) as KtFile
+	fun parseJava(text: String) = parse(text, JavaLanguage.INSTANCE) as PsiJavaFile
+	fun parse(text: String, language: ProgrammingLanguage<*>, name: String? = null) = parse(text, language.language, name)
+	fun parse(text: String, language: Language, name: String? = null) = psiFileFactory
+			.createFileFromText(name ?: GlobalSettings.javaClassName, language, text)
 
 	fun compileJvm(ktFile: KtFile) {
 		ensureTargetDirExists()

@@ -153,6 +153,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			currentFile = it
 			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
+			document.switchLanguage(it.name)
 			document.clear()
 			document.insert(0, it.readText())
 			edited = false

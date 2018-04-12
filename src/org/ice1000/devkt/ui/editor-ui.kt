@@ -3,12 +3,8 @@ package org.ice1000.devkt.ui
 import org.ice1000.devkt.*
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.lang.JavaAnnotator
-import org.ice1000.devkt.lang.KotlinAnnotator
+import org.ice1000.devkt.lang.*
 import org.jetbrains.kotlin.com.intellij.psi.*
-import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import javax.swing.JTextPane
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
@@ -32,15 +28,22 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	private var selfMaintainedString = StringBuilder()
-	private val ktAnotator = KotlinAnnotator<TextAttributes>()
-	private val javaAnotator = JavaAnnotator<TextAttributes>()
-	private var annotator = ktAnotator
+	private val languages = listOf(
+			Java<TextAttributes>(JavaAnnotator(), JavaSyntaxHighlighter()),
+			Kotlin<TextAttributes>(KotlinAnnotator(), KotlinSyntaxHighlighter())
+	)
+
+	private var currentLanguage: ProgrammingLanguage<TextAttributes>? = null
+	private var psiFileCache: PsiFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
-	private var psiFileCache: PsiFile? = null
 
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
+
+	fun switchLanguage(fileName: String) {
+		currentLanguage = languages.firstOrNull { it.satisfies(fileName) }
+	}
 
 	fun adjustFormat(offs: Int = 0, len: Int = document.length - offs) {
 		if (len <= 0) return
@@ -111,30 +114,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 	private fun lex() {
 		val tokens = Analyzer.lex(text)
 		for ((start, end, _, type) in tokens)
-			attributesOf(type)?.let { highlight(start, end, it) }
-	}
-
-	/**
-	 * @see com.intellij.openapi.fileTypes.SyntaxHighlighter.getTokenHighlights
-	 */
-	private fun attributesOf(type: IElementType) = when (type) {
-		KtTokens.IDENTIFIER -> colorScheme.identifiers
-		KtTokens.CHARACTER_LITERAL -> colorScheme.charLiteral
-		KtTokens.EOL_COMMENT -> colorScheme.lineComments
-		KtTokens.DOC_COMMENT -> colorScheme.docComments
-		KtTokens.SEMICOLON -> colorScheme.semicolon
-		KtTokens.COLON -> colorScheme.colon
-		KtTokens.COMMA -> colorScheme.comma
-		KtTokens.INTEGER_LITERAL, KtTokens.FLOAT_LITERAL -> colorScheme.numbers
-		KtTokens.LPAR, KtTokens.RPAR -> colorScheme.parentheses
-		KtTokens.LBRACE, KtTokens.RBRACE -> colorScheme.braces
-		KtTokens.LBRACKET, KtTokens.RBRACKET -> colorScheme.brackets
-		KtTokens.BLOCK_COMMENT, KtTokens.SHEBANG_COMMENT -> colorScheme.blockComments
-		in stringTokens -> colorScheme.string
-		in stringTemplateTokens -> colorScheme.templateEntries
-		in KtTokens.KEYWORDS -> colorScheme.keywords
-		in KtTokens.OPERATIONS -> colorScheme.operators
-		else -> null
+			currentLanguage?.attributesOf(type, colorScheme)?.let { highlight(start, end, it) }
 	}
 
 	/**
@@ -149,7 +129,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 		SyntaxTraverser
 				.psiTraverser(Analyzer.parseKotlin(text).also { psiFileCache = it })
 				.forEach { psi ->
-					if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
+					if (psi !is PsiWhiteSpace) currentLanguage?.annotate(psi, this, colorScheme)
 				}
 	}
 
