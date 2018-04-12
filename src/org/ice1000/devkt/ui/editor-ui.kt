@@ -5,8 +5,10 @@ import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.paired
+import org.jetbrains.kotlin.com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.com.intellij.testFramework.LightVirtualFile
 import javax.swing.JTextPane
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
@@ -35,12 +37,14 @@ class DevKtDocumentHandler<in TextAttributes>(
 		adjustFormat()
 		GlobalSettings.languageExtensions.forEach {
 			Analyzer.registerLanguage(it)
+			@Suppress("UNCHECKED_CAST")
 			languages += it as ProgrammingLanguage<TextAttributes>
 		}
 	}
 
 	private var currentLanguage: ProgrammingLanguage<TextAttributes>? = null
 	private var psiFileCache: PsiFile? = null
+	private var virtualFileCache: VirtualFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
 
@@ -49,6 +53,7 @@ class DevKtDocumentHandler<in TextAttributes>(
 
 	fun switchLanguage(fileName: String) {
 		currentLanguage = languages.firstOrNull { it.satisfies(fileName) }
+
 	}
 
 	val psiFile: PsiFile?

@@ -100,7 +100,7 @@ object Analyzer {
 	fun parseJava(text: String) = parse(text, JavaLanguage.INSTANCE) as PsiJavaFile
 	fun parse(text: String, language: ProgrammingLanguage<*>, name: String? = null) = parse(text, language.language, name)
 	fun parse(text: String, language: Language, name: String? = null) = psiFileFactory
-			.createFileFromText(name ?: GlobalSettings.javaClassName, language, text)
+			.createFileFromText(name ?: GlobalSettings.javaClassName, language, text, false, false, true)
 
 	fun compileJvm(ktFile: KtFile) {
 		ensureTargetDirExists()
