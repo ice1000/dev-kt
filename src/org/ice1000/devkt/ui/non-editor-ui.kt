@@ -10,6 +10,7 @@ import org.ice1000.devkt.selfLocation
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import java.awt.*
@@ -18,7 +19,6 @@ import java.awt.event.MouseEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
-import javax.swing.text.AttributeSet
 import kotlin.concurrent.thread
 
 fun JFrame.TODO() {
@@ -140,7 +140,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	}
 
 	fun viewPsi() {
-		PsiViewerImpl(ktFile(), frame).show
+		psiFile()?.let { PsiViewerImpl(it, frame).show }
 	}
 
 	fun exit() {
@@ -161,9 +161,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		val start = System.currentTimeMillis()
+		val ktFile = psiFile() as? KtFile ?: return@thread
 		try {
 			message("Build started…")
-			Analyzer.compileJar(ktFile())
+			Analyzer.compileJar(ktFile)
 			SwingUtilities.invokeLater {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
@@ -184,9 +185,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	inline fun buildAsJs(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		val start = System.currentTimeMillis()
+		val ktFile = psiFile() as? KtFile ?: return@thread
 		try {
 			message("Build started…")
-			Analyzer.compileJs(ktFile())
+			Analyzer.compileJs(ktFile)
 			SwingUtilities.invokeLater {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
@@ -207,9 +209,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		val start = System.currentTimeMillis()
+		val ktFile = psiFile() as? KtFile ?: return@thread
 		try {
 			message("Build started…")
-			Analyzer.compileJvm(ktFile())
+			Analyzer.compileJvm(ktFile)
 			SwingUtilities.invokeLater {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
@@ -237,7 +240,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 					JOptionPane.QUESTION_MESSAGE,
 					DevKtIcons.KOTLIN)
 
-	abstract fun ktFile(): KtFile
+	abstract fun psiFile(): PsiFile?
 	protected abstract fun reloadSettings()
 	fun restart() {
 		reloadSettings()
@@ -247,7 +250,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	abstract fun updateShowInFilesMenuItem()
 	fun runCommand(file: File) {
-		val ktFile = ktFile()
+		val ktFile = psiFile() as? KtFile ?: return
 		val className = ktFile.packageFqName.asString().let {
 			if (it.isEmpty()) "${GlobalSettings.javaClassName}Kt" else "$it.${GlobalSettings.javaClassName}Kt"
 		}

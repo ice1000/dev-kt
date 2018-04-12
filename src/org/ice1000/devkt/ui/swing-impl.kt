@@ -234,7 +234,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	//Shortcuts ↑↑↑
 
-	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(document.text)
+	override fun psiFile() = document.psiFile
 
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()

@@ -45,6 +45,8 @@ class DevKtDocumentHandler<in TextAttributes>(
 		currentLanguage = languages.firstOrNull { it.satisfies(fileName) }
 	}
 
+	val psiFile: PsiFile? get() = psiFileCache ?: currentLanguage?.run { Analyzer.parse(text, language) }
+
 	fun adjustFormat(offs: Int = 0, len: Int = document.length - offs) {
 		if (len <= 0) return
 		document.changeParagraphAttributes(offs, len, colorScheme.tabSize, false)
