@@ -2,7 +2,7 @@ package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.ui.AnnotationHolder
-import org.jetbrains.kotlin.com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -35,7 +35,34 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			element: PsiElement,
 			document: AnnotationHolder<TextAttributes>,
 			colorScheme: ColorScheme<TextAttributes>) {
-		// TODO
+		when (element) {
+			is PsiAnnotation -> annotation(element, document, colorScheme)
+			is PsiTypeElement -> typeElement(element, document, colorScheme)
+			is PsiMethod -> method(element, document, colorScheme)
+		}
+	}
+
+	private fun method(
+			element: PsiMethod,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		element.nameIdentifier?.let { document.highlight(it, colorScheme.function) }
+	}
+
+	private fun typeElement(
+			element: PsiElement,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		document.highlight(element, colorScheme.userTypeRef)
+	}
+
+	private fun annotation(
+			element: PsiAnnotation,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		val start = element.startOffset
+		val end = element.nameReferenceElement?.endOffset ?: element.firstChild?.endOffset ?: start
+		document.highlight(start, end, colorScheme.annotations)
 	}
 }
 
@@ -105,7 +132,7 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			document: AnnotationHolder<TextAttributes>,
 			colorScheme: ColorScheme<TextAttributes>) {
 		val start = element.startOffset
-		val end = element.typeReference?.endOffset ?: start
+		val end = element.typeReference?.endOffset ?: element.atSymbol?.endOffset ?: start
 		document.highlight(start, end, colorScheme.annotations)
 	}
 }

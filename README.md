@@ -8,7 +8,7 @@ Travis CI (test, no artifact)|[![Build Status](https://travis-ci.org/ice1000/dev
 AppVeyor (artifact, no test)|[![Build status](https://ci.appveyor.com/api/projects/status/c0aq16ej7415m302?svg=true)](https://ci.appveyor.com/project/ice1000/dev-kt)
 CircleCI (both)|[![CircleCI](https://circleci.com/gh/ice1000/dev-kt.svg?style=svg)](https://circleci.com/gh/ice1000/dev-kt)
 
-This is a DevCpp-like cross-platform Kotlin IDE features in lightweight.
+This is a DevCpp-like cross-platform Kotlin (and Java, experimental) IDE features in lightweight.
 
 You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-kt/build/artifacts), the one ends with "-all.jar" is an executable jar.
 
@@ -21,6 +21,7 @@ You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-k
 + Build as jar/class files, run after build, just one click
 + Cross platform (windows/macos/linux), just an executable jar
 + One property-based configuration file, hackable
++ Experimental Java support
 
 Just a simple comparison:
 
