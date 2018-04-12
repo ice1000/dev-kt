@@ -45,7 +45,8 @@ class DevKtDocumentHandler<in TextAttributes>(
 		currentLanguage = languages.firstOrNull { it.satisfies(fileName) }
 	}
 
-	val psiFile: PsiFile? get() = psiFileCache ?: currentLanguage?.run { Analyzer.parse(text, language) }
+	val psiFile: PsiFile?
+		get() = psiFileCache ?: currentLanguage?.run { Analyzer.parse(text, language) }
 
 	fun adjustFormat(offs: Int = 0, len: Int = document.length - offs) {
 		if (len <= 0) return
@@ -102,21 +103,24 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	fun reparse() {
+		val lang = currentLanguage ?: return
 		while (highlightCache.size <= document.length) highlightCache.add(null)
 		// val time = System.currentTimeMillis()
-		if (GlobalSettings.highlightTokenBased) lex()
+		if (GlobalSettings.highlightTokenBased) lex(lang)
 		// val time2 = System.currentTimeMillis()
-		if (GlobalSettings.highlightSemanticBased) parse()
+		if (GlobalSettings.highlightSemanticBased) parse(lang)
 		// val time3 = System.currentTimeMillis()
 		rehighlight()
 		// benchmark
 		// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time3}")
 	}
 
-	private fun lex() {
-		val tokens = Analyzer.lex(text)
+	private fun lex(language: ProgrammingLanguage<TextAttributes>) {
+		val tokens = Analyzer.lex(text, language.lexer)
 		for ((start, end, _, type) in tokens)
-			currentLanguage?.attributesOf(type, colorScheme)?.let { highlight(start, end, it) }
+			currentLanguage?.attributesOf(type, colorScheme)?.let {
+				highlight(start, end, it)
+			}
 	}
 
 	/**
@@ -127,9 +131,9 @@ class DevKtDocumentHandler<in TextAttributes>(
 		for (i in tokenStart until tokenEnd) highlightCache[i] = attributeSet
 	}
 
-	private fun parse() {
+	private fun parse(language: ProgrammingLanguage<TextAttributes>) {
 		SyntaxTraverser
-				.psiTraverser(Analyzer.parseKotlin(text).also { psiFileCache = it })
+				.psiTraverser(Analyzer.parse(text, language.language).also { psiFileCache = it })
 				.forEach { psi ->
 					if (psi !is PsiWhiteSpace) currentLanguage?.annotate(psi, this, colorScheme)
 				}

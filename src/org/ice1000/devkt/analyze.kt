@@ -8,17 +8,17 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
+import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.com.intellij.psi.*
+import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
+import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
@@ -41,7 +41,6 @@ object Analyzer {
 	private val jvmEnvironment: KotlinCoreEnvironment
 	private val jsEnvironment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
-	private val lexer: KotlinLexer
 
 	init {
 		val compilerConfiguration = CompilerConfiguration()
@@ -58,8 +57,6 @@ object Analyzer {
 				jsCompilerConfiguration, EnvironmentConfigFiles.JS_CONFIG_FILES)
 		val project = jvmEnvironment.project
 		psiFileFactory = PsiFileFactory.getInstance(project)
-		val parserDef = KotlinParserDefinition.instance
-		lexer = parserDef.createLexer(project) as KotlinLexer
 	}
 
 	fun parseKotlin(text: String) = parse(text, KotlinLanguage.INSTANCE) as KtFile
@@ -108,7 +105,7 @@ object Analyzer {
 	}
 
 	// TODO incremental
-	fun lex(text: String) = lexer.run {
+	fun lex(text: String, lexer: Lexer) = lexer.run {
 		start(text)
 		generateSequence {
 			tokenType

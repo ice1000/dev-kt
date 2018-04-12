@@ -3,6 +3,9 @@ package org.ice1000.devkt.lang
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.stringTemplateTokens
 import org.ice1000.devkt.stringTokens
+import org.jetbrains.kotlin.com.intellij.lexer.JavaDocTokenTypes
+import org.jetbrains.kotlin.com.intellij.psi.JavaDocTokenType
+import org.jetbrains.kotlin.com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -41,7 +44,14 @@ class KotlinSyntaxHighlighter<TextAttributes> : SyntaxHighlighter<TextAttributes
 }
 
 class JavaSyntaxHighlighter<TextAttributes> : SyntaxHighlighter<TextAttributes> {
-	override fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>): TextAttributes? {
-		return null
+	override fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>) = when (type) {
+		JavaTokenType.END_OF_LINE_COMMENT -> colorScheme.lineComments
+		JavaDocTokenType.ALL_JAVADOC_TOKENS -> colorScheme.docComments
+		JavaTokenType.C_STYLE_COMMENT -> colorScheme.blockComments
+		else -> null
+	}
+
+	companion object TokenSets {
+
 	}
 }
