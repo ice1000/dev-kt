@@ -2,14 +2,10 @@ package org.ice1000.devkt.ui
 
 import charlie.gensokyo.show
 import net.iharder.dnd.FileDrop
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
-import org.ice1000.devkt.config.*
-import org.ice1000.devkt.lang.KotlinAnnotator
-import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
-import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.config.swingColorScheme
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import java.awt.Font
@@ -36,14 +32,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
-	private var lineNumber = 1
-	private val document: KtDocument
 	private val documentHandler: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
-		private val annotator = KotlinAnnotator<AttributeSet>()
-		private val highlightCache = ArrayList<AttributeSet?>(5000)
-		private var selfMaintainedString = StringBuilder()
 		override var caretPosition
 			get() = editor.caretPosition
 			set(value) {
@@ -56,78 +47,23 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				undoManager.addEdit(it.edit)
 				edited = true
 			}
-			adjustFormat()
 		}
 
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
-
-		override fun adjustFormat(offs: Int, len: Int) {
-			if (len <= 0) return
-			setParagraphAttributesDoneBySettings(offs, len, colorScheme.tabSize, false)
-			val currentLineNumber = selfMaintainedString.count { it == '\n' } + 1
-			val change = currentLineNumber != lineNumber
-			lineNumber = currentLineNumber
-			//language=HTML
-			if (change) lineNumberLabel.text = (1..currentLineNumber).joinToString(
-					separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>")
+		override fun lockWrite() = writeLock()
+		override fun unlockWrite() = writeUnlock()
+		override fun resetLineNumberLabel(str: String) {
+			lineNumberLabel.text = str
 		}
-
-		override val text: String get() = selfMaintainedString.toString()
 
 		override fun insert(offs: Int, str: String) = insertString(offs, str, null)
 
-		private fun lex() {
-			val tokens = Analyzer.lex(text)
-			for ((start, end, _, type) in tokens)
-				attributesOf(type)?.let { highlight(start, end, it) }
-		}
-
-		private fun parse() {
-			SyntaxTraverser
-					.psiTraverser(Analyzer.parseKotlin(text).also { ktFileCache = it })
-					.forEach { psi ->
-						if (psi !is PsiWhiteSpace) annotator.annotate(psi, this, colorScheme)
-					}
-		}
-
-		override fun reparse() {
-			while (highlightCache.size <= length) highlightCache.add(null)
-			// val time = System.currentTimeMillis()
-			if (GlobalSettings.highlightTokenBased) lex()
-			// val time2 = System.currentTimeMillis()
-			if (GlobalSettings.highlightSemanticBased) parse()
-			// val time3 = System.currentTimeMillis()
-			rehighlight()
-			// benchmark
-			// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time3}")
-		}
-
-		private fun rehighlight() {
-			if (length > 1) try {
-				writeLock()
-				var tokenStart = 0
-				var attributeSet = highlightCache[0]
-				highlightCache[0] = null
-				for (i in 1 until highlightCache.size) {
-					if (attributeSet != highlightCache[i]) {
-						if (attributeSet != null)
-							setCharacterAttributesDoneByCache(tokenStart, i - tokenStart, attributeSet, true)
-						tokenStart = i
-						attributeSet = highlightCache[i]
-					}
-					highlightCache[i] = null
-				}
-			} finally {
-				writeUnlock()
-			}
-		}
-
 		/**
 		 * Re-implement of [setCharacterAttributes], invoke [fireUndoableEditUpdate] with
-		 * [highlightCache] as event source, which is used by [undoManager] to prevent color
+		 * [documentHandler] as event source, which is used by [undoManager] to prevent color
 		 * modifications to be recorded.
 		 */
-		private fun setCharacterAttributesDoneByCache(offset: Int, length: Int, s: AttributeSet, replace: Boolean) {
+		override fun changeCharacterAttributes(offset: Int, length: Int, s: AttributeSet, replace: Boolean) {
 			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
 			buffer.change(offset, length, changes)
 			val sCopy = s.copyAttributes()
@@ -145,7 +81,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 			changes.end()
 			fireChangedUpdate(changes)
-			fireUndoableEditUpdate(UndoableEditEvent(highlightCache, changes))
+			fireUndoableEditUpdate(UndoableEditEvent(documentHandler, changes))
 		}
 
 		/**
@@ -153,8 +89,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		 * [GlobalSettings] as event source, which is used by [undoManager] to prevent color
 		 * modifications to be recorded.
 		 */
-		private fun setParagraphAttributesDoneBySettings(
-				offset: Int, length: Int, s: AttributeSet, replace: Boolean) = try {
+		override fun changeParagraphAttributes(offset: Int, length: Int, s: AttributeSet, replace: Boolean) = try {
 			writeLock()
 			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
 			val sCopy = s.copyAttributes()
@@ -172,47 +107,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		} finally {
 			writeUnlock()
 		}
-
-		/**
-		 * @see com.intellij.openapi.fileTypes.SyntaxHighlighter.getTokenHighlights
-		 */
-		private fun attributesOf(type: IElementType) = when (type) {
-			IDENTIFIER -> colorScheme.identifiers
-			CHARACTER_LITERAL -> colorScheme.charLiteral
-			EOL_COMMENT -> colorScheme.lineComments
-			DOC_COMMENT -> colorScheme.docComments
-			SEMICOLON -> colorScheme.semicolon
-			COLON -> colorScheme.colon
-			COMMA -> colorScheme.comma
-			INTEGER_LITERAL, FLOAT_LITERAL -> colorScheme.numbers
-			LPAR, RPAR -> colorScheme.parentheses
-			LBRACE, RBRACE -> colorScheme.braces
-			LBRACKET, RBRACKET -> colorScheme.brackets
-			BLOCK_COMMENT, SHEBANG_COMMENT -> colorScheme.blockComments
-			in stringTokens -> colorScheme.string
-			in stringTemplateTokens -> colorScheme.templateEntries
-			in KEYWORDS -> colorScheme.keywords
-			in OPERATIONS -> colorScheme.operators
-			else -> null
-		}
-
-		override fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) =
-				doHighlight(tokenStart, tokenEnd, attributeSet)
-
-		/**
-		 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
-		 */
-		fun doHighlight(tokenStart: Int, tokenEnd: Int, attributeSet: AttributeSet) {
-			if (tokenStart >= tokenEnd) return
-			for (i in tokenStart until tokenEnd) {
-				highlightCache[i] = attributeSet
-			}
-		}
 	}
 
 	init {
 		mainMenu(menuBar, frame)
-		document = KtDocument()
+		val document = KtDocument()
 		editor.document = document
 		documentHandler = document.createHandler()
 		FileDrop(mainPanel) {
@@ -318,8 +217,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	//这三个方法应该可以合并成一个方法吧
 	fun nextLine() {
 		val index = editor.caretPosition        //光标所在位置
-		val text = document.text                //编辑器内容
-		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
+		val text = documentHandler.text                //编辑器内容
+		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: documentHandler.length
 		documentHandler.insert(endOfLineIndex, "\n")
 		editor.caretPosition = endOfLineIndex + 1
 	}
@@ -332,7 +231,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	fun newLineBeforeCurrent() {
 		val index = editor.caretPosition
-		val text = document.text
+		val text = documentHandler.text
 		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
 		documentHandler.insert(startOfLineIndex, "\n")
 		editor.caretPosition = startOfLineIndex + 1
@@ -352,7 +251,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	//Shortcuts ↑↑↑
 
-	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(document.text)
+	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(documentHandler.text)
 
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
@@ -385,7 +284,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		loadFont()
 		refreshTitle()
 		init()
-		with(document) {
+		with(documentHandler) {
 			adjustFormat()
 			reparse()
 		}

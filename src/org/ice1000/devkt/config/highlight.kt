@@ -8,7 +8,10 @@ import java.awt.GraphicsEnvironment
 import java.awt.font.FontRenderContext
 import javax.swing.text.*
 
-class ColorScheme<out TextAttributes>(settings: GlobalSettings, wrapColor: (String) -> TextAttributes) {
+class ColorScheme<out TextAttributes>(
+		settings: GlobalSettings,
+		val tabSize: TextAttributes,
+		wrapColor: (String) -> TextAttributes) {
 	val keywords = wrapColor(settings.colorKeywords)
 	val string = wrapColor(settings.colorString)
 	val templateEntries = wrapColor(settings.colorTemplateEntries)
@@ -31,13 +34,12 @@ class ColorScheme<out TextAttributes>(settings: GlobalSettings, wrapColor: (Stri
 	val typeParam = wrapColor(settings.colorTypeParam)
 	val userTypeRef = wrapColor(settings.colorUserTypeRef)
 	val property = wrapColor(settings.colorProperty)
-	val tabSize = createTabSizeAttributes(settings.tabSize)
 }
 
 fun swingColorScheme(
 		settings: GlobalSettings,
 		context: AbstractDocument.AttributeContext = StyleContext.getDefaultStyleContext()) =
-		ColorScheme<AttributeSet>(settings) {
+		ColorScheme<AttributeSet>(settings, createTabSizeAttributes(settings.tabSize)) {
 			context.addAttribute(context.emptySet, StyleConstants.Foreground, Color.decode(it))
 		}
 
