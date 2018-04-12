@@ -38,12 +38,17 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	private var lineNumber = 1
 	private val document: KtDocument
-	private var selfMaintainedString = StringBuilder()
+	private val documentHandler: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
-		private val colorScheme: ColorScheme<AttributeSet> = swingColorScheme(GlobalSettings, attributeContext)
 		private val annotator = KotlinAnnotator<AttributeSet>()
 		private val highlightCache = ArrayList<AttributeSet?>(5000)
+		private var selfMaintainedString = StringBuilder()
+		override var caretPosition
+			get() = editor.caretPosition
+			set(value) {
+				editor.caretPosition = value
+			}
 
 		init {
 			addUndoableEditListener {
@@ -53,6 +58,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 			adjustFormat()
 		}
+
+		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
 
 		override fun adjustFormat(offs: Int, len: Int) {
 			if (len <= 0) return
@@ -68,44 +75,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		override val text: String get() = selfMaintainedString.toString()
 
 		override fun insert(offs: Int, str: String) = insertString(offs, str, null)
-		override fun insertString(offs: Int, str: String, a: AttributeSet?) {
-			val normalized = str.filterNot { it == '\r' }
-			val (offset, string, attr, move) = when {
-				normalized.length > 1 -> Quad(offs, normalized, a, 0)
-				normalized in paired.values -> {
-					val another = paired.keys.first { paired[it] == normalized }
-					if (offs != 0
-							&& getText(offs - 1, 1) == another
-							&& getText(offs, 1) == normalized) {
-						Quad(offs, "", a, 1)
-					} else Quad(offs, normalized, a, 0)
-				}
-				normalized in paired -> Quad(offs, normalized + paired[normalized], a, -1)
-				else -> Quad(offs, normalized, a, 0)
-			}
-
-			super.insertString(offset, string, attr)
-			selfMaintainedString.insert(offset, string)
-			editor.caretPosition += move
-			reparse()
-			adjustFormat(offset, string.length)
-		}
-
-		override fun remove(offs: Int, len: Int) {
-			val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
-			val (offset, length) = when {
-				delString in paired            //是否存在于字符对里
-						&& text.getOrNull(offs + 1)?.toString() == paired[delString] -> {
-					offs to 2
-				}
-				else -> offs to len
-			}
-
-			super.remove(offset, length)
-			selfMaintainedString.delete(offset, offset + length)
-			reparse()
-			adjustFormat(offset, length)
-		}
 
 		private fun lex() {
 			val tokens = Analyzer.lex(text)
@@ -245,6 +214,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		mainMenu(menuBar, frame)
 		document = KtDocument()
 		editor.document = document
+		documentHandler = document.createHandler()
 		FileDrop(mainPanel) {
 			it.firstOrNull { it.canRead() }?.let {
 				loadFile(it)
@@ -270,8 +240,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (!makeSureLeaveCurrentFile()) {
 			currentFile = null
 			edited = true
-			document.clear()
-			document.insert(0, javaClass
+			documentHandler.clear()
+			documentHandler.insert(0, javaClass
 					.getResourceAsStream("/template/$templateName")
 					.reader()
 					.readText())
@@ -283,8 +253,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			currentFile = it
 			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
-			document.clear()
-			document.insert(0, it.readText())
+			documentHandler.clear()
+			documentHandler.insert(0, it.readText())
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 		}
@@ -350,13 +320,13 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val index = editor.caretPosition        //光标所在位置
 		val text = document.text                //编辑器内容
 		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: document.length
-		document.insert(endOfLineIndex, "\n")
+		documentHandler.insert(endOfLineIndex, "\n")
 		editor.caretPosition = endOfLineIndex + 1
 	}
 
 	fun splitLine() {
 		val index = editor.caretPosition        //光标所在位置
-		document.insert(index, "\n")
+		documentHandler.insert(index, "\n")
 		editor.caretPosition = index
 	}
 
@@ -364,7 +334,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val index = editor.caretPosition
 		val text = document.text
 		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
-		document.insert(startOfLineIndex, "\n")
+		documentHandler.insert(startOfLineIndex, "\n")
 		editor.caretPosition = startOfLineIndex + 1
 	}
 
@@ -376,8 +346,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val lineStart = root.getElement(lineCount).startOffset
 		val lineEnd = root.getElement(lineCount).endOffset
 		val currentLineText = editor.document.getText(lineStart, lineEnd - lineStart)
-		if (currentLineText.startsWith("//")) document.remove(lineStart, 2)
-		else document.insert(lineStart, "//")
+		if (currentLineText.startsWith("//")) documentHandler.remove(lineStart, 2)
+		else documentHandler.insert(lineStart, "//")
 	}
 
 	//Shortcuts ↑↑↑
