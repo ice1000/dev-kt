@@ -11,9 +11,9 @@ import javax.swing.JTextPane
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
 	var caretPosition: Int
-	fun clear() = remove(0, length)
-	fun remove(offs: Int, len: Int)
-	fun insert(offs: Int, str: String)
+	fun clear() = delete(0, length)
+	fun delete(offs: Int, len: Int)
+	fun insert(offs: Int, str: String?)
 	fun changeCharacterAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
 	fun changeParagraphAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
 	fun resetLineNumberLabel(str: String)
@@ -61,8 +61,8 @@ class DevKtDocumentHandler<in TextAttributes>(
 				separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>"))
 	}
 
-	fun clear() = remove(0, document.length)
-	fun remove(offs: Int, len: Int) {
+	fun clear() = delete(0, document.length)
+	fun delete(offs: Int, len: Int) {
 		val delString = this.text.substring(offs, offs + len)        //即将被删除的字符串
 		val (offset, length) = when {
 			delString in paired            //是否存在于字符对里
@@ -74,14 +74,14 @@ class DevKtDocumentHandler<in TextAttributes>(
 
 		selfMaintainedString.delete(offset, offset + length)
 		with(document) {
-			remove(offset, length)
+			delete(offset, length)
 			reparse()
 			adjustFormat(offset, length)
 		}
 	}
 
-	fun insert(offs: Int, str: String) {
-		val normalized = str.filterNot { it == '\r' }
+	fun insert(offs: Int, str: String?) {
+		val normalized = str.orEmpty().filterNot { it == '\r' }
 		val (offset, string, move) = when {
 			normalized.length > 1 -> Triple(offs, normalized, 0)
 			normalized in paired.values -> {
@@ -122,10 +122,10 @@ class DevKtDocumentHandler<in TextAttributes>(
 		tokens
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { (start, end, _, type) ->
-			language.attributesOf(type, colorScheme)?.let {
-				highlight(start, end, it)
-			}
-		}
+					language.attributesOf(type, colorScheme)?.let {
+						highlight(start, end, it)
+					}
+				}
 	}
 
 	/**
@@ -164,27 +164,29 @@ class DevKtDocumentHandler<in TextAttributes>(
 		}
 	}
 
-	fun nextLine() {
-		document.message("Started new line")
-		val index = document.caretPosition
+	fun nextLine() = with(document) {
+		message("Started new line")
+		val index = caretPosition
 		val endOfLineIndex = selfMaintainedString.indexOf('\n', index)
-		document.insert(if (endOfLineIndex < 0) document.length else endOfLineIndex, "\n")
-		document.caretPosition = endOfLineIndex + 1
+		insert(if (endOfLineIndex < 0) length else endOfLineIndex, "\n")
+		caretPosition = endOfLineIndex + 1
 	}
 
-	fun splitLine() {
-		document.message("Split new line")
-		val index = document.caretPosition
-		document.insert(index, "\n")
-		document.caretPosition = index
+	fun splitLine() = with(document) {
+		message("Split new line")
+		val index = caretPosition
+		insert(index, "\n")
+		caretPosition = index
 	}
 
-	fun newLineBeforeCurrent() {
-		document.message("Started new line before current line")
-		val index = document.caretPosition
-		val startOfLineIndex = selfMaintainedString.lastIndexOf('\n', (index - 1).coerceAtLeast(0)).coerceAtLeast(0)
-		document.insert(startOfLineIndex, "\n")
-		document.caretPosition = startOfLineIndex + 1
+	fun newLineBeforeCurrent() = with(document) {
+		message("Started new line before current line")
+		val index = caretPosition
+		val startOfLineIndex = selfMaintainedString
+				.lastIndexOf('\n', (index - 1).coerceAtLeast(0))
+				.coerceAtLeast(0)
+		insert(startOfLineIndex, "\n")
+		caretPosition = startOfLineIndex + 1
 	}
 }
 

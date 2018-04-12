@@ -3,7 +3,9 @@ package org.ice1000.devkt.lang
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
+import org.jetbrains.kotlin.com.intellij.lexer.EmptyLexer
 import org.jetbrains.kotlin.com.intellij.lexer.Lexer
+import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
@@ -52,4 +54,20 @@ class Kotlin<TextAttributes>(
 		KotlinLexer(),
 		KotlinLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".kt") or fileName.endsWith(".kts")
+}
+
+/**
+ * @author ice1000
+ * @since v1.2
+ * @see PlainTextLanguage
+ */
+class PlainText<TextAttributes>(
+		annotator: Annotator<TextAttributes>,
+		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
+) : ProgrammingLanguage<TextAttributes>(
+		annotator,
+		syntaxHighlighter,
+		EmptyLexer(),
+		PlainTextLanguage.INSTANCE) {
+	override fun satisfies(fileName: String) = fileName.endsWith(".txt") || '.' !in fileName
 }

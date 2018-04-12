@@ -51,7 +51,18 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
 		override fun lockWrite() = writeLock()
 		override fun unlockWrite() = writeUnlock()
-		override fun insert(offs: Int, str: String) = insertString(offs, str, null)
+		/** from [DevKtDocument] */
+		override fun insert(offs: Int, str: String?) = super.insertString(offs, str, null)
+
+		/** from [DevKtDocument] */
+		override fun delete(offs: Int, len: Int) = super.remove(offs, len)
+
+		/** from [DefaultStyledDocument] */
+		override fun remove(offs: Int, len: Int) = document.delete(offs, len)
+
+		/** from [DefaultStyledDocument] */
+		override fun insertString(offs: Int, str: String?, a: AttributeSet?) = document.insert(offs, str)
+
 		override fun resetLineNumberLabel(str: String) {
 			lineNumberLabel.text = str
 		}
@@ -229,7 +240,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val lineStart = root.getElement(lineCount).startOffset
 		val lineEnd = root.getElement(lineCount).endOffset
 		val currentLineText = editor.document.getText(lineStart, lineEnd - lineStart)
-		if (currentLineText.startsWith("//")) document.remove(lineStart, 2)
+		if (currentLineText.startsWith("//")) document.delete(lineStart, 2)
 		else document.insert(lineStart, "//")
 	}
 
