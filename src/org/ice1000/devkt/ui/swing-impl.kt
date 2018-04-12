@@ -6,8 +6,6 @@ import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
-import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import java.awt.Font
 import java.io.File
 import javax.swing.JFileChooser
@@ -32,7 +30,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
-	private val documentHandler: DevKtDocumentHandler<AttributeSet>
+	private val document: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
 		override var caretPosition
@@ -60,7 +58,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		/**
 		 * Re-implement of [setCharacterAttributes], invoke [fireUndoableEditUpdate] with
-		 * [documentHandler] as event source, which is used by [undoManager] to prevent color
+		 * [document] as event source, which is used by [undoManager] to prevent color
 		 * modifications to be recorded.
 		 */
 		override fun changeCharacterAttributes(offset: Int, length: Int, s: AttributeSet, replace: Boolean) {
@@ -81,7 +79,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 			changes.end()
 			fireChangedUpdate(changes)
-			fireUndoableEditUpdate(UndoableEditEvent(documentHandler, changes))
+			fireUndoableEditUpdate(UndoableEditEvent(document, changes))
 		}
 
 		/**
@@ -111,9 +109,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	init {
 		mainMenu(menuBar, frame)
-		val document = KtDocument()
-		editor.document = document
-		documentHandler = document.createHandler()
+		val ktDocument = KtDocument()
+		editor.document = ktDocument
+		document = ktDocument.createHandler()
 		FileDrop(mainPanel) {
 			it.firstOrNull { it.canRead() }?.let {
 				loadFile(it)
@@ -139,8 +137,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (!makeSureLeaveCurrentFile()) {
 			currentFile = null
 			edited = true
-			documentHandler.clear()
-			documentHandler.insert(0, javaClass
+			document.clear()
+			document.insert(0, javaClass
 					.getResourceAsStream("/template/$templateName")
 					.reader()
 					.readText())
@@ -152,8 +150,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			currentFile = it
 			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
-			documentHandler.clear()
-			documentHandler.insert(0, it.readText())
+			document.clear()
+			document.insert(0, it.readText())
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 		}
@@ -215,27 +213,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	//这三个方法应该可以合并成一个方法吧
-	fun nextLine() {
-		val index = editor.caretPosition        //光标所在位置
-		val text = documentHandler.text                //编辑器内容
-		val endOfLineIndex = text.indexOfOrNull('\n', index) ?: documentHandler.length
-		documentHandler.insert(endOfLineIndex, "\n")
-		editor.caretPosition = endOfLineIndex + 1
-	}
+	fun nextLine() = document.nextLine()
 
-	fun splitLine() {
-		val index = editor.caretPosition        //光标所在位置
-		documentHandler.insert(index, "\n")
-		editor.caretPosition = index
-	}
-
-	fun newLineBeforeCurrent() {
-		val index = editor.caretPosition
-		val text = documentHandler.text
-		val startOfLineIndex = text.lastIndexOfOrNull('\n', (index - 1).coerceAtLeast(0)) ?: 0        //一行的开头
-		documentHandler.insert(startOfLineIndex, "\n")
-		editor.caretPosition = startOfLineIndex + 1
-	}
+	fun splitLine() = document.splitLine()
+	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 
 	//TODO 暂时还不支持多行注释 QAQ
 	fun comment() {
@@ -245,13 +226,13 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val lineStart = root.getElement(lineCount).startOffset
 		val lineEnd = root.getElement(lineCount).endOffset
 		val currentLineText = editor.document.getText(lineStart, lineEnd - lineStart)
-		if (currentLineText.startsWith("//")) documentHandler.remove(lineStart, 2)
-		else documentHandler.insert(lineStart, "//")
+		if (currentLineText.startsWith("//")) document.remove(lineStart, 2)
+		else document.insert(lineStart, "//")
 	}
 
 	//Shortcuts ↑↑↑
 
-	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(documentHandler.text)
+	override fun ktFile() = ktFileCache ?: Analyzer.parseKotlin(document.text)
 
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
@@ -284,7 +265,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		loadFont()
 		refreshTitle()
 		init()
-		with(documentHandler) {
+		with(document) {
 			adjustFormat()
 			reparse()
 		}

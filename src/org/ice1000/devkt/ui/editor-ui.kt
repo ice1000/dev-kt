@@ -8,6 +8,7 @@ import org.ice1000.devkt.lang.KotlinAnnotator
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.utils.addToStdlib.lastIndexOfOrNull
 import javax.swing.JTextPane
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
@@ -169,6 +170,26 @@ class DevKtDocumentHandler<in TextAttributes>(
 		} finally {
 			document.unlockWrite()
 		}
+	}
+
+	fun nextLine() {
+		val index = document.caretPosition
+		val endOfLineIndex = selfMaintainedString.indexOf('\n', index)
+		document.insert(if (endOfLineIndex < 0) document.length else endOfLineIndex, "\n")
+		document.caretPosition = endOfLineIndex + 1
+	}
+
+	fun splitLine() {
+		val index = document.caretPosition
+		document.insert(index, "\n")
+		document.caretPosition = index
+	}
+
+	fun newLineBeforeCurrent() {
+		val index = document.caretPosition
+		val startOfLineIndex = selfMaintainedString.lastIndexOf('\n', (index - 1).coerceAtLeast(0)).coerceAtLeast(0)
+		document.insert(startOfLineIndex, "\n")
+		document.caretPosition = startOfLineIndex + 1
 	}
 }
 
