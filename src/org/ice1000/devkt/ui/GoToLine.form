@@ -30,7 +30,7 @@
             </constraints>
             <properties>
               <labelFor value="d8af7"/>
-              <text value="&amp;Position:"/>
+              <text value="[Line] [:column]:"/>
             </properties>
           </component>
           <component id="f8805" class="javax.swing.JLabel">

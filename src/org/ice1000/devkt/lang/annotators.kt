@@ -28,7 +28,7 @@ interface Annotator<TextAttributes> {
 
 /**
  * @author ice1000
- * @since v1.1
+ * @since v1.2
  */
 class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	override fun annotate(
