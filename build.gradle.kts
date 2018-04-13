@@ -22,15 +22,16 @@ val commitHash by lazy {
 	output.trim()
 }
 
-val isCI = !System.getenv("CI").isNullOrBlank()
+val isCI = true// !System.getenv("CI").isNullOrBlank()
 
 val shortVersion = "v1.2-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
-val kotlinVersion = "1.2.31"
-val pluginCalculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
+var kotlinVersion: String by extra
+kotlinVersion = if (isCI) "1.2.40-eap-61" else "1.2.31"
+val calculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
 
 group = packageName
-version = pluginCalculatedVersion
+version = calculatedVersion
 
 plugins {
 	idea
@@ -156,6 +157,7 @@ repositories {
 	mavenCentral()
 	jcenter()
 	maven("https://jitpack.io")
+	maven("https://dl.bintray.com/kotlin/kotlin-eap-1.2")
 }
 
 dependencies {
