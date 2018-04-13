@@ -7,6 +7,7 @@ import org.ice1000.devkt.ui.swing.AbstractUI
 import org.ice1000.devkt.ui.swing.DevKtFrame
 import org.ice1000.devkt.ui.swing.forms.Configuration
 import java.awt.Font
+import java.awt.TextField
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
@@ -36,7 +37,15 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 		buttonReset.addActionListener { reset() }
 		backgroundBrowse.addActionListener {
 			val old = GlobalSettings.backgroundImage.first.let(::File)
-			backgroundImageField.text = JFileChooser(if (old.exists()) old.parentFile else null).apply {
+			backgroundImageField.text = JFileChooser(old.parentFile?.takeIf { old.exists() }).apply {
+				showOpenDialog(mainPanel)
+				fileSelectionMode = JFileChooser.FILES_ONLY
+				// selectedFile will be return null if JFileChooser was canceled
+			}.selectedFile?.absolutePath.orEmpty()
+		}
+		backgroundBrowse.addActionListener {
+			val old = GlobalSettings.windowIcon.first.let(::File)
+			windowIconField.text = JFileChooser(old.parentFile?.takeIf { old.exists() }).apply {
 				showOpenDialog(mainPanel)
 				fileSelectionMode = JFileChooser.FILES_ONLY
 				// selectedFile will be return null if JFileChooser was canceled

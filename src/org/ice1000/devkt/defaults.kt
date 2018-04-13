@@ -48,6 +48,8 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("List.font", value)
 			UIManager.put("Table.font", value)
 			UIManager.put("Panel.font", value)
+			UIManager.put("CheckBox.font", value)
+			UIManager.put("ComboBox.font", value)
 			UIManager.put("ToolTip.font", value)
 		}
 
