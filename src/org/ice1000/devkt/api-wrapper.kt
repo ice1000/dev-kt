@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
@@ -32,7 +33,7 @@ fun analyzeAndCheckForErrors(
 		files: Collection<KtFile>,
 		configuration: CompilerConfiguration,
 		packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-		trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
+		trace: BindingTrace = CliBindingTrace()
 ): AnalysisResult {
 	for (file in files) AnalyzingUtils.checkForSyntacticErrors(file)
 
@@ -58,7 +59,7 @@ private fun analyze(
 		files: Collection<KtFile>,
 		configuration: CompilerConfiguration,
 		packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
-		trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
+		trace: BindingTrace = CliBindingTrace()
 ): AnalysisResult = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
 		project, files, trace, configuration, packagePartProviderFactory
 )
@@ -73,7 +74,7 @@ fun compileFiles(
 		files: List<KtFile>,
 		environment: KotlinCoreEnvironment,
 		classBuilderFactory: ClassBuilderFactory = ClassBuilderFactories.TEST,
-		trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
+		trace: BindingTrace = CliBindingTrace()
 ): GenerationState =
 		compileFiles(files, environment.configuration, classBuilderFactory, environment::createPackagePartProvider, trace)
 
@@ -82,7 +83,7 @@ fun compileFiles(
 		configuration: CompilerConfiguration,
 		classBuilderFactory: ClassBuilderFactory,
 		packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
-		trace: BindingTrace = CliLightClassGenerationSupport.CliBindingTrace()
+		trace: BindingTrace = CliBindingTrace()
 ): GenerationState {
 	val analysisResult =
 			analyzeAndCheckForErrors(files.first().project, files, configuration, packagePartProvider, trace)
