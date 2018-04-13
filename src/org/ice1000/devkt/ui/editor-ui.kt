@@ -30,6 +30,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
 			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter())
 	)
+	private val defaultLanguage = languages[1]
 
 	init {
 		adjustFormat()
@@ -48,6 +49,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
 
+	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	fun switchLanguage(fileName: String) {
 		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
 	}

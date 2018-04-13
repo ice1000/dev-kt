@@ -265,14 +265,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
 
-	fun buildClassAndRun() {
-		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
-	}
-
-	fun buildJarAndRun() {
-		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
-	}
-
 	override fun updateShowInFilesMenuItem() {
 		showInFilesMenuItem.isEnabled = currentFile != null
 		buildMenuBar.isVisible = document.psiFile is KtFile

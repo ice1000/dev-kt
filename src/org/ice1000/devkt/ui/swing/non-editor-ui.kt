@@ -203,6 +203,14 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		}
 	}
 
+	fun buildClassAndRun() {
+		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
+	}
+
+	fun buildJarAndRun() {
+		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
+	}
+
 	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		val start = System.currentTimeMillis()
 		val ktFile = psiFile() as? KtFile ?: return@thread
