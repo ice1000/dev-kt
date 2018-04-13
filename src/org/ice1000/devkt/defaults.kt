@@ -8,7 +8,7 @@ import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
 import org.ice1000.devkt.lie.mac
-import org.ice1000.devkt.ui.DevKtFrame
+import org.ice1000.devkt.ui.swing.DevKtFrame
 import java.awt.Font
 import java.awt.GraphicsEnvironment
 import java.io.OutputStream
@@ -48,6 +48,8 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 			UIManager.put("List.font", value)
 			UIManager.put("Table.font", value)
 			UIManager.put("Panel.font", value)
+			UIManager.put("CheckBox.font", value)
+			UIManager.put("ComboBox.font", value)
 			UIManager.put("ToolTip.font", value)
 		}
 

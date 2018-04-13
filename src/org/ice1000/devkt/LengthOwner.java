@@ -1,4 +1,4 @@
-package org.ice1000.devkt.ui;
+package org.ice1000.devkt;
 
 /**
  * @author ice1000

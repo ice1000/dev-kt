@@ -1,4 +1,4 @@
-package org.ice1000.devkt.ui;
+package org.ice1000.devkt.ui.swing.forms;
 
 import org.ice1000.devkt.lang.PsiViewerImpl;
 import org.jetbrains.annotations.Nullable;

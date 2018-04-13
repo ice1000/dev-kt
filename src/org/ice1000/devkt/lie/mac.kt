@@ -4,7 +4,7 @@ import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.ui.DevKtFrame.Companion.instance
+import org.ice1000.devkt.ui.swing.DevKtFrame.Companion.instance
 import java.awt.event.KeyEvent
 
 val mac = SystemInfo.isMac

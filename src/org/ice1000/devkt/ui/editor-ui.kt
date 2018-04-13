@@ -1,15 +1,12 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.Analyzer
+import org.ice1000.devkt.*
 import org.ice1000.devkt.config.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
-import org.ice1000.devkt.paired
-import org.jetbrains.kotlin.com.intellij.openapi.vfs.VirtualFile
+import org.ice1000.devkt.ui.swing.AnnotationHolder
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.com.intellij.testFramework.LightVirtualFile
-import javax.swing.JTextPane
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
 	var caretPosition: Int
@@ -24,9 +21,10 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 	fun message(text: String)
 }
 
-class DevKtDocumentHandler<in TextAttributes>(
+class DevKtDocumentHandler<TextAttributes>(
 		private val document: DevKtDocument<TextAttributes>,
-		private val colorScheme: ColorScheme<TextAttributes>) : AnnotationHolder<TextAttributes> {
+		private val colorScheme: ColorScheme<TextAttributes>) :
+		AnnotationHolder<TextAttributes> {
 	private var selfMaintainedString = StringBuilder()
 	private val languages: MutableList<ProgrammingLanguage<TextAttributes>> = arrayListOf(
 			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
@@ -44,7 +42,6 @@ class DevKtDocumentHandler<in TextAttributes>(
 
 	private var currentLanguage: ProgrammingLanguage<TextAttributes>? = null
 	private var psiFileCache: PsiFile? = null
-	private var virtualFileCache: VirtualFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
 
@@ -52,8 +49,11 @@ class DevKtDocumentHandler<in TextAttributes>(
 	override fun getLength() = document.length
 
 	fun switchLanguage(fileName: String) {
-		currentLanguage = languages.firstOrNull { it.satisfies(fileName) }
+		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
+	}
 
+	fun switchLanguage(language: ProgrammingLanguage<TextAttributes>?) {
+		currentLanguage = language
 	}
 
 	val psiFile: PsiFile?
@@ -128,8 +128,8 @@ class DevKtDocumentHandler<in TextAttributes>(
 	}
 
 	private fun lex(language: ProgrammingLanguage<TextAttributes>) {
-		val tokens = Analyzer.lex(text, language.lexer)
-		tokens
+		Analyzer
+				.lex(text, language.lexer)
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { (start, end, _, type) ->
 					language.attributesOf(type, colorScheme)?.let {
@@ -198,17 +198,4 @@ class DevKtDocumentHandler<in TextAttributes>(
 		insert(startOfLineIndex, "\n")
 		caretPosition = startOfLineIndex + 1
 	}
-}
-
-//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
-fun JTextPane.lineColumnToPos(line: Int, column: Int = 1): Int {
-	val lineStart = document.defaultRootElement.getElement(line - 1).startOffset
-	return lineStart + column - 1
-}
-
-fun JTextPane.posToLineColumn(pos: Int): Pair<Int, Int> {
-	val root = document.defaultRootElement
-	val line = root.getElementIndex(pos)
-	val column = pos - root.getElement(line).startOffset
-	return line + 1 to column + 1
 }

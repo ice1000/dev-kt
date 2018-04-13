@@ -27,10 +27,10 @@ class ScriptTest : KtUsefulTestCase() {
 		val aClass = compileScript("die_home_guy_so_disgusting.kts", StandardScriptDefinition)
 		Assert.assertNotNull(aClass)
 		val out = captureOut {
-			val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "comment"))
+			val anObj = tryConstructClassFromStringArgs(aClass!!, listOf("4", "commentCurrent"))
 			Assert.assertNotNull(anObj)
 		}
-		// 	assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
+		// 	assertEqualsTrimmed("$NUM_4_LINE (commentCurrent)$FIB_SCRIPT_OUTPUT_TAIL", out)
 	}
 
 	fun testStandardScriptWithoutParams() {

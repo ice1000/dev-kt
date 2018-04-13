@@ -1,7 +1,7 @@
 package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.config.ColorScheme
-import org.ice1000.devkt.ui.AnnotationHolder
+import org.ice1000.devkt.ui.swing.AnnotationHolder
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -40,7 +40,15 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			is PsiTypeElement -> typeElement(element, document, colorScheme)
 			is PsiMethod -> method(element, document, colorScheme)
 			is PsiField -> field(element, document, colorScheme)
+			is PsiVariable -> variable(element, document, colorScheme)
 		}
+	}
+
+	private fun variable(
+			element: PsiVariable,
+			document: AnnotationHolder<TextAttributes>,
+			colorScheme: ColorScheme<TextAttributes>) {
+		element.nameIdentifier?.let { document.highlight(it, colorScheme.variable) }
 	}
 
 	private fun method(

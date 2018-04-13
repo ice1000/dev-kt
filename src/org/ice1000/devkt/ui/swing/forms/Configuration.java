@@ -1,4 +1,4 @@
-package org.ice1000.devkt.ui;
+package org.ice1000.devkt.ui.swing.forms;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +17,12 @@ public abstract class Configuration extends JDialog {
 	protected JComboBox<String> uiFontField;
 	protected JSpinner fontSizeSpinner;
 	protected JButton backgroundBrowse;
+	protected JCheckBox useLexer;
+	protected JCheckBox useParser;
+	protected JTextField windowIconField;
+	protected JButton browseWindowIcon;
+	protected JTextField classNameField;
+	protected JTextField jarNameField;
 
 	public Configuration(@Nullable Window owner) {
 		super(owner);

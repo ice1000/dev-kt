@@ -1,12 +1,14 @@
-package org.ice1000.devkt.ui
+package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
 import com.bulenkov.iconloader.util.SystemInfo
-import org.ice1000.devkt.Analyzer
+import org.ice1000.devkt.*
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
-import org.ice1000.devkt.selfLocation
+import org.ice1000.devkt.ui.DevKtIcons
+import org.ice1000.devkt.ui.swing.forms.GoToLine
+import org.ice1000.devkt.ui.swing.forms.UI
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
@@ -20,11 +22,6 @@ import java.io.File
 import java.net.URL
 import javax.swing.*
 import kotlin.concurrent.thread
-
-fun JFrame.TODO() {
-	JOptionPane.showMessageDialog(this, "This feature is TODO.",
-			"Unfinished", 1, DevKtIcons.KOTLIN)
-}
 
 private const val MEGABYTE = 1024 * 1024
 
