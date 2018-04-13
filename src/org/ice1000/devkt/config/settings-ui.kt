@@ -61,6 +61,8 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 	private fun reset() = with(GlobalSettings) {
 		backgroundImageField.text = backgroundImage.first
 		windowIconField.text = windowIcon.first
+		classNameField.text = javaClassName
+		jarNameField.text = jarName
 		editorFontField.selectedItem = monoFontName
 		uiFontField.selectedItem = gothicFontName
 		fontSizeSpinner.value = fontSize
@@ -77,6 +79,8 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 	private fun apply() = with(receiver = GlobalSettings) {
 		monoFontName = editorFontField.selectedItem.toString()
 		gothicFontName = uiFontField.selectedItem.toString()
+		javaClassName = classNameField.text
+		jarName = jarNameField.text
 		(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
 		(backgroundImageAlphaSlider.value as? Number)?.let { GlobalSettings.backgroundAlpha = it.toInt() }
 		monoFontName.apply {

@@ -21,6 +21,8 @@ public abstract class Configuration extends JDialog {
 	protected JCheckBox useParser;
 	protected JTextField windowIconField;
 	protected JButton browseWindowIcon;
+	protected JTextField classNameField;
+	protected JTextField jarNameField;
 
 	public Configuration(@Nullable Window owner) {
 		super(owner);
