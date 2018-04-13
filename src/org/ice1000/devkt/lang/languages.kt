@@ -23,7 +23,8 @@ abstract class ProgrammingLanguage<TextAttributes> internal constructor(
 		val lexer: Lexer,
 		val language: Language
 ) : Annotator<TextAttributes> by annotator, SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
-	abstract fun satisfies(fileName: String): Boolean
+	open fun satisfies(fileName: String) = false
+	open val lineCommentStart = "//"
 }
 
 /**
@@ -39,7 +40,8 @@ abstract class ExtendedProgrammingLanguage<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
 		parserDefinition.createLexer(Analyzer.project),
-		language)
+		language
+)
 
 /**
  * @author ice1000

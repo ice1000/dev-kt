@@ -241,20 +241,20 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	fun comment(lines: IntRange) {
 		val root = editor.document.defaultRootElement
+		val lineCommentStart = document.lineCommentStart
 		val add = lines.any {
 			val element = root.getElement(it)
 			val lineStart = element.startOffset
 			val lineEnd = element.endOffset
 			val lineText = editor.document.getText(lineStart, lineEnd - lineStart)
-			!lineText.startsWith("//")        //只要有一行开头不为 `//` 就进行添加注释操作
+			!lineText.startsWith(lineCommentStart)        //只要有一行开头不为 `//` 就进行添加注释操作
 		}
 		//这上面和下面感觉可以优化emmmm
 		lines.forEach {
 			val element = root.getElement(it)
 			val lineStart = element.startOffset
-			if (add) {
-				document.insert(lineStart, "//")
-			} else document.delete(lineStart, 2)
+			if (add) document.insert(lineStart, lineCommentStart)
+			else document.delete(lineStart, 2)
 		}
 	}
 
@@ -276,7 +276,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	 */
 	private fun init() {
 		refreshLineNumber()
-		memoryIndicator.font = messageLabel.font.run { deriveFont(size2D - 4) }
+		memoryIndicator.font = messageLabel.font.run { deriveFont(size2D - 2.5F) }
 	}
 
 	override fun reloadSettings() {

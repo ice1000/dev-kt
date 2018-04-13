@@ -48,6 +48,7 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
+	val lineCommentStart get() = currentLanguage?.lineCommentStart ?: "//"
 
 	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	fun switchLanguage(fileName: String) {
