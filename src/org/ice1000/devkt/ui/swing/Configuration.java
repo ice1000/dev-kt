@@ -17,6 +17,8 @@ public abstract class Configuration extends JDialog {
 	protected JComboBox<String> uiFontField;
 	protected JSpinner fontSizeSpinner;
 	protected JButton backgroundBrowse;
+	protected JCheckBox useLexer;
+	protected JCheckBox useParser;
 
 	public Configuration(@Nullable Window owner) {
 		super(owner);
