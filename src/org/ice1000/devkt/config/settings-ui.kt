@@ -7,7 +7,6 @@ import org.ice1000.devkt.ui.swing.AbstractUI
 import org.ice1000.devkt.ui.swing.DevKtFrame
 import org.ice1000.devkt.ui.swing.forms.Configuration
 import java.awt.Font
-import java.awt.TextField
 import java.awt.event.*
 import java.io.File
 import javax.imageio.ImageIO
@@ -35,22 +34,8 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 		buttonApply.addActionListener { apply() }
 		buttonCancel.addActionListener { dispose() }
 		buttonReset.addActionListener { reset() }
-		backgroundBrowse.addActionListener {
-			val old = GlobalSettings.backgroundImage.first.let(::File)
-			backgroundImageField.text = JFileChooser(old.parentFile?.takeIf { old.exists() }).apply {
-				showOpenDialog(mainPanel)
-				fileSelectionMode = JFileChooser.FILES_ONLY
-				// selectedFile will be return null if JFileChooser was canceled
-			}.selectedFile?.absolutePath.orEmpty()
-		}
-		backgroundBrowse.addActionListener {
-			val old = GlobalSettings.windowIcon.first.let(::File)
-			windowIconField.text = JFileChooser(old.parentFile?.takeIf { old.exists() }).apply {
-				showOpenDialog(mainPanel)
-				fileSelectionMode = JFileChooser.FILES_ONLY
-				// selectedFile will be return null if JFileChooser was canceled
-			}.selectedFile?.absolutePath.orEmpty()
-		}
+		backgroundBrowse.addActionListener(browseActionOf(GlobalSettings.backgroundImage, backgroundImageField))
+		windowIconField.addActionListener(browseActionOf(GlobalSettings.windowIcon, windowIconField))
 		addWindowListener(object : WindowAdapter() {
 			override fun windowClosing(e: WindowEvent?) {
 				dispose()
@@ -64,8 +49,18 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 		reset()
 	}
 
+	private fun browseActionOf(oldPair: Pair<String, *>, textField: JTextField) = ActionListener {
+		val old = oldPair.first.let(::File)
+		textField.text = JFileChooser(old.parentFile?.takeIf { old.exists() }).apply {
+			showOpenDialog(mainPanel)
+			fileSelectionMode = JFileChooser.FILES_ONLY
+			// selectedFile will be return null if JFileChooser was canceled
+		}.selectedFile?.absolutePath.orEmpty()
+	}
+
 	private fun reset() = with(GlobalSettings) {
 		backgroundImageField.text = backgroundImage.first
+		windowIconField.text = windowIcon.first
 		editorFontField.selectedItem = monoFontName
 		uiFontField.selectedItem = gothicFontName
 		fontSizeSpinner.value = fontSize
@@ -92,6 +87,19 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 		highlightTokenBased = useLexer.isSelected
 		highlightSemanticBased = useParser.isSelected
 		backgroundImage = backgroundImageField.text.let {
+			try {
+				it to ImageIO.read(File(it))
+			} catch (e: Exception) {
+				if (!it.isEmpty()) {
+					JOptionPane.showMessageDialog(contentPane,
+							"Image is invalid!",
+							"Message",
+							JOptionPane.ERROR_MESSAGE)
+				}
+				it to null
+			}
+		}
+		windowIcon = windowIconField.text.let {
 			try {
 				it to ImageIO.read(File(it))
 			} catch (e: Exception) {
