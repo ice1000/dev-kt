@@ -3,7 +3,9 @@ package org.ice1000.devkt.config
 import charlie.gensokyo.doNothingOnClose
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.allFonts
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
-import org.ice1000.devkt.ui.swing.*
+import org.ice1000.devkt.ui.swing.AbstractUI
+import org.ice1000.devkt.ui.swing.DevKtFrame
+import org.ice1000.devkt.ui.swing.forms.Configuration
 import java.awt.Font
 import java.awt.event.*
 import java.io.File

@@ -1,4 +1,4 @@
-package org.ice1000.devkt.ui.swing;
+package org.ice1000.devkt.ui.swing.forms;
 
 import javax.swing.*;
 

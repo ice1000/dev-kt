@@ -7,6 +7,8 @@ import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
 import org.ice1000.devkt.ui.DevKtIcons
+import org.ice1000.devkt.ui.swing.forms.GoToLine
+import org.ice1000.devkt.ui.swing.forms.UI
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
