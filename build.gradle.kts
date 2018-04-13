@@ -166,7 +166,7 @@ dependencies {
 	compile(group = "com.github.ice1k", name = "darcula", version = "2018.1")
 	compile(group = "com.intellij", name = "forms_rt", version = "7.0.3")
 	compile(files(Paths.get("lib", "filedrop.jar")))
-	val plugins = Paths.get("plugins").toFile().listFiles()
+	val plugins = Paths.get("plugins").toFile().listFiles().orEmpty()
 	compile(files(*plugins))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
