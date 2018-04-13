@@ -197,6 +197,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 			item("CLion") {
 				icon = DevKtIcons.CLION
+
 				onAction { clion() }
 			}
 			item("Eclipse") {
