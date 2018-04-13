@@ -1,6 +1,5 @@
 import de.undercouch.gradle.tasks.download.Download
 import groovy.lang.Closure
-import org.gradle.api.internal.HasConvention
 import org.gradle.internal.deployment.RunApplication
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -22,12 +21,11 @@ val commitHash by lazy {
 	output.trim()
 }
 
-val isCI = true// !System.getenv("CI").isNullOrBlank()
+val isCI = !System.getenv("CI").isNullOrBlank()
 
 val shortVersion = "v1.2-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
-var kotlinVersion: String by extra
-kotlinVersion = if (isCI) "1.2.40-eap-61" else "1.2.31"
+var kotlinVersion = if (isCI) "1.2.40-eap-61" else "1.2.31"
 val calculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
 
 group = packageName
@@ -136,20 +134,21 @@ val fatJar = task<Jar>("fatJar") {
 	with(tasks["jar"] as Jar)
 }
 
-val SourceSet.kotlin
-	get() = (this as HasConvention).convention.getPlugin(KotlinSourceSet::class.java).kotlin
-
 java.sourceSets {
 	"main" {
-		java.setSrcDirs(listOf("src"))
-		kotlin.setSrcDirs(listOf("src"))
 		resources.setSrcDirs(listOf("res"))
+		java.setSrcDirs(listOf("src"))
+		withConvention(KotlinSourceSet::class) {
+			kotlin.setSrcDirs(listOf("src"))
+		}
 	}
 
 	"test" {
-		java.setSrcDirs(listOf("test"))
-		kotlin.setSrcDirs(listOf("test"))
 		resources.setSrcDirs(listOf("testRes"))
+		java.setSrcDirs(listOf("test"))
+		withConvention(KotlinSourceSet::class) {
+			kotlin.setSrcDirs(listOf("test"))
+		}
 	}
 }
 
@@ -157,7 +156,7 @@ repositories {
 	mavenCentral()
 	jcenter()
 	maven("https://jitpack.io")
-	maven("https://dl.bintray.com/kotlin/kotlin-eap-1.2")
+	maven("https://dl.bintray.com/kotlin/kotlin-dev")
 }
 
 dependencies {
