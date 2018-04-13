@@ -86,32 +86,22 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 		}
 		highlightTokenBased = useLexer.isSelected
 		highlightSemanticBased = useParser.isSelected
-		backgroundImage = backgroundImageField.text.let {
-			try {
-				it to ImageIO.read(File(it))
-			} catch (e: Exception) {
-				if (!it.isEmpty()) {
-					JOptionPane.showMessageDialog(contentPane,
-							"Image is invalid!",
-							"Message",
-							JOptionPane.ERROR_MESSAGE)
-				}
-				it to null
-			}
-		}
-		windowIcon = windowIconField.text.let {
-			try {
-				it to ImageIO.read(File(it))
-			} catch (e: Exception) {
-				if (!it.isEmpty()) {
-					JOptionPane.showMessageDialog(contentPane,
-							"Image is invalid!",
-							"Message",
-							JOptionPane.ERROR_MESSAGE)
-				}
-				it to null
-			}
-		}
+		backgroundImage = imagePairOf(backgroundImageField)
+		windowIcon = imagePairOf(windowIconField)
 		uiImpl.restart()
+	}
+
+	private fun imagePairOf(windowIconField: JTextField) = windowIconField.text.let {
+		try {
+			it to ImageIO.read(File(it))
+		} catch (e: Exception) {
+			if (!it.isEmpty()) {
+				JOptionPane.showMessageDialog(contentPane,
+						"Image is invalid!",
+						"Message",
+						JOptionPane.ERROR_MESSAGE)
+			}
+			it to null
+		}
 	}
 }
