@@ -71,5 +71,3 @@ fun JMenuItem.keyMap(key: Int, modifiers: Int) {
 }
 
 fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.keyCode, shortcut.modifier)
-
-fun CharSequence.subString(from: Int, len: Int) = substring(from, from + len)
