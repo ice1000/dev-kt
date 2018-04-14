@@ -61,6 +61,7 @@ class ColorScheme<out TextAttributes>(
 	val predefined = wrapColor(settings.colorPredefined)
 	val string = wrapColor(settings.colorString)
 	val stringEscape = wrapColor(settings.colorStringEscape)
+	val interpolation = wrapColor(settings.colorInterpolation)
 	val templateEntries = wrapColor(settings.colorTemplateEntries)
 	val charLiteral = wrapColor(settings.colorCharLiteral)
 	val lineComments = wrapColor(settings.colorLineComments)

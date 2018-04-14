@@ -88,6 +88,7 @@ object GlobalSettings {
 	var colorPredefined: String by properties
 	var colorString: String by properties
 	var colorStringEscape: String by properties
+	var colorInterpolation: String by properties
 	var colorTemplateEntries: String by properties
 	var colorCharLiteral: String by properties
 	var colorLineComments: String by properties
@@ -171,6 +172,7 @@ object GlobalSettings {
 		defaultOf(::colorPredefined.name, "#507874")
 		defaultOf(::colorString.name, "#6A8759")
 		defaultOf(::colorStringEscape.name, "#CC7832")
+		defaultOf(::colorInterpolation.name, "#CC7832")
 		defaultOf(::colorTemplateEntries.name, "#CC7832")
 		defaultOf(::colorCharLiteral.name, "#6A8759")
 		defaultOf(::colorLineComments.name, "#808080")
