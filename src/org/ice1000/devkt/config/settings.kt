@@ -109,6 +109,7 @@ object GlobalSettings {
 	var colorUserTypeRef: String by properties
 	var colorProperty: String by properties
 	var colorBackground: String by properties
+	var colorInputError: String by properties
 
 	var shortcutUndo = ShortCut(true, false, false, KeyEvent.VK_Z)
 	var shortcutSave = ShortCut(true, false, false, KeyEvent.VK_S)
@@ -122,6 +123,8 @@ object GlobalSettings {
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBefore = ShortCut(true, true, false, KeyEvent.VK_ENTER)
 	var shortcutComment = ShortCut(true, false, false, KeyEvent.VK_SLASH)
+	var shortcutFind = ShortCut(true, false, false, KeyEvent.VK_F)
+	var shortcutReplace = ShortCut(true, false, false, KeyEvent.VK_R)
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value
@@ -184,6 +187,7 @@ object GlobalSettings {
 		defaultOf(::colorUserTypeRef.name, "#B5B6E3")
 		defaultOf(::colorProperty.name, "#9876AA")
 		defaultOf(::colorBackground.name, "#2B2B2B")
+		defaultOf(::colorInputError.name, "#743A39")
 		initImageProperty(::windowIcon)
 		initImageProperty(::backgroundImage)
 		properties[::windowBounds.name]

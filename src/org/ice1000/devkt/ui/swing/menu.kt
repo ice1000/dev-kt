@@ -147,6 +147,14 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			keyMap(GlobalSettings.shortcutComment)
 			onAction { commentCurrent() }
 		}
+		item("Find") {
+			keyMap(GlobalSettings.shortcutFind)
+			onAction { find() }
+		}
+		item("Replace") {
+			keyMap(GlobalSettings.shortcutReplace)
+			onAction { replace() }
+		}
 	}
 	buildMenuBar = menuBar.subMenu("Build") {
 		mnemonic = KeyEvent.VK_B

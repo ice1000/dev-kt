@@ -215,6 +215,14 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		GoToLineDialog(this@UIImpl, editor).show
 	}
 
+	fun find() {
+		FindDialog(this@UIImpl, editor).show
+	}
+
+	fun replace() {
+		ReplaceDialog(this@UIImpl, editor).show
+	}
+
 	fun save() {
 		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
 			showSaveDialog(mainPanel)
