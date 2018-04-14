@@ -6,6 +6,7 @@ import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.openapi.*
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
+import java.util.*
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
 	var caretPosition: Int
@@ -33,11 +34,15 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	init {
 		adjustFormat()
-		GlobalSettings.languageExtensions.forEach {
-			Analyzer.registerLanguage(it)
-			@Suppress("UNCHECKED_CAST")
-			languages += it as DevKtLanguage<TextAttributes>
-		}
+		ServiceLoader
+				.load(ExtendedDevKtLanguage::class.java)
+				.forEach {
+					Analyzer.registerLanguage(it)
+					handleException {
+						@Suppress("UNCHECKED_CAST")
+						languages += it as DevKtLanguage<TextAttributes>
+					}
+				}
 	}
 
 	private var currentLanguage: DevKtLanguage<TextAttributes>? = null
