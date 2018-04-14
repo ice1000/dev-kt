@@ -25,7 +25,9 @@ val isCI = !System.getenv("CI").isNullOrBlank()
 
 val shortVersion = "v1.2-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
-var kotlinVersion = if (isCI) "1.2.40-eap-61" else "1.2.31"
+val kotlinStable = "1.2.31"
+val kotlinEAP = "1.2.40-eap-61"
+var kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 val calculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
 
 group = packageName
@@ -172,7 +174,7 @@ dependencies {
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile("junit", "junit", "4.12")
-	testCompile(kotlin("test-junit", kotlinVersion))
-	testCompile(kotlin("stdlib-jdk8", kotlinVersion))
+	testCompile(kotlin("test-junit", kotlinStable))
+	testCompile(kotlin("stdlib-jdk8", kotlinStable))
 	configurations.runtime.extendsFrom(configurations.testCompileOnly)
 }
