@@ -2,7 +2,6 @@ package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
 import net.iharder.dnd.FileDrop
-import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
@@ -170,6 +169,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			document.insert(0, it.readText())
 			edited = false
 			GlobalSettings.lastOpenedFile = path
+			GlobalSettings.recentFiles.add(it)
 		}
 		updateShowInFilesMenuItem()
 	}

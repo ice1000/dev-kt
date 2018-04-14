@@ -94,7 +94,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 			fileSelectionMode = JFileChooser.FILES_ONLY
 		}.selectedFile?.let {
 			loadFile(it)
-			GlobalSettings.recentFiles.add(it)
 		}
 	}
 
