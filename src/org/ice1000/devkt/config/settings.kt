@@ -78,7 +78,6 @@ object GlobalSettings {
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
 	var recentFiles = hashSetOf<File>()
-	var languageExtensions = hashSetOf<ExtendedDevKtLanguage<*>>()
 
 	var javaClassName: String by properties
 	var jarName: String by properties
@@ -222,17 +221,6 @@ object GlobalSettings {
 		initShortCutProperty(::shortcutNextLine)
 		initShortCutProperty(::shortcutSplitLine)
 		initShortCutProperty(::shortcutNewLineBefore)
-
-		handleException {
-			properties[::languageExtensions.name]
-					?.toString()
-					.orEmpty()
-					.split(',')
-					.filter { it.isNotBlank() }
-					.mapTo(languageExtensions) {
-						Class.forName(it).newInstance() as ExtendedDevKtLanguage<*>
-					}
-		}
 	}
 
 	fun save() {
@@ -256,7 +244,6 @@ object GlobalSettings {
 		properties[::shortcutNextLine.name] = shortcutNextLine.toString()
 		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
 		properties[::shortcutNewLineBefore.name] = shortcutNewLineBefore.toString()
-		properties[::languageExtensions.name] = languageExtensions.joinToString { it.javaClass.canonicalName }
 		properties.store(configFile.outputStream(), null)
 	}
 }

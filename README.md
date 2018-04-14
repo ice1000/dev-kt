@@ -22,7 +22,7 @@ You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-k
 + Cross platform (windows/macos/linux), just an executable jar
 + One property-based configuration file, hackable
 + Experimental Java support
-+ Plugin system
++ Plugin system based on `ServiceLoader`
 
 Just a simple comparison:
 
