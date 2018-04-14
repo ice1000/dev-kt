@@ -7,8 +7,7 @@ import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtIcons
 import java.awt.event.KeyEvent
 import java.io.File
-import javax.swing.JFrame
-import javax.swing.JMenuBar
+import javax.swing.*
 import javax.swing.filechooser.FileFilter
 
 /**
@@ -61,7 +60,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		subMenu("Open Recent") {
 			GlobalSettings.recentFiles.forEach { recent ->
-			val presentableFile = currentFile?.let { current -> recent.relativeTo(current.parentFile) }
+				val presentableFile = currentFile?.let { current -> recent.relativeTo(current.parentFile) }
 						?: recent.absoluteFile
 				item(presentableFile.toString()) {
 					onAction { loadFile(presentableFile) }
@@ -189,7 +188,11 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = DevKtIcons.EXECUTE
 			item("Kotlin Script") {
 				icon = DevKtIcons.KOTLIN_FILE
-				onAction { frame.TODO() }
+				onAction {
+					// TODO
+					JOptionPane.showMessageDialog(frame, "This feature is TODO.",
+							"Unfinished", 1, DevKtIcons.KOTLIN)
+				}
 			}
 		}
 	}

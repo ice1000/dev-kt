@@ -22,6 +22,15 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 	fun lockWrite()
 	fun unlockWrite()
 	fun message(text: String)
+
+	//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
+	fun lineColumnToPos(line: Int, column: Int = 1) = startOffsetOf(line - 1) + column - 1
+
+	fun posToLineColumn(pos: Int): Pair<Int, Int> {
+		val line = lineOf(pos)
+		val column = pos - startOffsetOf(line)
+		return line + 1 to column + 1
+	}
 }
 
 class DevKtDocumentHandler<TextAttributes>(
