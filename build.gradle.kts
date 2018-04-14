@@ -110,6 +110,15 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
+tasks.withType<JavaCompile> {
+	options.apply {
+		isDeprecation = true
+		isWarnings = true
+		isDebug = !isCI
+		compilerArgs.add("-Xlint:unchecked")
+	}
+}
+
 tasks.withType<Jar> {
 	manifest {
 		attributes(mapOf("Main-Class" to application.mainClassName,
