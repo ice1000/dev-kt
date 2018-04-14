@@ -4,7 +4,6 @@ import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import org.ice1000.devkt.handleException
 import org.ice1000.devkt.ignoreException
 import org.ice1000.devkt.lie.ctrlOrMeta
-import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
@@ -85,7 +84,9 @@ object GlobalSettings {
 	var monoFontName: String by properties
 	var gothicFontName: String by properties
 	var colorKeywords: String by properties
+	var colorPredefined: String by properties
 	var colorString: String by properties
+	var colorStringEscape: String by properties
 	var colorTemplateEntries: String by properties
 	var colorCharLiteral: String by properties
 	var colorLineComments: String by properties
@@ -107,6 +108,9 @@ object GlobalSettings {
 	var colorTypeParam: String by properties
 	var colorUserTypeRef: String by properties
 	var colorProperty: String by properties
+	var colorNamespace: String by properties
+	var colorMetaData: String by properties
+	var colorMacro: String by properties
 	var colorBackground: String by properties
 	var colorInputError: String by properties
 
@@ -163,7 +167,9 @@ object GlobalSettings {
 		defaultOf(::monoFontName.name, defaultFontName)
 		defaultOf(::gothicFontName.name, defaultFontName)
 		defaultOf(::colorKeywords.name, "#CC7832")
+		defaultOf(::colorPredefined.name, "#507874")
 		defaultOf(::colorString.name, "#6A8759")
+		defaultOf(::colorStringEscape.name, "#CC7832")
 		defaultOf(::colorTemplateEntries.name, "#CC7832")
 		defaultOf(::colorCharLiteral.name, "#6A8759")
 		defaultOf(::colorLineComments.name, "#808080")
@@ -185,6 +191,9 @@ object GlobalSettings {
 		defaultOf(::colorTypeParam.name, "#6897BB")
 		defaultOf(::colorUserTypeRef.name, "#B5B6E3")
 		defaultOf(::colorProperty.name, "#9876AA")
+		defaultOf(::colorNamespace.name, "#6D9CBE")
+		defaultOf(::colorMetaData.name, "#BBB529")
+		defaultOf(::colorMacro.name, "#4EADE5")
 		defaultOf(::colorBackground.name, "#2B2B2B")
 		defaultOf(::colorInputError.name, "#743A39")
 		initImageProperty(::windowIcon)

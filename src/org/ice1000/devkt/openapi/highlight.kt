@@ -58,7 +58,9 @@ class ColorScheme<out TextAttributes>(
 		val tabSize: TextAttributes,
 		wrapColor: (String) -> TextAttributes) {
 	val keywords = wrapColor(settings.colorKeywords)
+	val predefined = wrapColor(settings.colorPredefined)
 	val string = wrapColor(settings.colorString)
+	val stringEscape = wrapColor(settings.colorStringEscape)
 	val templateEntries = wrapColor(settings.colorTemplateEntries)
 	val charLiteral = wrapColor(settings.colorCharLiteral)
 	val lineComments = wrapColor(settings.colorLineComments)
@@ -80,5 +82,8 @@ class ColorScheme<out TextAttributes>(
 	val unknown = wrapColor(settings.colorUnknown)
 	val userTypeRef = wrapColor(settings.colorUserTypeRef)
 	val property = wrapColor(settings.colorProperty)
+	val namespace = wrapColor(settings.colorNamespace)
+	val metaData = wrapColor(settings.colorMetaData)
+	val macro = wrapColor(settings.colorMacro)
 }
 
