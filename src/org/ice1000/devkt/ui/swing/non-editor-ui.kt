@@ -7,9 +7,7 @@ import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
 import org.ice1000.devkt.ui.DevKtIcons
-import org.ice1000.devkt.ui.swing.forms.Find
-import org.ice1000.devkt.ui.swing.forms.GoToLine
-import org.ice1000.devkt.ui.swing.forms.UI
+import org.ice1000.devkt.ui.swing.forms.*
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
@@ -343,6 +341,9 @@ open class FindDialog(uiImpl: AbstractUI, val editor: JTextPane) : Find() {
 			override fun removeUpdate(e: DocumentEvent?) = search()
 		})
 	}
+
+	final override fun setLocationRelativeTo(c: Component?) = super.setLocationRelativeTo(c)
+	final override fun pack() = super.pack()
 
 	protected open fun search() {
 		searchResult.clear()

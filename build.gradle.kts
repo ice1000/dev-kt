@@ -23,7 +23,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val shortVersion = "v1.2-SNAPSHOT"
+val shortVersion = "v1.3-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
 val kotlinStable = "1.2.31"
 val kotlinEAP = "1.2.40-eap-61"
