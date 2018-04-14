@@ -1,4 +1,4 @@
-package org.ice1000.devkt;
+package org.ice1000.devkt.openapi;
 
 /**
  * @author ice1000

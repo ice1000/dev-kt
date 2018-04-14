@@ -1,5 +1,7 @@
 package org.ice1000.devkt.lang
 
+import org.ice1000.devkt.openapi.Annotator
+import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.ParserDefinition
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage

@@ -1,9 +1,27 @@
 package org.ice1000.devkt.openapi
 
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.ui.swing.AnnotationHolder
+import org.jetbrains.kotlin.com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
+
+/**
+ * @author ice1000
+ */
+interface AnnotationHolder<in TextAttributes> : LengthOwner {
+	val text: String
+	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: TextAttributes)
+
+	fun highlight(range: TextRange, attributeSet: TextAttributes) =
+			highlight(range.startOffset, range.endOffset, attributeSet)
+
+	fun highlight(astNode: ASTNode, attributeSet: TextAttributes) =
+			highlight(astNode.textRange, attributeSet)
+
+	fun highlight(element: PsiElement, attributeSet: TextAttributes) =
+			highlight(element.textRange, attributeSet)
+}
 
 /**
  * @author ice1000

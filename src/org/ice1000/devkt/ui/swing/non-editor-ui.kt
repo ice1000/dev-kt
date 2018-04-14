@@ -287,23 +287,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	}
 }
 
-/**
- * @author ice1000
- */
-interface AnnotationHolder<in TextAttributes> : LengthOwner {
-	val text: String
-	fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: TextAttributes)
-
-	fun highlight(range: TextRange, attributeSet: TextAttributes) =
-			highlight(range.startOffset, range.endOffset, attributeSet)
-
-	fun highlight(astNode: ASTNode, attributeSet: TextAttributes) =
-			highlight(astNode.textRange, attributeSet)
-
-	fun highlight(element: PsiElement, attributeSet: TextAttributes) =
-			highlight(element.textRange, attributeSet)
-}
-
 class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLine() {
 	init {
 		setLocationRelativeTo(uiImpl.mainPanel)

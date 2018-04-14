@@ -1,10 +1,9 @@
 package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.*
-import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
-import org.ice1000.devkt.ui.swing.AnnotationHolder
+import org.ice1000.devkt.openapi.*
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 

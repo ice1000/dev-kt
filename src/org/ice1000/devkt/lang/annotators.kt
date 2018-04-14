@@ -1,7 +1,6 @@
 package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.openapi.*
-import org.ice1000.devkt.ui.swing.AnnotationHolder
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
