@@ -77,6 +77,7 @@ class ColorScheme<out TextAttributes>(
 	val variable = wrapColor(settings.colorVariable)
 	val function = wrapColor(settings.colorFunction)
 	val typeParam = wrapColor(settings.colorTypeParam)
+	val unknown = wrapColor(settings.colorUnknown)
 	val userTypeRef = wrapColor(settings.colorUserTypeRef)
 	val property = wrapColor(settings.colorProperty)
 }
