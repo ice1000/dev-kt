@@ -3,38 +3,11 @@
 package org.ice1000.devkt.config
 
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`
+import org.ice1000.devkt.openapi.ColorScheme
 import java.awt.Color
 import java.awt.GraphicsEnvironment
 import java.awt.font.FontRenderContext
 import javax.swing.text.*
-
-class ColorScheme<out TextAttributes>(
-		settings: GlobalSettings,
-		val tabSize: TextAttributes,
-		wrapColor: (String) -> TextAttributes) {
-	val keywords = wrapColor(settings.colorKeywords)
-	val string = wrapColor(settings.colorString)
-	val templateEntries = wrapColor(settings.colorTemplateEntries)
-	val charLiteral = wrapColor(settings.colorCharLiteral)
-	val lineComments = wrapColor(settings.colorLineComments)
-	val blockComments = wrapColor(settings.colorBlockComments)
-	val docComments = wrapColor(settings.colorDocComments)
-	val operators = wrapColor(settings.colorOperators)
-	val parentheses = wrapColor(settings.colorParentheses)
-	val braces = wrapColor(settings.colorBraces)
-	val brackets = wrapColor(settings.colorBrackets)
-	val semicolon = wrapColor(settings.colorSemicolon)
-	val numbers = wrapColor(settings.colorNumbers)
-	val identifiers = wrapColor(settings.colorIdentifiers)
-	val annotations = wrapColor(settings.colorAnnotations)
-	val colon = wrapColor(settings.colorColon)
-	val comma = wrapColor(settings.colorComma)
-	val variable = wrapColor(settings.colorVariable)
-	val function = wrapColor(settings.colorFunction)
-	val typeParam = wrapColor(settings.colorTypeParam)
-	val userTypeRef = wrapColor(settings.colorUserTypeRef)
-	val property = wrapColor(settings.colorProperty)
-}
 
 fun swingColorScheme(
 		settings: GlobalSettings,

@@ -1,30 +1,12 @@
 package org.ice1000.devkt.lang
 
-import org.ice1000.devkt.config.ColorScheme
+import org.ice1000.devkt.openapi.*
 import org.ice1000.devkt.ui.swing.AnnotationHolder
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-
-/**
- * @author ice1000
- * @since v0.0.1
- * @see com.intellij.lang.annotation.Annotator
- * TODO move to daemon instead of running in ui thread
- */
-interface Annotator<TextAttributes> {
-	/**
-	 * @param element the [PsiElement] to be highlighted
-	 * @param document similar to [com.intellij.lang.annotation.AnnotationHolder]
-	 * @param colorScheme current color scheme, initialized in [org.ice1000.devkt.config.GlobalSettings]
-	 */
-	fun annotate(
-			element: PsiElement,
-			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>)
-}
 
 /**
  * @author ice1000

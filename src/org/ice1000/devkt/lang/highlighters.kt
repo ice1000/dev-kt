@@ -1,27 +1,14 @@
 package org.ice1000.devkt.lang
 
-import org.ice1000.devkt.config.ColorScheme
+import org.ice1000.devkt.openapi.ColorScheme
+import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.ice1000.devkt.stringTemplateTokens
 import org.ice1000.devkt.stringTokens
-import org.jetbrains.kotlin.com.intellij.psi.JavaDocTokenType
 import org.jetbrains.kotlin.com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.JavaDocElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.com.intellij.psi.tree.java.IJavaDocElementType
 import org.jetbrains.kotlin.lexer.KtTokens
-
-/**
- * @author ice1000
- * @since v1.2
- * @see com.intellij.openapi.fileTypes.SyntaxHighlighter
- */
-interface SyntaxHighlighter<TextAttributes> {
-	/**
-	 * @see com.intellij.openapi.fileTypes.SyntaxHighlighter.getTokenHighlights
-	 */
-	fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>): TextAttributes?
-}
 
 class KotlinSyntaxHighlighter<TextAttributes> : SyntaxHighlighter<TextAttributes> {
 	override fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>) = when (type) {
