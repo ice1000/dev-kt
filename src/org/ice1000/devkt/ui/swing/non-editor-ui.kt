@@ -7,8 +7,7 @@ import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
 import org.ice1000.devkt.selfLocation
-import org.ice1000.devkt.ui.DevKtDocumentHandler
-import org.ice1000.devkt.ui.DevKtIcons
+import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.forms.*
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
@@ -288,7 +287,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	}
 }
 
-class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLine() {
+class GoToLineDialog(uiImpl: AbstractUI, private val document: DevKtDocument<*>) : GoToLine() {
 	init {
 		setLocationRelativeTo(uiImpl.mainPanel)
 		getRootPane().defaultButton = okButton
@@ -298,7 +297,7 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 		pack()
 		okButton.addActionListener { ok() }
 		cancelButton.addActionListener { dispose() }
-		lineColumn.text = editor.posToLineColumn(editor.caretPosition).let { (line, column) ->
+		lineColumn.text = document.posToLineColumn(document.caretPosition).let { (line, column) ->
 			"$line:$column"
 		}
 	}
@@ -307,7 +306,7 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 		val input = lineColumn.text.split(':')
 		val line = input.firstOrNull()?.toIntOrNull() ?: return
 		val column = input.getOrNull(1)?.toIntOrNull() ?: 1
-		editor.caretPosition = editor.lineColumnToPos(line, column)
+		document.caretPosition = document.lineColumnToPos(line, column)
 		dispose()
 	}
 }

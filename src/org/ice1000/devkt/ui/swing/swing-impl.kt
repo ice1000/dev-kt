@@ -35,6 +35,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val document: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
+		private val root = defaultRootElement
 		override var caretPosition
 			get() = editor.caretPosition
 			set(value) {
@@ -50,6 +51,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
+		override fun startOffsetOf(line: Int) = root.getElement(line).startOffset
+		override fun endOffsetOf(line: Int) = root.getElement(line).endOffset
+		override fun lineOf(offset: Int) = root.getElementIndex(offset)
+
 		override fun lockWrite() = writeLock()
 		override fun unlockWrite() = writeUnlock()
 		/** from [DevKtDocument] */
@@ -107,9 +112,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			writeLock()
 			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
 			val sCopy = s.copyAttributes()
-			val section = defaultRootElement
-			for (i in section.getElementIndex(offset)..section.getElementIndex(offset + if (length > 0) length - 1 else 0)) {
-				val paragraph = section.getElement(i)
+			for (i in root.getElementIndex(offset)..root.getElementIndex(offset + if (length > 0) length - 1 else 0)) {
+				val paragraph = root.getElement(i)
 				val attr = paragraph.attributes as MutableAttributeSet
 				changes.addEdit(AttributeUndoableEdit(paragraph, sCopy, replace))
 				if (replace) attr.removeAttributes(attr)
@@ -212,7 +216,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	fun gotoLine() {
-		GoToLineDialog(this@UIImpl, editor).show
+		GoToLineDialog(this@UIImpl, document.document).show
 	}
 
 	fun find() {

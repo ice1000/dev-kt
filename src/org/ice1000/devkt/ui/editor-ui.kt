@@ -16,13 +16,16 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 	fun changeCharacterAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
 	fun changeParagraphAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
 	fun resetLineNumberLabel(str: String)
+	fun startOffsetOf(line: Int): Int
+	fun endOffsetOf(line: Int): Int
+	fun lineOf(offset: Int): Int
 	fun lockWrite()
 	fun unlockWrite()
 	fun message(text: String)
 }
 
 class DevKtDocumentHandler<TextAttributes>(
-		private val document: DevKtDocument<TextAttributes>,
+		internal val document: DevKtDocument<TextAttributes>,
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		AnnotationHolder<TextAttributes> {
 	private var selfMaintainedString = StringBuilder()
