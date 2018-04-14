@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent
 import java.io.OutputStream
 import java.io.PrintStream
 import javax.swing.*
-import javax.swing.text.Document
 
 data class Quad<out A, out B, out C, out D>(val first: A, val second: B, val third: C, val fourth: D)
 
@@ -38,28 +37,28 @@ inline fun handleException(lambda: () -> Unit) {
 val selfLocation: String = Analyzer::class.java.protectionDomain.codeSource.location.file
 
 val paired = mapOf(
-		"\"" to "\"",
-		"'" to "'",
-		"“" to "”",
-		"‘" to "’",
-		"`" to "`",
-		"`" to "`",
-		"(" to ")",
-		"（" to "）",
-		"『" to "』",
-		"「" to "」",
-		"〖" to "〗",
-		"【" to "】",
-		"[" to "]",
-		"〔" to "〕",
-		"［" to "］",
-		"{" to "}",
-		"｛" to "｝",
-		"<" to ">",
-		"《" to "》",
-		"〈" to "〉",
-		"‹" to "›",
-		"«" to "»"
+		'"' to '"',
+		'\'' to '\'',
+		'“' to '”',
+		'‘' to '’',
+		'`' to '`',
+		'`' to '`',
+		'(' to ')',
+		'（' to '）',
+		'『' to '』',
+		'「' to '」',
+		'〖' to '〗',
+		'【' to '】',
+		'[' to ']',
+		'〔' to '〕',
+		'［' to '］',
+		'{' to '}',
+		'｛' to '｝',
+		'<' to '>',
+		'《' to '》',
+		'〈' to '〉',
+		'‹' to '›',
+		'«' to '»'
 )
 
 /**
@@ -72,12 +71,5 @@ fun JMenuItem.keyMap(key: Int, modifiers: Int) {
 }
 
 fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.keyCode, shortcut.modifier)
-
-var Document.text: String
-	get() = getText(0, length)
-	set(value) {
-		remove(0, length)
-		insertString(0, value, null)
-	}
 
 fun CharSequence.subString(from: Int, len: Int) = substring(from, from + len)

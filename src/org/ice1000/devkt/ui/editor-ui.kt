@@ -79,14 +79,13 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	fun clear() = delete(0, document.length)
 	fun delete(offs: Int, len: Int) {
-		val delString = selfMaintainedString.substring(offs, offs + len)        //即将被删除的字符串
-		val (offset, length) = when {
-			delString in paired            //是否存在于字符对里
-					&& text.getOrNull(offs + 1)?.toString() == paired[delString] -> {
+		val delString = selfMaintainedString.substring(offs, offs + len)
+		val (offset, length) = if (delString.isNotEmpty()) {
+			val char = delString[0]
+			if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
 				offs to 2
-			}
-			else -> offs to len
-		}
+			} else offs to len
+		} else offs to len
 
 		selfMaintainedString.delete(offset, offset + length)
 		with(document) {
@@ -99,18 +98,19 @@ class DevKtDocumentHandler<TextAttributes>(
 	fun insert(offs: Int, str: String?) {
 		if (offs < 0) return
 		val normalized = str.orEmpty().filterNot { it == '\r' }
-		val (offset, string, move) = when {
-			normalized.length > 1 -> Triple(offs, normalized, 0)
-			normalized in paired.values -> {
-				val another = paired.keys.first { paired[it] == normalized }
+		val (offset, string, move) = if (normalized.length > 1)
+			Triple(offs, normalized, 0)
+		else {
+			val char = normalized[0]
+			if (char in paired.values) {
+				val another = paired.keys.first { paired[it] == char }
 				if (offs != 0
-						&& selfMaintainedString.subString(offs - 1, 1) == another
-						&& selfMaintainedString.subString(offs, 1) == normalized) {
+						&& selfMaintainedString[offs - 1] == another
+						&& selfMaintainedString[offs] == char) {
 					Triple(offs, "", 1)
 				} else Triple(offs, normalized, 0)
-			}
-			normalized in paired -> Triple(offs, normalized + paired[normalized], -1)
-			else -> Triple(offs, normalized, 0)
+			} else if (char in paired) Triple(offs, "$normalized${paired[char]}", -1)
+			else Triple(offs, normalized, 0)
 		}
 		selfMaintainedString.insert(offset, string)
 		with(document) {
