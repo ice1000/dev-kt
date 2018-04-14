@@ -265,7 +265,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val add = lines.any {
 			val lineStart = document.startOffsetOf(it)
 			val lineEnd = document.endOffsetOf(it)
-			val lineText = editor.document.getText(lineStart, lineEnd - lineStart)
+			val lineText = document.textWithin(lineStart, lineEnd)
 			!lineText.startsWith(lineCommentStart)        //只要有一行开头不为 `//` 就进行添加注释操作
 		}
 		//这上面和下面感觉可以优化emmmm
