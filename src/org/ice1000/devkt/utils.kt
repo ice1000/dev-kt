@@ -79,3 +79,5 @@ var Document.text: String
 		remove(0, length)
 		insertString(0, value, null)
 	}
+
+fun CharSequence.subString(from: Int, len: Int) = substring(from, from + len)

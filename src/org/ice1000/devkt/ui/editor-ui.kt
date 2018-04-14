@@ -99,8 +99,8 @@ class DevKtDocumentHandler<TextAttributes>(
 			normalized in paired.values -> {
 				val another = paired.keys.first { paired[it] == normalized }
 				if (offs != 0
-						&& selfMaintainedString.substring(offs - 1, 1) == another
-						&& selfMaintainedString.substring(offs, 1) == normalized) {
+						&& selfMaintainedString.subString(offs - 1, 1) == another
+						&& selfMaintainedString.subString(offs, 1) == normalized) {
 					Triple(offs, "", 1)
 				} else Triple(offs, normalized, 0)
 			}
