@@ -48,7 +48,9 @@ abstract class DevKtLanguageBase<TextAttributes> internal constructor(
 abstract class ExtendedDevKtLanguage<TextAttributes>(
 		language: Language,
 		val parserDefinition: ParserDefinition
-) : DevKtLanguage<TextAttributes>(language)
+) : DevKtLanguage<TextAttributes>(language) {
+	override fun createLexer(project: Project): Lexer = parserDefinition.createLexer(project)
+}
 
 /**
  * @author ice1000
@@ -63,7 +65,8 @@ class Java<TextAttributes>(
 		syntaxHighlighter,
 		JavaLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".java")
-	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_8) // TODO multiple language level support
+	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_8)
+	// TODO multiple language level support
 	override fun createLexer(project: Project) = java8Lexer
 }
 
