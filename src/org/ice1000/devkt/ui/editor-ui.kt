@@ -132,7 +132,7 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	private fun lex(language: DevKtLanguage<TextAttributes>) {
 		Analyzer
-				.lex(text, language.lexer)
+				.lex(text, language.createLexer(Analyzer.project))
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { (start, end, _, type) ->
 					language.attributesOf(type, colorScheme)?.let {

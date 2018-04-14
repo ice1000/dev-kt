@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
 import org.jetbrains.kotlin.com.intellij.lexer.EmptyLexer
 import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.PlainTextLanguage
+import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
@@ -21,6 +22,7 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 ) : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
 	abstract fun satisfies(fileName: String): Boolean
 	abstract val lineCommentStart: String
+	abstract fun createLexer(project: Project): Lexer
 }
 
 /**
@@ -31,7 +33,6 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 abstract class DevKtLanguageBase<TextAttributes> internal constructor(
 		private val annotator: Annotator<TextAttributes>,
 		private val syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
-		val lexer: Lexer,
 		language: Language
 ) : DevKtLanguage<TextAttributes>(language),
 		Annotator<TextAttributes> by annotator,
@@ -60,9 +61,10 @@ class Java<TextAttributes>(
 ) : DevKtLanguageBase<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
-		JavaLexer(LanguageLevel.JDK_1_8), // TODO multiple language level support
 		JavaLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".java")
+	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_8) // TODO multiple language level support
+	override fun createLexer(project: Project) = java8Lexer
 }
 
 /**
@@ -76,9 +78,10 @@ class Kotlin<TextAttributes>(
 ) : DevKtLanguageBase<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
-		KotlinLexer(),
 		KotlinLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".kt") or fileName.endsWith(".kts")
+	private val lexer = KotlinLexer()
+	override fun createLexer(project: Project) = lexer
 }
 
 /**
@@ -92,7 +95,8 @@ class PlainText<TextAttributes>(
 ) : DevKtLanguageBase<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
-		EmptyLexer(),
 		PlainTextLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".txt") || '.' !in fileName
+	private val lexer = EmptyLexer()
+	override fun createLexer(project: Project) = lexer
 }
