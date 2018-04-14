@@ -163,6 +163,7 @@ repositories {
 
 dependencies {
 	compile(kotlin("stdlib-jdk8", kotlinVersion))
+	compile(kotlin("reflect", kotlinVersion))
 	compile(kotlin("compiler-embeddable", kotlinVersion))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
 	compile(group = "com.github.ice1k", name = "darcula", version = "2018.1")
@@ -176,5 +177,6 @@ dependencies {
 	testCompile("junit", "junit", "4.12")
 	testCompile(kotlin("test-junit", kotlinStable))
 	testCompile(kotlin("stdlib-jdk8", kotlinStable))
+	testCompile(kotlin("reflect", kotlinStable))
 	configurations.runtime.extendsFrom(configurations.testCompileOnly)
 }
