@@ -3,8 +3,7 @@ package org.ice1000.devkt.config
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import org.ice1000.devkt.handleException
 import org.ice1000.devkt.ignoreException
-import org.ice1000.devkt.lie.ctrlOrMeta
-import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
+import org.ice1000.devkt.lie.*
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
@@ -116,7 +115,7 @@ object GlobalSettings {
 	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
 	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
 	// Build | Run As | Class, force to use ctrl + R even though it is in Mac.
-	var shortcutBuildRunAsClass = ShortCut(KeyEvent.CTRL_DOWN_MASK, KeyEvent.VK_R)    // Mac
+	var shortcutBuildRunAsClass = ShortCut(if (mac) KeyEvent.CTRL_DOWN_MASK else 0, KeyEvent.VK_R)
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBefore = ShortCut(true, true, false, KeyEvent.VK_ENTER)

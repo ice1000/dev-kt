@@ -67,7 +67,8 @@ val paired = mapOf(
  * @param key like [KeyEvent.VK_S]
  */
 fun JMenuItem.keyMap(key: Int, modifiers: Int) {
-	accelerator = KeyStroke.getKeyStroke(key, modifiers)
+	if (key != 0 && modifiers != 0)
+		accelerator = KeyStroke.getKeyStroke(key, modifiers)
 }
 
 fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.keyCode, shortcut.modifier)
