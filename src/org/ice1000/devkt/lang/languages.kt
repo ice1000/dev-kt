@@ -46,17 +46,6 @@ abstract class DevKtLanguageBase<TextAttributes> internal constructor(
 /**
  * @author ice1000
  * @since v1.2
- */
-abstract class ExtendedDevKtLanguage<TextAttributes>(
-		language: Language,
-		val parserDefinition: ParserDefinition
-) : DevKtLanguage<TextAttributes>(language) {
-	override fun createLexer(project: Project): Lexer = parserDefinition.createLexer(project)
-}
-
-/**
- * @author ice1000
- * @since v1.2
  * @see JavaLanguage
  */
 class Java<TextAttributes>(

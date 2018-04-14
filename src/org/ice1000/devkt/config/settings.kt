@@ -3,8 +3,8 @@ package org.ice1000.devkt.config
 import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.defaultFontName
 import org.ice1000.devkt.handleException
 import org.ice1000.devkt.ignoreException
-import org.ice1000.devkt.lang.ExtendedDevKtLanguage
 import org.ice1000.devkt.lie.ctrlOrMeta
+import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
