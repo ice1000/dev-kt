@@ -137,4 +137,12 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	}
 }
 
-
+/**
+ * @author ice1000
+ * @since v1.3
+ */
+class PlainTextAnnotator<TextAttributes> : Annotator<TextAttributes> {
+	override fun annotate(element: PsiElement, document: AnnotationHolder<TextAttributes>, colorScheme: ColorScheme<TextAttributes>) {
+		// Do nothing
+	}
+}

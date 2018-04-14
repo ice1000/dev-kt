@@ -42,7 +42,8 @@ class DevKtDocumentHandler<TextAttributes>(
 	private var selfMaintainedString = StringBuilder()
 	private val languages: MutableList<DevKtLanguage<TextAttributes>> = arrayListOf(
 			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
-			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter())
+			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter()),
+			PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
 	)
 	private val defaultLanguage = languages[1]
 	fun startOffsetOf(line: Int) = document.startOffsetOf(line)

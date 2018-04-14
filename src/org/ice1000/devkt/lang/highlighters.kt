@@ -117,3 +117,11 @@ class JavaSyntaxHighlighter<TextAttributes> : SyntaxHighlighter<TextAttributes> 
 		)
 	}
 }
+
+/**
+ * @author ice1000
+ * @since v1.3
+ */
+class PlainTextSyntaxHighlighter<TextAttributes> : SyntaxHighlighter<TextAttributes> {
+	override fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>): TextAttributes? = null
+}
