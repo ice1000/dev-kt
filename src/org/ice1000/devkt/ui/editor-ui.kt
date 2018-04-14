@@ -79,7 +79,7 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
-	val lineCommentStart get() = currentLanguage?.lineCommentStart ?: "//"
+	val lineCommentStart get() = currentLanguage?.lineCommentStart.orEmpty()
 
 	fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 

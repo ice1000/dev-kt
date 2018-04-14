@@ -23,7 +23,7 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 		val language: Language
 ) : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
 	abstract fun satisfies(fileName: String): Boolean
-	abstract val lineCommentStart: String
+	abstract val lineCommentStart: String?
 	abstract fun createLexer(project: Project): Lexer
 }
 
