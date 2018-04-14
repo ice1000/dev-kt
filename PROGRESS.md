@@ -41,7 +41,20 @@
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
 + Plugin system
-    + [X] Load support plugin
+    + [X] Load plugins in classpath
+    + [X] [Official CovScript plugin](https://github.com/covscript/covscript-devkt)
+    + [ ] Official Zig plugin
+    + [ ] Official Lua plugin (based on EmmyLua)
+    + [ ] Official Python plugin
+    + [ ] Official Groovy plugin
+    + [ ] Official Ruby plugin
+    + [ ] Official HTML plugin
+    + [ ] Official XML plugin
+    + [ ] Official CSS plugin
+    + [ ] Official Lice plugin
+    + [ ] Official Markdown plugin
+    + [ ] Official Scala plugin
+    + [ ] Official Clojure plugin
 + Build and run (Kotlin specific)
 	+ Build
 		+ [X] Build as class files
