@@ -2,10 +2,12 @@ package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
 import com.bulenkov.iconloader.util.SystemInfo
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
+import org.ice1000.devkt.selfLocation
+import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.ice1000.devkt.ui.DevKtIcons
 import org.ice1000.devkt.ui.swing.forms.*
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
@@ -313,7 +315,10 @@ class GoToLineDialog(uiImpl: AbstractUI, private val editor: JTextPane) : GoToLi
 
 data class SearchResult(val start: Int, val end: Int)
 
-open class FindDialog(uiImpl: AbstractUI, val editor: JTextPane) : Find() {
+open class FindDialog(
+		uiImpl: AbstractUI,
+		private val editor: JTextPane,
+		val document: DevKtDocumentHandler<*>) : Find() {
 	companion object {
 		val NO_REGEXP_CHARS = arrayOf(
 				'\\', '{', '[', '(', '+', '*', '^', '$', '.'
@@ -350,7 +355,7 @@ open class FindDialog(uiImpl: AbstractUI, val editor: JTextPane) : Find() {
 		editor.selectionEnd = editor.selectionStart
 
 		val input = input.text
-		val text = editor.document.text
+		val text = document.text
 		val regex = if (isRegex.isSelected.not()) {                //FIXME stupid code 我太菜了
 			var tempInput = input
 			NO_REGEXP_CHARS.forEach {
@@ -393,7 +398,9 @@ open class FindDialog(uiImpl: AbstractUI, val editor: JTextPane) : Find() {
 	}
 }
 
-class ReplaceDialog(uiImpl: AbstractUI, editor: JTextPane) : FindDialog(uiImpl, editor) {
+class ReplaceDialog(
+		uiImpl: AbstractUI, editor: JTextPane, document: DevKtDocumentHandler<*>) :
+		FindDialog(uiImpl, editor, document) {
 	init {
 		title = "Replace"
 		listOf<JComponent>(separator, replaceInput, replace, replaceAll).forEach {
@@ -408,16 +415,18 @@ class ReplaceDialog(uiImpl: AbstractUI, editor: JTextPane) : FindDialog(uiImpl, 
 
 	private fun replaceCurrent() {
 		searchResult.getOrNull(currentIndex)?.run {
-			editor.document.text = editor.document.text.replaceRange(start until end, replaceInput.text)
+			document.clear()
+			document.insert(0, document.text.replaceRange(start until end, replaceInput.text))
 		}
 	}
 
 	private fun replaceAll() {
-		val text = editor.document.text
+		val text = document.text
 		val findInput = input.text
 		val replaceInput = replaceInput.text
-		editor.document.text = if (isRegex.isSelected) {
+		document.clear()
+		document.insert(0, if (isRegex.isSelected) {
 			text.replace(Regex(findInput), replaceInput)
-		} else text.replace(findInput, replaceInput)
+		} else text.replace(findInput, replaceInput))
 	}
 }

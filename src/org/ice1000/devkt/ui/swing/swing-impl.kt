@@ -216,11 +216,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	fun find() {
-		FindDialog(this@UIImpl, editor).show
+		FindDialog(this@UIImpl, editor, document).show
 	}
 
 	fun replace() {
-		ReplaceDialog(this@UIImpl, editor).show
+		ReplaceDialog(this@UIImpl, editor, document).show
 	}
 
 	fun save() {
