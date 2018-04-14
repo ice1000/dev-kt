@@ -43,6 +43,8 @@
 + Plugin system
     + [X] Load plugins in classpath
     + [X] [Official CovScript plugin](https://github.com/covscript/covscript-devkt)
+    + [X] [Official Clojure plugin](https://github.com/devkt-plugins/clojure-devkt)
+    + [X] [Official Julia plugin](https://github.com/devkt-plugins/julia-devkt)
     + [ ] Official Zig plugin
     + [ ] Official Lua plugin (based on EmmyLua)
     + [ ] Official Python plugin
@@ -54,7 +56,6 @@
     + [ ] Official Lice plugin
     + [ ] Official Markdown plugin
     + [ ] Official Scala plugin
-    + [ ] Official Clojure plugin
 + Build and run (Kotlin specific)
 	+ Build
 		+ [X] Build as class files

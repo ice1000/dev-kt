@@ -180,7 +180,7 @@ dependencies {
 	compile(files(Paths.get("lib", "filedrop.jar")))
 	val plugins = Paths.get("plugins").toFile()
 			.listFiles().orEmpty()
-	compile(files(*plugins))
+	runtime(files(*plugins))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile("junit", "junit", "4.12")
