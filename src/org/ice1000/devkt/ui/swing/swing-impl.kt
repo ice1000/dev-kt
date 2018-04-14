@@ -41,6 +41,16 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			set(value) {
 				editor.caretPosition = value
 			}
+		override var selectionEnd: Int
+			get() = editor.selectionEnd
+			set(value) {
+				editor.selectionEnd = value
+			}
+		override var selectionStart: Int
+			get() = editor.selectionStart
+			set(value) {
+				editor.selectionStart = value
+			}
 
 		init {
 			addUndoableEditListener {
@@ -220,11 +230,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	fun find() {
-		FindDialog(this@UIImpl, editor, document).show
+		FindDialog(this@UIImpl, document).show
 	}
 
 	fun replace() {
-		ReplaceDialog(this@UIImpl, editor, document).show
+		ReplaceDialog(this@UIImpl, document).show
 	}
 
 	fun save() {
@@ -245,9 +255,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 
 	fun commentCurrent() {
-		val root = editor.document.defaultRootElement
-		val start = root.getElementIndex(editor.selectionStart)
-		val end = root.getElementIndex(editor.selectionEnd)
+		val start = document.lineOf(editor.selectionStart)
+		val end = document.lineOf(editor.selectionEnd)
 		comment(start..end)
 	}
 

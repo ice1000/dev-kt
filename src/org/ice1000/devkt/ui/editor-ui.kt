@@ -10,6 +10,8 @@ import java.util.*
 
 interface DevKtDocument<in TextAttributes> : LengthOwner {
 	var caretPosition: Int
+	var selectionStart: Int
+	var selectionEnd: Int
 	fun clear() = delete(0, length)
 	fun delete(offs: Int, len: Int)
 	fun insert(offs: Int, str: String?)
@@ -43,6 +45,19 @@ class DevKtDocumentHandler<TextAttributes>(
 			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter())
 	)
 	private val defaultLanguage = languages[1]
+	fun startOffsetOf(line: Int) = document.startOffsetOf(line)
+	fun endOffsetOf(line: Int) = document.endOffsetOf(line)
+	fun lineOf(offset: Int) = document.lineOf(offset)
+	var selectionStart
+		get() = document.selectionStart
+		set(value) {
+			document.selectionStart = value
+		}
+	var selectionEnd
+		get() = document.selectionEnd
+		set(value) {
+			document.selectionEnd = value
+		}
 
 	init {
 		adjustFormat()

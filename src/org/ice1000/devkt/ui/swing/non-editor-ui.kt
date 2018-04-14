@@ -315,7 +315,6 @@ data class SearchResult(val start: Int, val end: Int)
 
 open class FindDialog(
 		uiImpl: AbstractUI,
-		private val editor: JTextPane,
 		val document: DevKtDocumentHandler<*>) : Find() {
 	companion object {
 		val NO_REGEXP_CHARS = arrayOf(
@@ -350,7 +349,7 @@ open class FindDialog(
 
 	protected open fun search() {
 		searchResult.clear()
-		editor.selectionEnd = editor.selectionStart
+		document.selectionEnd = document.selectionStart
 
 		val input = input.text
 		val text = document.text
@@ -380,10 +379,10 @@ open class FindDialog(
 	}
 
 	protected open fun select(index: Int) {
-		searchResult.getOrNull(index)?.run {
+		searchResult.getOrNull(index)?.let { (start, end) ->
 			currentIndex = index
-			editor.selectionStart = this.start
-			editor.selectionEnd = this.end
+			document.selectionStart = start
+			document.selectionEnd = end
 		}
 	}
 
@@ -397,8 +396,8 @@ open class FindDialog(
 }
 
 class ReplaceDialog(
-		uiImpl: AbstractUI, editor: JTextPane, document: DevKtDocumentHandler<*>) :
-		FindDialog(uiImpl, editor, document) {
+		uiImpl: AbstractUI, document: DevKtDocumentHandler<*>) :
+		FindDialog(uiImpl, document) {
 	init {
 		title = "Replace"
 		listOf<JComponent>(separator, replaceInput, replace, replaceAll).forEach {
