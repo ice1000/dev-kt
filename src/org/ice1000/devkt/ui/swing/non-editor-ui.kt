@@ -380,9 +380,6 @@ open class FindDialog(uiImpl: AbstractUI, val editor: JTextPane) : Find() {
 			currentIndex = index
 			editor.selectionStart = this.start
 			editor.selectionEnd = this.end
-			pack()
-
-
 		}
 	}
 
