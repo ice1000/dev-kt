@@ -26,7 +26,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		AnnotationHolder<TextAttributes> {
 	private var selfMaintainedString = StringBuilder()
-	private val languages: MutableList<ProgrammingLanguage<TextAttributes>> = arrayListOf(
+	private val languages: MutableList<DevKtLanguage<TextAttributes>> = arrayListOf(
 			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
 			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter())
 	)
@@ -37,11 +37,11 @@ class DevKtDocumentHandler<TextAttributes>(
 		GlobalSettings.languageExtensions.forEach {
 			Analyzer.registerLanguage(it)
 			@Suppress("UNCHECKED_CAST")
-			languages += it as ProgrammingLanguage<TextAttributes>
+			languages += it as DevKtLanguage<TextAttributes>
 		}
 	}
 
-	private var currentLanguage: ProgrammingLanguage<TextAttributes>? = null
+	private var currentLanguage: DevKtLanguage<TextAttributes>? = null
 	private var psiFileCache: PsiFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
@@ -55,7 +55,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
 	}
 
-	fun switchLanguage(language: ProgrammingLanguage<TextAttributes>?) {
+	fun switchLanguage(language: DevKtLanguage<TextAttributes>?) {
 		currentLanguage = language
 	}
 
@@ -130,7 +130,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time3}")
 	}
 
-	private fun lex(language: ProgrammingLanguage<TextAttributes>) {
+	private fun lex(language: DevKtLanguage<TextAttributes>) {
 		Analyzer
 				.lex(text, language.lexer)
 				.filter { it.type !in TokenSet.WHITE_SPACE }
@@ -149,7 +149,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		for (i in tokenStart until tokenEnd) highlightCache[i] = attributeSet
 	}
 
-	private fun parse(language: ProgrammingLanguage<TextAttributes>) {
+	private fun parse(language: DevKtLanguage<TextAttributes>) {
 		SyntaxTraverser
 				.psiTraverser(Analyzer.parse(text, language.language).also { psiFileCache = it })
 				.forEach { psi ->

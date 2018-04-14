@@ -1,8 +1,8 @@
 package org.ice1000.devkt
 
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.lang.ExtendedProgrammingLanguage
-import org.ice1000.devkt.lang.ProgrammingLanguage
+import org.ice1000.devkt.lang.ExtendedDevKtLanguage
+import org.ice1000.devkt.lang.DevKtLanguage
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -11,11 +11,8 @@ import org.jetbrains.kotlin.com.intellij.lang.*
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
-import org.jetbrains.kotlin.com.intellij.openapi.extensions.ExtensionPointName
-import org.jetbrains.kotlin.com.intellij.openapi.extensions.Extensions
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
@@ -91,13 +88,13 @@ object Analyzer : Disposable {
 	}
 
 	fun registerLanguage(
-			extendedProgrammingLanguage: ExtendedProgrammingLanguage<*>) = registerLanguage(
+			extendedProgrammingLanguage: ExtendedDevKtLanguage<*>) = registerLanguage(
 			extendedProgrammingLanguage.language,
 			extendedProgrammingLanguage.parserDefinition)
 
 	fun parseKotlin(text: String) = parse(text, KotlinLanguage.INSTANCE) as KtFile
 	fun parseJava(text: String) = parse(text, JavaLanguage.INSTANCE) as PsiJavaFile
-	fun parse(text: String, language: ProgrammingLanguage<*>, name: String? = null) = parse(text, language.language, name)
+	fun parse(text: String, language: DevKtLanguage<*>, name: String? = null) = parse(text, language.language, name)
 	fun parse(text: String, language: Language, name: String? = null) = psiFileFactory
 			.createFileFromText(name ?: GlobalSettings.javaClassName, language, text, false, false, true)
 
