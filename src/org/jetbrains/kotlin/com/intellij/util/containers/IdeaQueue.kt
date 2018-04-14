@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "unused")
 
 package org.jetbrains.kotlin.com.intellij.util.containers
 
@@ -33,10 +33,7 @@ class IdeaQueue<T>(initialCapacity: Int) {
 	// if true, elements are located at myFirst..myArray.length and 0..myLast
 	// otherwise, they are at myFirst..myLast
 	private var isWrapped: Boolean = false
-
-
-	val isEmpty: Boolean
-		get() = size() == 0
+	val isEmpty: Boolean get() = size() == 0
 
 	fun addLast(`object`: T) {
 		val currentSize = size()
@@ -67,24 +64,13 @@ class IdeaQueue<T>(initialCapacity: Int) {
 
 	fun peekLast(): T {
 		var last = myLast
-		if (last == 0) {
-			last = myArray.size
-		}
-		val result = myArray[last - 1] as T
-		return result
+		if (last == 0) last = myArray.size
+		return myArray[last - 1] as T
 	}
 
-	fun size(): Int {
-		return if (isWrapped) myArray.size - myFirst + myLast else myLast - myFirst
-	}
-
-	fun toList(): List<T> {
-		return normalize(size()).toList() as List<T>
-	}
-
-	fun toArray(): Array<out Any?> {
-		return normalize(size())
-	}
+	fun size() = if (isWrapped) myArray.size - myFirst + myLast else myLast - myFirst
+	fun toList() = normalize(size()).toList() as List<T>
+	fun toArray() = normalize(size())
 
 	fun pullFirst(): T {
 		val result = peekFirst()
@@ -108,18 +94,12 @@ class IdeaQueue<T>(initialCapacity: Int) {
 		return length
 	}
 
-	private fun normalize(capacity: Int): Array<Any?> {
-		val result = arrayOfNulls<Any>(capacity)
-		return normalize(result)
-	}
-
+	private fun normalize(capacity: Int) = normalize(arrayOfNulls(capacity))
 	private fun normalize(result: Array<Any?>): Array<Any?> {
 		if (isWrapped) {
 			val tailLength = copyFromTo(myFirst, myArray.size, result, 0)
 			copyFromTo(0, myLast, result, tailLength)
-		} else {
-			copyFromTo(myFirst, myLast, result, 0)
-		}
+		} else copyFromTo(myFirst, myLast, result, 0)
 		return result
 	}
 
@@ -132,31 +112,23 @@ class IdeaQueue<T>(initialCapacity: Int) {
 
 	operator fun set(index: Int, value: T): T {
 		var arrayIndex = myFirst + index
-		if (isWrapped && arrayIndex >= myArray.size) {
-			arrayIndex -= myArray.size
-		}
+		if (isWrapped && arrayIndex >= myArray.size) arrayIndex -= myArray.size
 		val old = myArray[arrayIndex]
 		myArray[arrayIndex] = value
-		val t = old as T
-		return t
+		return old as T
 	}
 
 	operator fun get(index: Int): T {
 		var arrayIndex = myFirst + index
-		if (isWrapped && arrayIndex >= myArray.size) {
-			arrayIndex -= myArray.size
-		}
-		val t = myArray[arrayIndex] as T
-		return t
+		if (isWrapped && arrayIndex >= myArray.size) arrayIndex -= myArray.size
+		return myArray[arrayIndex] as T
 	}
 
-	override fun toString(): String {
-		if (isEmpty) return "<empty>"
-
-		return if (isWrapped) "[ " + sub(myFirst, myArray.size) + " ||| " + sub(0, myLast) + " ]" else "[ " + sub(myFirst, myLast) + " ]"
+	override fun toString() = when {
+		isEmpty -> "<empty>"
+		isWrapped -> "[ ${sub(myFirst, myArray.size)} ||| ${sub(0, myLast)} ]"
+		else -> "[ ${sub(myFirst, myLast)} ]"
 	}
 
-	private fun sub(start: Int, end: Int): Any {
-		return if (start == end) "" else Arrays.asList<Any>(*myArray).subList(start, end)
-	}
+	private fun sub(start: Int, end: Int): Any = if (start == end) "" else Arrays.asList<Any>(*myArray).subList(start, end)
 }

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.com.intellij.lexer;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class LexerBase extends Lexer {
-	@NotNull
 	@Override
-	public LexerPosition getCurrentPosition() {
+	public @NotNull
+	LexerPosition getCurrentPosition() {
 		final int offset = getTokenStart();
 		final int intState = getState();
 		return new LexerPositionImpl(offset, intState);
