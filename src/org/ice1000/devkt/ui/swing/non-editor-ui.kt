@@ -418,11 +418,10 @@ class ReplaceDialog(
 	}
 
 	private fun replaceAll() {
-		val text = document.text
 		val findInput = input.text
 		val replaceInput = replaceInput.text
 		document.resetTextTo(if (isRegex.isSelected) {
-			text.replace(Regex(findInput), replaceInput)
-		} else text.replace(findInput, replaceInput))
+			document.replaceText(Regex(findInput), replaceInput)
+		} else document.text.replace(findInput, replaceInput))
 	}
 }

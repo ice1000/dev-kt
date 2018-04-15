@@ -84,6 +84,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	val blockComment get() = currentLanguage?.blockComment
 
 	fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
+	fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
 
 	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	fun switchLanguage(fileName: String) {
