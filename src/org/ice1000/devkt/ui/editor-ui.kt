@@ -110,6 +110,12 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	fun clear() = deleteDirectly(0, document.length)
 
+	/**
+	 * Delete without checking
+	 *
+	 * @param offset Int see [delete]
+	 * @param length Int see [delete]
+	 */
 	fun deleteDirectly(offset: Int, length: Int) {
 		selfMaintainedString.delete(offset, offset + length)
 		with(document) {
@@ -119,15 +125,34 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 	}
 
+	/**
+	 * Handles user input, delete with checks
+	 *
+	 * @param offs Int see [insert]
+	 * @param len Int length of deletion
+	 */
 	fun delete(offs: Int, len: Int) {
 		val delString = selfMaintainedString.substring(offs, offs + len)
-		val (offset, length) = if (delString.isNotEmpty()) {
+		return if (delString.isNotEmpty()) {
 			val char = delString[0]
 			if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
-				offs to 2
-			} else offs to len
-		} else offs to len
-		deleteDirectly(offset, length)
+				deleteDirectly(offs, 2)
+			} else deleteDirectly(offs, len)
+		} else deleteDirectly(offs, len)
+	}
+
+	fun resetTextTo(string: String) {
+		with(selfMaintainedString) {
+			setLength(0)
+			append(string)
+		}
+		with(document) {
+			clear()
+			insertDirectly(0, string)
+			reparse()
+			adjustFormat()
+		}
+
 	}
 
 	/**

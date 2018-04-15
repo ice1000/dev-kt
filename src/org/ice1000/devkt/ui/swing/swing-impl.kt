@@ -166,7 +166,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			currentFile = null
 			edited = true
 			document.clear()
-			document.insert(0, javaClass
+			document.insertDirectly(0, javaClass
 					.getResourceAsStream("/template/$templateName")
 					.reader()
 					.readText())
@@ -180,7 +180,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			val path = it.absolutePath.orEmpty()
 			document.switchLanguage(it.name)
 			document.clear()
-			document.insert(0, it.readText())
+			document.insertDirectly(0, it.readText())
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 			GlobalSettings.recentFiles.add(it)
@@ -267,7 +267,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		lines.forEach {
 			val lineStart = document.startOffsetOf(it)
 			if (add) document.insertDirectly(lineStart, lineCommentStart)
-			else document.delete(lineStart, lineCommentStart.length)
+			else document.deleteDirectly(lineStart, lineCommentStart.length)
 		}
 	}
 
