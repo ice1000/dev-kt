@@ -108,7 +108,7 @@ class DevKtDocumentHandler<TextAttributes>(
 				separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>"))
 	}
 
-	fun clear() = deleteDirectly(0, document.length)
+	fun clear() = deleteDirectly(0, document.length, false)
 
 	/**
 	 * Delete without checking
@@ -116,12 +116,14 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param offset Int see [delete]
 	 * @param length Int see [delete]
 	 */
-	fun deleteDirectly(offset: Int, length: Int) {
+	fun deleteDirectly(offset: Int, length: Int, reparse: Boolean = true) {
 		selfMaintainedString.delete(offset, offset + length)
 		with(document) {
 			delete(offset, length)
-			reparse()
-			adjustFormat(offset, length)
+			if (reparse) {
+				adjustFormat(offset, length)
+				reparse()
+			}
 		}
 	}
 
@@ -152,10 +154,11 @@ class DevKtDocumentHandler<TextAttributes>(
 			append(string)
 		}
 		with(document) {
+			caretPosition = 0
 			clear()
-			insertDirectly(0, string)
-			reparse()
+			insert(0, string)
 			adjustFormat()
+			reparse()
 		}
 	}
 
@@ -166,13 +169,15 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param string String see [insert]
 	 * @param move Int how long the caret should move
 	 */
-	fun insertDirectly(offset: Int, string: String, move: Int = string.length) {
+	fun insertDirectly(offset: Int, string: String, move: Int = string.length, reparse: Boolean = true) {
 		selfMaintainedString.insert(offset, string)
 		with(document) {
 			insert(offset, string)
 			caretPosition += move
-			reparse()
-			adjustFormat(offset, string.length)
+			if (reparse) {
+				reparse()
+				adjustFormat(offset, string.length)
+			}
 		}
 	}
 
@@ -218,7 +223,8 @@ class DevKtDocumentHandler<TextAttributes>(
 		Analyzer
 				.lex(text, language.createLexer(Analyzer.project))
 				.filter { it.type !in TokenSet.WHITE_SPACE }
-				.forEach { (start, end, _, type) ->
+				.forEach { (start, end, text, type) ->
+					println("$text in ($start, $end)")
 					language.attributesOf(type, colorScheme)?.let {
 						highlight(start, end, it)
 					}
@@ -229,7 +235,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @see com.intellij.lang.annotation.AnnotationHolder.createAnnotation
 	 */
 	override fun highlight(tokenStart: Int, tokenEnd: Int, attributeSet: TextAttributes) {
-		if (tokenStart >= tokenEnd) return
+		if (tokenStart >= tokenEnd || tokenEnd >= length) return
 		for (i in tokenStart until tokenEnd) highlightCache[i] = attributeSet
 	}
 
