@@ -165,8 +165,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (!makeSureLeaveCurrentFile()) {
 			currentFile = null
 			edited = true
-			document.clear()
-			document.insertDirectly(0, javaClass
+			document.resetTextTo(javaClass
 					.getResourceAsStream("/template/$templateName")
 					.reader()
 					.readText())
@@ -179,8 +178,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			message("Loaded ${it.absolutePath}")
 			val path = it.absolutePath.orEmpty()
 			document.switchLanguage(it.name)
-			document.clear()
-			document.insertDirectly(0, it.readText())
+			document.resetTextTo(it.readText().filterNot { it == '\r' })
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 			GlobalSettings.recentFiles.add(it)

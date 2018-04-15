@@ -413,8 +413,7 @@ class ReplaceDialog(
 
 	private fun replaceCurrent() {
 		searchResult.getOrNull(currentIndex)?.run {
-			document.clear()
-			document.insert(0, document.text.replaceRange(start until end, replaceInput.text))
+			document.resetTextTo(document.text.replaceRange(start until end, replaceInput.text))
 		}
 	}
 
@@ -422,8 +421,7 @@ class ReplaceDialog(
 		val text = document.text
 		val findInput = input.text
 		val replaceInput = replaceInput.text
-		document.clear()
-		document.insert(0, if (isRegex.isSelected) {
+		document.resetTextTo(if (isRegex.isSelected) {
 			text.replace(Regex(findInput), replaceInput)
 		} else text.replace(findInput, replaceInput))
 	}

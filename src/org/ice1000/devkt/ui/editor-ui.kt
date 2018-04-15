@@ -141,6 +141,11 @@ class DevKtDocumentHandler<TextAttributes>(
 		} else deleteDirectly(offs, len)
 	}
 
+	/**
+	 * Clear the editor and set the content.
+	 *
+	 * @param string String new content.
+	 */
 	fun resetTextTo(string: String) {
 		with(selfMaintainedString) {
 			setLength(0)
@@ -152,7 +157,6 @@ class DevKtDocumentHandler<TextAttributes>(
 			reparse()
 			adjustFormat()
 		}
-
 	}
 
 	/**
