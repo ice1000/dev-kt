@@ -223,8 +223,8 @@ class DevKtDocumentHandler<TextAttributes>(
 		Analyzer
 				.lex(text, language.createLexer(Analyzer.project))
 				.filter { it.type !in TokenSet.WHITE_SPACE }
-				.forEach { (start, end, text, type) ->
-					println("$text in ($start, $end)")
+				.forEach { (start, end, _, type) ->
+					// println("$text in ($start, $end)")
 					language.attributesOf(type, colorScheme)?.let {
 						highlight(start, end, it)
 					}
