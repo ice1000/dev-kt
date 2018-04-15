@@ -318,7 +318,7 @@ open class FindDialog(
 		val document: DevKtDocumentHandler<*>) : Find() {
 	companion object {
 		val NO_REGEXP_CHARS = arrayOf(
-				'\\', '{', '[', '(', '+', '*', '^', '$', '.'
+				'\\', '{', '[', '(', '+', '*', '^', '$', '.', '?', '|'
 		)
 	}
 
@@ -327,11 +327,12 @@ open class FindDialog(
 
 	init {
 		setLocationRelativeTo(uiImpl.mainPanel)
-		pack()
 
 		contentPane = mainPanel
 		title = "Find"
 		isModal = true
+
+		pack()
 
 		moveUp.addActionListener { moveUp() }
 		moveDown.addActionListener { moveDown() }
@@ -365,7 +366,7 @@ open class FindDialog(
 		try {
 			Pattern.compile(
 					regex,
-					if (isMatchCase.isSelected) Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE else 0
+					if (isMatchCase.isSelected.not()) Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE else 0
 			).matcher(text).run {
 				while (find()) {
 					searchResult.add(SearchResult(start(), end()))
