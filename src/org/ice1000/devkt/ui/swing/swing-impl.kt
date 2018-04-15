@@ -266,15 +266,16 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		//这上面和下面感觉可以优化emmmm
 		lines.forEach {
 			val lineStart = document.startOffsetOf(it)
-			if (add) document.insert(lineStart, lineCommentStart)
+			if (add) document.insertDirectly(lineStart, lineCommentStart)
 			else document.delete(lineStart, lineCommentStart.length)
 		}
 	}
 
 	fun blockComment() {
 		val (start, end) = document.blockComment ?: return
-		document.insertDirectly(document.selectionEnd, end)
-		document.insertDirectly(document.selectionStart, start)
+		val selectionStart = document.selectionStart
+		document.insertDirectly(document.selectionEnd, end, 0)
+		document.insertDirectly(selectionStart, start, 0)
 	}
 
 	//Shortcuts ↑↑↑

@@ -108,7 +108,17 @@ class DevKtDocumentHandler<TextAttributes>(
 				separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>"))
 	}
 
-	fun clear() = delete(0, document.length)
+	fun clear() = deleteDirectly(0, document.length)
+
+	fun deleteDirectly(offset: Int, length: Int) {
+		selfMaintainedString.delete(offset, offset + length)
+		with(document) {
+			delete(offset, length)
+			reparse()
+			adjustFormat(offset, length)
+		}
+	}
+
 	fun delete(offs: Int, len: Int) {
 		val delString = selfMaintainedString.substring(offs, offs + len)
 		val (offset, length) = if (delString.isNotEmpty()) {
@@ -117,13 +127,7 @@ class DevKtDocumentHandler<TextAttributes>(
 				offs to 2
 			} else offs to len
 		} else offs to len
-
-		selfMaintainedString.delete(offset, offset + length)
-		with(document) {
-			delete(offset, length)
-			reparse()
-			adjustFormat(offset, length)
-		}
+		deleteDirectly(offset, length)
 	}
 
 	/**
@@ -151,9 +155,9 @@ class DevKtDocumentHandler<TextAttributes>(
 	 */
 	fun insert(offs: Int, str: String?) {
 		if (offs < 0) return
-		val normalized = str.orEmpty().filterNot { it == '\r' }
-		val (offset, string, move) = if (normalized.length > 1)
-			Triple(offs, normalized, 0)
+		val normalized = str?.filterNot { it == '\r' } ?: return
+		return if (normalized.length > 1)
+			insertDirectly(offs, normalized, 0)
 		else {
 			val char = normalized[0]
 			if (char in paired.values) {
@@ -161,12 +165,11 @@ class DevKtDocumentHandler<TextAttributes>(
 				if (offs != 0
 						&& selfMaintainedString[offs - 1] == another
 						&& selfMaintainedString[offs] == char) {
-					Triple(offs, "", 1)
-				} else Triple(offs, normalized, 0)
-			} else if (char in paired) Triple(offs, "$normalized${paired[char]}", -1)
-			else Triple(offs, normalized, 0)
+					insertDirectly(offs, "", 1)
+				} else insertDirectly(offs, normalized, 0)
+			} else if (char in paired) insertDirectly(offs, "$normalized${paired[char]}", -1)
+			else insertDirectly(offs, normalized, 0)
 		}
-		insertDirectly(offset, string, move)
 	}
 
 	fun reparse() {
