@@ -272,7 +272,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		lines.forEach {
 			val lineStart = document.startOffsetOf(it)
 			if (add) document.insert(lineStart, lineCommentStart)
-			else document.delete(lineStart, 2)
+			else document.delete(lineStart, lineCommentStart.length)
 		}
 	}
 
