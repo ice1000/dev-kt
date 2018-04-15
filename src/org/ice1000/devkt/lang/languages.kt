@@ -3,7 +3,6 @@ package org.ice1000.devkt.lang
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.jetbrains.kotlin.com.intellij.lang.Language
-import org.jetbrains.kotlin.com.intellij.lang.ParserDefinition
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
 import org.jetbrains.kotlin.com.intellij.lexer.EmptyLexer
@@ -24,6 +23,7 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 ) : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
 	abstract fun satisfies(fileName: String): Boolean
 	abstract val lineCommentStart: String?
+	abstract val blockComment: Pair<String, String>?
 	abstract fun createLexer(project: Project): Lexer
 }
 
@@ -32,7 +32,7 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
  * @since v1.2
  * @see DevKtLanguage
  */
-abstract class DevKtLanguageBase<TextAttributes> internal constructor(
+sealed class BuiltinDevKtLanguage<TextAttributes>(
 		private val annotator: Annotator<TextAttributes>,
 		private val syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
 		language: Language
@@ -41,6 +41,7 @@ abstract class DevKtLanguageBase<TextAttributes> internal constructor(
 		SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
 	override fun satisfies(fileName: String) = false
 	override val lineCommentStart = "//"
+	override val blockComment: Pair<String, String>? = "/*" to "*/"
 }
 
 /**
@@ -51,7 +52,7 @@ abstract class DevKtLanguageBase<TextAttributes> internal constructor(
 class Java<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : DevKtLanguageBase<TextAttributes>(
+) : BuiltinDevKtLanguage<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
 		JavaLanguage.INSTANCE) {
@@ -69,7 +70,7 @@ class Java<TextAttributes>(
 class Kotlin<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : DevKtLanguageBase<TextAttributes>(
+) : BuiltinDevKtLanguage<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
 		KotlinLanguage.INSTANCE) {
@@ -86,11 +87,12 @@ class Kotlin<TextAttributes>(
 class PlainText<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : DevKtLanguageBase<TextAttributes>(
+) : BuiltinDevKtLanguage<TextAttributes>(
 		annotator,
 		syntaxHighlighter,
 		PlainTextLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".txt") || '.' !in fileName
 	private val lexer = EmptyLexer()
 	override fun createLexer(project: Project) = lexer
+	override val blockComment: Pair<String, String>? get() = null
 }

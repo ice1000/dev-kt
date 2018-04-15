@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 
 
 /**
+ * Provides default implementations to avoid breaking plugins when adding new APIs.
+ *
  * @author ice1000
  * @since v1.2
  */
@@ -18,7 +20,13 @@ abstract class ExtendedDevKtLanguage<TextAttributes>(
 	/**
 	 * Line comment start, used when pressing <kbd>Ctrl</kbd> + <kbd>/</kbd>
 	 */
-	override val lineCommentStart: String get() = ""
+	override val lineCommentStart: String? get() = null
+
+	/**
+	 * Block comment surrounding, used when pressing
+	 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
+	 */
+	override val blockComment: Pair<String, String>? get() = null
 
 	/**
 	 * Creates a lexer for syntax highlight
