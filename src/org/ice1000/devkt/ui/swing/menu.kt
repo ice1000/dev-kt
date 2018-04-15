@@ -142,10 +142,16 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			keyMap(GlobalSettings.shortcutGoto)
 			onAction { gotoLine() }
 		}
-		item("Toggle Comment") {
+		separator
+		item("Toggle Line Comment") {
 			keyMap(GlobalSettings.shortcutComment)
 			onAction { commentCurrent() }
 		}
+		item("Insert Block Comment") {
+			keyMap(GlobalSettings.shortcutBlockComment)
+			onAction { blockComment() }
+		}
+		separator
 		item("Find") {
 			keyMap(GlobalSettings.shortcutFind)
 			onAction { find() }

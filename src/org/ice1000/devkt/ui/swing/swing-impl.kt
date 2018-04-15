@@ -255,24 +255,13 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 
 	fun commentCurrent() {
-		val start = document.lineOf(document.selectionStart)
-		val end = document.lineOf(document.selectionEnd)
-		comment(start..end)
-	}
-
-	fun blockComment() {
-		val (start, end) = document.blockComment ?: return
-		document.insertDirectly(document.selectionEnd, end)
-		document.insertDirectly(document.selectionStart, start)
-	}
-
-	private fun comment(lines: IntRange) {
+		val lines = document.lineOf(document.selectionStart)..document.lineOf(document.selectionEnd)
 		val lineCommentStart = document.lineCommentStart ?: return
 		val add = lines.any {
 			val lineStart = document.startOffsetOf(it)
 			val lineEnd = document.endOffsetOf(it)
 			val lineText = document.textWithin(lineStart, lineEnd)
-			!lineText.startsWith(lineCommentStart)        //只要有一行开头不为 `//` 就进行添加注释操作
+			!lineText.startsWith(lineCommentStart)
 		}
 		//这上面和下面感觉可以优化emmmm
 		lines.forEach {
@@ -280,6 +269,12 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			if (add) document.insert(lineStart, lineCommentStart)
 			else document.delete(lineStart, lineCommentStart.length)
 		}
+	}
+
+	fun blockComment() {
+		val (start, end) = document.blockComment ?: return
+		document.insertDirectly(document.selectionEnd, end)
+		document.insertDirectly(document.selectionStart, start)
 	}
 
 	//Shortcuts ↑↑↑

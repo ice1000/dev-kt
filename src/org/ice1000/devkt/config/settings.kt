@@ -128,6 +128,7 @@ object GlobalSettings {
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBefore = ShortCut(true, true, false, KeyEvent.VK_ENTER)
 	var shortcutComment = ShortCut(true, false, false, KeyEvent.VK_SLASH)
+	var shortcutBlockComment = ShortCut(true, false, true, KeyEvent.VK_SLASH)
 	var shortcutFind = ShortCut(true, false, false, KeyEvent.VK_F)
 	var shortcutReplace = ShortCut(true, false, false, KeyEvent.VK_R)
 
