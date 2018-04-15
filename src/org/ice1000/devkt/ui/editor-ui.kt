@@ -80,7 +80,8 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
-	val lineCommentStart get() = currentLanguage?.lineCommentStart.orEmpty()
+	val lineCommentStart get() = currentLanguage?.lineCommentStart
+	val blockComment get() = currentLanguage?.blockComment
 
 	fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 
@@ -125,6 +126,29 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 	}
 
+	/**
+	 * Insert without checking
+	 *
+	 * @param offset Int see [insert]
+	 * @param string String see [insert]
+	 * @param move Int how long the caret should move
+	 */
+	fun insertDirectly(offset: Int, string: String, move: Int = string.length) {
+		selfMaintainedString.insert(offset, string)
+		with(document) {
+			insert(offset, string)
+			caretPosition += move
+			reparse()
+			adjustFormat(offset, string.length)
+		}
+	}
+
+	/**
+	 * Handles user input, insert with checks
+	 *
+	 * @param offs Int offset from the beginning of the document
+	 * @param str String? text to insert
+	 */
 	fun insert(offs: Int, str: String?) {
 		if (offs < 0) return
 		val normalized = str.orEmpty().filterNot { it == '\r' }
@@ -142,13 +166,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			} else if (char in paired) Triple(offs, "$normalized${paired[char]}", -1)
 			else Triple(offs, normalized, 0)
 		}
-		selfMaintainedString.insert(offset, string)
-		with(document) {
-			insert(offset, string)
-			caretPosition += move
-			reparse()
-			adjustFormat(offset, string.length)
-		}
+		insertDirectly(offset, string, move)
 	}
 
 	fun reparse() {

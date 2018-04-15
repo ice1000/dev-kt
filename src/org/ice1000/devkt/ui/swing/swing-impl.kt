@@ -255,13 +255,19 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 
 	fun commentCurrent() {
-		val start = document.lineOf(editor.selectionStart)
-		val end = document.lineOf(editor.selectionEnd)
+		val start = document.lineOf(document.selectionStart)
+		val end = document.lineOf(document.selectionEnd)
 		comment(start..end)
 	}
 
-	fun comment(lines: IntRange) {
-		val lineCommentStart = document.lineCommentStart
+	fun blockComment() {
+		val (start, end) = document.blockComment ?: return
+		document.insertDirectly(document.selectionEnd, end)
+		document.insertDirectly(document.selectionStart, start)
+	}
+
+	private fun comment(lines: IntRange) {
+		val lineCommentStart = document.lineCommentStart ?: return
 		val add = lines.any {
 			val lineStart = document.startOffsetOf(it)
 			val lineEnd = document.endOffsetOf(it)
