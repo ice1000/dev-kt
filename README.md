@@ -34,7 +34,15 @@ VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercont
 
 # Plugin development guide
 
-See [covscript/covscript-devkt](https://github.com/covscript/covscript-devkt).
+See:
+
++ [CovScript plugin](https://github.com/covscript/covscript-devkt)
++ [Clojure plugin based on Clojure-Kit](https://github.com/devkt-plugins/clojure-devkt) (deprecated)
++ [Clojure plugin based on la-clojuer](https://github.com/devkt-plugins/la-clojure-devkt)
++ [Julia plugin](https://github.com/devkt-plugins/julia-devkt)
++ [JSON plugin](https://github.com/devkt-plugins/json-devkt)
+
+To install a plugin, just add the jar in the classpath, and you don't need to do anything else.
 
 # Screenshots
 
