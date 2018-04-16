@@ -1,15 +1,17 @@
 package org.ice1000.devkt.ui.jfx
 
+import javafx.application.Application
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
 import org.ice1000.devkt.ui.MessageType
 import org.ice1000.devkt.ui.UIBase
+import java.io.File
 
 /**
  * @param T Unknown ATM
  */
-abstract class AbstractJfxUI<T> : UIBase<T>() {
+abstract class AbstractJfxUI<T>(private val application: Application) : UIBase<T>() {
 	private fun <T> initAlert(it: Dialog<T>, title: String) {
 		it.isResizable = false
 		it.title = title
@@ -37,4 +39,7 @@ abstract class AbstractJfxUI<T> : UIBase<T>() {
 			MessageType.Warning -> Alert.AlertType.WARNING
 		}, text, ButtonType.OK).let { initAlert(it, title) }
 	}
+
+	override fun doBrowse(url: String) = application.hostServices.showDocument(url)
+	override fun doOpen(file: File) = doBrowse(file.toURI().toString())
 }
