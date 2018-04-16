@@ -45,5 +45,6 @@ abstract class AbstractJfxUI<T>(private val application: Application) : UIBase<T
 	override fun doBrowse(url: String) =
 			if (SystemInfo.isOracleJvm)
 				application.hostServices.showDocument(url)
-			else throw UnsupportedOperationException("browsing files cannot be done on non-oracle jvm.")
+			else throw UnsupportedOperationException(
+					"browsing files cannot be done on non-oracle jvm.")
 }

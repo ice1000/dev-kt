@@ -21,7 +21,7 @@ val commitHash by lazy {
 
 val isCI = !System.getenv("CI").isNullOrBlank()
 
-val shortVersion = "v1.3-SNAPSHOT"
+val shortVersion = "v2.0-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
 val kotlinStable = "1.2.31"
 val kotlinEAP = "1.2.40-eap-62"
@@ -35,7 +35,6 @@ plugins {
 	idea
 	java
 	application
-	id("org.jetbrains.intellij") version "0.3.1"
 	id("de.undercouch.download") version "3.4.2"
 	kotlin("jvm") version "1.2.31"
 }
@@ -44,46 +43,6 @@ application {
 	if (SystemInfo.isMac)
 		applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
 	mainClassName = "org.ice1000.devkt.Main"
-}
-
-intellij {
-	instrumentCode = true
-	if (ext.has("ideaC_path")) {
-		localPath = ext["ideaC_path"].toString()
-	} else {
-		if (isCI) return@intellij
-		try {
-			println("Please specify your IntelliJ IDEA installation path:")
-			val line = readLine()?.trim()
-			if (null != line && Files.exists(Paths.get(line))) {
-				localPath = line
-				file("gradle.properties").writeText("ideaC_path=$line")
-			} else version = "2018.1"
-		} catch (e: HeadlessException) {
-			e.printStackTrace()
-			version = "2018.1"
-		}
-	}
-}
-
-val disabledTasks = listOf("assembleDist",
-		"distZip",
-		"distTar",
-		"installDist",
-		"runIde",
-		"verifyPlugin",
-		"buildPlugin",
-		"prepareSandbox",
-		"prepareTestingSandbox",
-		"patchPluginXml",
-		"publishPlugin"
-)
-
-tasks.removeIf {
-	if (it.name in disabledTasks) {
-		it.enabled = false
-		true
-	} else false
 }
 
 idea {
@@ -172,18 +131,14 @@ dependencies {
 	compile(kotlin("stdlib-jdk8", kotlinVersion))
 	compile(kotlin("reflect", kotlinVersion))
 	compile(kotlin("compiler-embeddable", kotlinVersion))
-	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
-	compile(group = "com.github.ice1k", name = "darcula", version = "2018.1")
-	compile(group = "com.intellij", name = "forms_rt", version = "7.0.3")
-	compile(files(Paths.get("lib", "filedrop.jar")))
+	// compile(group = "no.tornado", name = "tornadofx", version = "1.7.15")
+	compile(group = "com.jfoenix", name = "jfoenix", version = "9.0.3")
 	val plugins = Paths.get("plugins").toFile()
 			.listFiles().orEmpty().filterNot(File::isDirectory)
 	runtime(files(*plugins.toTypedArray()))
-	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile("junit", "junit", "4.12")
 	testCompile(kotlin("test-junit", kotlinStable))
 	testCompile(kotlin("stdlib-jdk8", kotlinStable))
 	testCompile(kotlin("reflect", kotlinStable))
-	configurations.runtime.extendsFrom(configurations.testCompileOnly)
 }
