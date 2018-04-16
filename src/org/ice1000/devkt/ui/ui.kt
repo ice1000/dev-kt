@@ -58,8 +58,11 @@ abstract class UIBase<TextAttributes> {
 	fun clion() = browse("https://www.jetbrains.com/clion/download/")
 	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
-
 	fun psiFile(): PsiFile? = document.psiFile
+	fun nextLine() = document.nextLine()
+	fun splitLine() = document.splitLine()
+	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
+
 	abstract fun refreshTitle()
 	abstract fun updateShowInFilesMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
@@ -69,6 +72,7 @@ abstract class UIBase<TextAttributes> {
 	protected abstract fun doOpen(file: File)
 	protected abstract fun dispose()
 	protected abstract fun createSelf()
+	protected abstract fun editorText(): String
 	abstract fun chooseFile(from: File?, chooseFileType: ChooseFileType): File?
 	abstract fun chooseDir(from: File?, chooseFileType: ChooseFileType): File?
 	abstract fun dialogYesNo(
@@ -81,14 +85,56 @@ abstract class UIBase<TextAttributes> {
 			messageType: MessageType,
 			title: String = messageType.name)
 
-	open fun makeSureLeaveCurrentFile() = dialogYesNo(
+	fun makeSureLeaveCurrentFile() = edited and dialogYesNo(
 			"${currentFile?.name ?: "Current file"} unsaved, leave?",
 			MessageType.Question)
+
+	fun regenerateTitle() = buildString {
+		if (edited) append("*")
+		append(currentFile?.absolutePath ?: "Untitled")
+		append(" - ")
+		append(GlobalSettings.appName)
+	}
 
 	fun open() {
 		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let {
 			loadFile(it)
 		}
+	}
+
+	fun save() {
+		val file = currentFile ?: chooseFile(GlobalSettings.recentFiles.firstOrNull()?.parentFile, ChooseFileType.Save)
+		?: return
+		currentFile = file
+		if (!file.exists()) file.createNewFile()
+		GlobalSettings.recentFiles.add(file)
+		file.writeText(editorText()) // here, it is better to use `editor.text` instead of `document.text`
+		message("Saved to ${file.absolutePath}")
+		edited = false
+	}
+
+	fun commentCurrent() {
+		val lines = document.lineOf(document.selectionStart)..document.lineOf(document.selectionEnd)
+		val lineCommentStart = document.lineCommentStart ?: return
+		val add = lines.any {
+			val lineStart = document.startOffsetOf(it)
+			val lineEnd = document.endOffsetOf(it)
+			val lineText = document.textWithin(lineStart, lineEnd)
+			!lineText.startsWith(lineCommentStart)
+		}
+		//这上面和下面感觉可以优化emmmm
+		lines.forEach {
+			val lineStart = document.startOffsetOf(it)
+			if (add) document.insertDirectly(lineStart, lineCommentStart)
+			else document.deleteDirectly(lineStart, lineCommentStart.length)
+		}
+	}
+
+	fun blockComment() {
+		val (start, end) = document.blockComment ?: return
+		val selectionStart = document.selectionStart
+		document.insertDirectly(document.selectionEnd, end, 0)
+		document.insertDirectly(selectionStart, start, 0)
 	}
 
 	fun refreshMemoryIndicator() {

@@ -205,48 +205,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		ReplaceDialog(this@UIImpl, document).show
 	}
 
-	fun save() {
-		val file = currentFile ?: chooseFile(GlobalSettings.recentFiles.firstOrNull()?.parentFile, ChooseFileType.Save) ?: return
-		currentFile = file
-		if (!file.exists()) file.createNewFile()
-		GlobalSettings.recentFiles.add(file)
-		file.writeText(editor.text) // here, it is better to use `editor.text` instead of `document.text`
-		message("Saved to ${file.absolutePath}")
-		edited = false
-	}
-
-	fun nextLine() = document.nextLine()
-	fun splitLine() = document.splitLine()
-	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
-
-	fun commentCurrent() {
-		val lines = document.lineOf(document.selectionStart)..document.lineOf(document.selectionEnd)
-		val lineCommentStart = document.lineCommentStart ?: return
-		val add = lines.any {
-			val lineStart = document.startOffsetOf(it)
-			val lineEnd = document.endOffsetOf(it)
-			val lineText = document.textWithin(lineStart, lineEnd)
-			!lineText.startsWith(lineCommentStart)
-		}
-		//这上面和下面感觉可以优化emmmm
-		lines.forEach {
-			val lineStart = document.startOffsetOf(it)
-			if (add) document.insertDirectly(lineStart, lineCommentStart)
-			else document.deleteDirectly(lineStart, lineCommentStart.length)
-		}
-	}
-
-	fun blockComment() {
-		val (start, end) = document.blockComment ?: return
-		val selectionStart = document.selectionStart
-		document.insertDirectly(document.selectionEnd, end, 0)
-		document.insertDirectly(selectionStart, start, 0)
-	}
-
-	//Shortcuts ↑↑↑
-
-	override fun makeSureLeaveCurrentFile() =
-			edited && super.makeSureLeaveCurrentFile()
+	override fun editorText() = editor.text.orEmpty()
 
 	override fun updateShowInFilesMenuItem() {
 		showInFilesMenuItem.isEnabled = currentFile != null
@@ -278,12 +237,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	override fun refreshTitle() {
-		frame.title = buildString {
-			if (edited) append("*")
-			append(currentFile?.absolutePath ?: "Untitled")
-			append(" - ")
-			append(GlobalSettings.appName)
-		}
+		frame.title = regenerateTitle()
 	}
 
 	var editorFont: Font
