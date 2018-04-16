@@ -22,7 +22,7 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			is PsiMethod -> method(element, document, colorScheme)
 			is PsiField -> field(element, document, colorScheme)
 			is PsiVariable -> variable(element, document, colorScheme)
-			is PsiErrorElement -> document.highlight(element, colorScheme.unknown)
+			is PsiErrorElement -> document.highlight(element, colorScheme.error)
 		}
 	}
 
@@ -84,7 +84,7 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 			is KtTypeReference -> typeReference(element, document, colorScheme)
 			is KtNamedFunction -> namedFunction(element, document, colorScheme)
 			is KtProperty -> property(element, document, colorScheme)
-			is PsiErrorElement -> document.highlight(element, colorScheme.unknown)
+			is PsiErrorElement -> document.highlight(element, colorScheme.error)
 		}
 	}
 

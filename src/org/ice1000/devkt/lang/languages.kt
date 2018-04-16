@@ -1,7 +1,6 @@
 package org.ice1000.devkt.lang
 
-import org.ice1000.devkt.openapi.Annotator
-import org.ice1000.devkt.openapi.SyntaxHighlighter
+import org.ice1000.devkt.openapi.*
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.jetbrains.kotlin.com.intellij.lang.Language
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.com.intellij.psi.PsiErrorElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 
@@ -46,7 +46,7 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 	abstract fun createLexer(project: Project): Lexer
 
 	/**
-	 * Called when typing.
+	 * Called when typing, before the typed character is inserted.
 	 *
 	 * @param offset Int
 	 * @param text String?
