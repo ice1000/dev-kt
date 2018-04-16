@@ -292,4 +292,10 @@ class DevKtDocumentHandler<TextAttributes>(
 		insert(startOfLineIndex, "\n")
 		caretPosition = startOfLineIndex + 1
 	}
+
+	fun handleInsert(offs: Int, str: String?) {
+		currentLanguage?.run {
+			handleTyping(offs, str, psiFile?.findElementAt(offs), this@DevKtDocumentHandler)
+		} ?: insert(offs, str)
+	}
 }

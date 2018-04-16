@@ -3,6 +3,7 @@ package org.ice1000.devkt.lang
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.ice1000.devkt.ui.DevKtDocument
+import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
@@ -44,11 +45,21 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 
 	abstract fun createLexer(project: Project): Lexer
 
+	/**
+	 * Called when typing.
+	 *
+	 * @param offset Int
+	 * @param text String?
+	 * @param element PsiElement?
+	 * @param document DevKtDocument<TextAttributes>
+	 * @see org.ice1000.devkt.ui.DevKtDocumentHandler.insertDirectly
+	 * @see org.ice1000.devkt.ui.DevKtDocumentHandler.insert
+	 */
 	open fun handleTyping(
 			offset: Int,
-			text: String,
-			element: PsiElement,
-			document: DevKtDocument<TextAttributes>) {
+			text: String?,
+			element: PsiElement?,
+			document: DevKtDocumentHandler<TextAttributes>) {
 		document.insert(offset, text)
 	}
 }

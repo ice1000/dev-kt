@@ -28,7 +28,7 @@ abstract class ExtendedDevKtLanguage<TextAttributes>(
 	override fun createLexer(project: Project): Lexer = parserDefinition.createLexer(project)
 
 	/**
-	 * @see [org.ice1000.devkt.openapi.SyntaxHighlighter.attributesOf]
+	 * @see org.ice1000.devkt.openapi.SyntaxHighlighter.attributesOf
 	 */
 	override fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>) = when (type) {
 		TokenType.BAD_CHARACTER, TokenType.ERROR_ELEMENT -> colorScheme.error

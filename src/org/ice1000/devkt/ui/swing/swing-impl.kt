@@ -77,7 +77,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		override fun remove(offs: Int, len: Int) = document.delete(offs, len)
 
 		/** from [DefaultStyledDocument] */
-		override fun insertString(offs: Int, str: String?, a: AttributeSet?) = document.insert(offs, str)
+		override fun insertString(offs: Int, str: String?, a: AttributeSet?) = document.handleInsert(offs, str)
 
 		override fun resetLineNumberLabel(str: String) {
 			lineNumberLabel.text = str
