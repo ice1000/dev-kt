@@ -21,6 +21,14 @@ enum class MessageType {
 }
 
 /**
+ * @author ice1000
+ * @since v1.3
+ */
+enum class ChooseFileType {
+	Open, Save, Create
+}
+
+/**
  * Platform independent
  * @author ice1000
  * @since v1.3
@@ -36,7 +44,6 @@ abstract class UIBase<TextAttributes> {
 			}
 		}
 	protected abstract val document: DevKtDocumentHandler<TextAttributes>
-	protected abstract var edited: Boolean
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
 	fun clion() = browse("https://www.jetbrains.com/clion/download/")
@@ -52,6 +59,9 @@ abstract class UIBase<TextAttributes> {
 	protected abstract fun reloadSettings()
 	protected abstract fun doBrowse(url: String)
 	protected abstract fun doOpen(file: File)
+	protected abstract fun dispose()
+	abstract fun chooseFile(from: File?, chooseFileType: ChooseFileType): File?
+	abstract fun chooseDir(from: File?, chooseFileType: ChooseFileType): File?
 	abstract fun dialogYesNo(
 			text: String,
 			messageType: MessageType,
@@ -65,6 +75,18 @@ abstract class UIBase<TextAttributes> {
 	open fun makeSureLeaveCurrentFile() = dialogYesNo(
 			"${currentFile?.name ?: "Current file"} unsaved, leave?",
 			MessageType.Question)
+
+	fun open() {
+		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let {
+			loadFile(it)
+		}
+	}
+
+	fun importSettings() {
+		val file = chooseFile(File(selfLocation), ChooseFileType.Open) ?: return
+		GlobalSettings.loadFile(file)
+		restart()
+	}
 
 	fun browse(url: String) = try {
 		doBrowse(url)
@@ -208,6 +230,4 @@ abstract class UIBase<TextAttributes> {
 			tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
 		}
 	}
-
-	protected abstract fun dispose()
 }

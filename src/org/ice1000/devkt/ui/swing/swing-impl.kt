@@ -22,7 +22,7 @@ import javax.swing.undo.UndoManager
  */
 class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val undoManager = UndoManager()
-	override var edited = false
+	var edited = false
 		set(value) {
 			val change = field != value
 			field = value

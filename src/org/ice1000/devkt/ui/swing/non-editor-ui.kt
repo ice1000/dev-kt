@@ -4,7 +4,7 @@ import charlie.gensokyo.show
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
-import org.ice1000.devkt.selfLocation
+import org.ice1000.devkt.ui.ChooseFileType
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.ice1000.devkt.ui.MessageType
@@ -91,13 +91,23 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 				MessageType.Warning -> JOptionPane.WARNING_MESSAGE
 			}, JOptionPane.YES_NO_OPTION)
 
-	fun open() {
-		JFileChooser(currentFile?.parentFile).apply {
-			// dialogTitle = "Choose a Analyzer file"
-			showOpenDialog(mainPanel)
+	override fun chooseFile(
+			from: File?, chooseFileType: ChooseFileType): File? =
+			jFileChooser(from, chooseFileType).selectedFile
+
+	override fun chooseDir(
+			from: File?, chooseFileType: ChooseFileType): File? =
+			jFileChooser(from, chooseFileType).currentDirectory
+
+	private fun jFileChooser(from: File?, chooseFileType: ChooseFileType): JFileChooser {
+		return JFileChooser(from).apply {
+			dialogType = when (chooseFileType) {
+				ChooseFileType.Open -> JFileChooser.OPEN_DIALOG
+				ChooseFileType.Save,
+				ChooseFileType.Create -> JFileChooser.SAVE_DIALOG
+			}
 			fileSelectionMode = JFileChooser.FILES_ONLY
-		}.selectedFile?.let {
-			loadFile(it)
+			showDialog(mainPanel, null)
 		}
 	}
 
@@ -112,14 +122,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	fun viewPsi() {
 		psiFile()?.let { PsiViewerImpl(it, frame).show }
-	}
-
-	fun importSettings() {
-		val file = JFileChooser(selfLocation).apply {
-			showOpenDialog(mainPanel)
-		}.selectedFile ?: return
-		GlobalSettings.loadFile(file)
-		restart()
 	}
 }
 
