@@ -26,11 +26,13 @@ class DevKtUndoManager(initialCapacity: Int) {
 	val canUndo get() = undoStack.isNotEmpty()
 	val canRedo get() = redoStack.isNotEmpty()
 
+	@Synchronized
 	fun clear() {
 		undoStack.clear()
 		redoStack.clear()
 	}
 
+	@Synchronized
 	fun undo(host: DevKtDocumentHandler<*>) {
 		if (!canUndo) return
 		while (null == undoStack.peek()) undoStack.pop()
@@ -43,6 +45,7 @@ class DevKtUndoManager(initialCapacity: Int) {
 		doneUndo()
 	}
 
+	@Synchronized
 	fun redo(host: DevKtDocumentHandler<*>) {
 		if (!canRedo) return
 		while (null == redoStack.peek()) redoStack.pop()
@@ -55,7 +58,6 @@ class DevKtUndoManager(initialCapacity: Int) {
 		done()
 	}
 
-	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
 	fun addEdit(edit: Edit) {
 		undoStack.add(edit)
 		redoStack.clear()

@@ -90,7 +90,10 @@ class DevKtDocumentHandler<TextAttributes>(
 	fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
 	fun undo() = undoManager.undo(this)
 	fun redo() = undoManager.redo(this)
+	fun done() = undoManager.done()
 	fun clearUndo() = undoManager.clear()
+	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
+	fun addEdit(edit: Edit) = undoManager.addEdit(edit)
 
 	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	fun switchLanguage(fileName: String) {
@@ -113,6 +116,31 @@ class DevKtDocumentHandler<TextAttributes>(
 		//language=HTML
 		if (change) document.resetLineNumberLabel((1..currentLineNumber).joinToString(
 				separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>"))
+	}
+
+	fun commentCurrent() {
+		val lines = lineOf(selectionStart)..lineOf(selectionEnd)
+		val lineCommentStart = lineCommentStart ?: return
+		val add = lines.any {
+			val lineStart = startOffsetOf(it)
+			val lineEnd = endOffsetOf(it)
+			val lineText = textWithin(lineStart, lineEnd)
+			!lineText.startsWith(lineCommentStart)
+		}
+		lines.forEach {
+			val lineStart = startOffsetOf(it)
+			addEdit(lineStart, lineCommentStart, add)
+			if (add) insertDirectly(lineStart, lineCommentStart)
+			else deleteDirectly(lineStart, lineCommentStart.length)
+		}
+		done()
+	}
+
+	fun blockComment() {
+		val (start, end) = blockComment ?: return
+		val selectionStart = selectionStart
+		insertDirectly(selectionEnd, end, 0)
+		insertDirectly(selectionStart, start, 0)
 	}
 
 	/**

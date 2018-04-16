@@ -129,29 +129,8 @@ abstract class UIBase<TextAttributes> {
 		edited = false
 	}
 
-	fun commentCurrent() {
-		val lines = document.lineOf(document.selectionStart)..document.lineOf(document.selectionEnd)
-		val lineCommentStart = document.lineCommentStart ?: return
-		val add = lines.any {
-			val lineStart = document.startOffsetOf(it)
-			val lineEnd = document.endOffsetOf(it)
-			val lineText = document.textWithin(lineStart, lineEnd)
-			!lineText.startsWith(lineCommentStart)
-		}
-		//这上面和下面感觉可以优化emmmm
-		lines.forEach {
-			val lineStart = document.startOffsetOf(it)
-			if (add) document.insertDirectly(lineStart, lineCommentStart)
-			else document.deleteDirectly(lineStart, lineCommentStart.length)
-		}
-	}
-
-	fun blockComment() {
-		val (start, end) = document.blockComment ?: return
-		val selectionStart = document.selectionStart
-		document.insertDirectly(document.selectionEnd, end, 0)
-		document.insertDirectly(selectionStart, start, 0)
-	}
+	fun commentCurrent() = document.commentCurrent()
+	fun blockComment() = document.blockComment()
 
 	fun refreshMemoryIndicator() {
 		val runtime = Runtime.getRuntime()
