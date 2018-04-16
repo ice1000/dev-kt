@@ -4,26 +4,14 @@ import org.ice1000.devkt.*
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.openapi.*
+import org.ice1000.devkt.openapi.ui.IDevKtDocument
+import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import java.util.*
 
-interface DevKtDocument<in TextAttributes> : LengthOwner {
-	var caretPosition: Int
-	var selectionStart: Int
-	var selectionEnd: Int
-	fun clear() = delete(0, length)
-	fun delete(offs: Int, len: Int)
-	fun insert(offs: Int, str: String?)
-	fun changeCharacterAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
-	fun changeParagraphAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
-	fun resetLineNumberLabel(str: String)
-	fun startOffsetOf(line: Int): Int
-	fun endOffsetOf(line: Int): Int
-	fun lineOf(offset: Int): Int
-	fun lockWrite()
-	fun unlockWrite()
-	fun message(text: String)
+interface DevKtDocument<in TextAttributes> : IDevKtDocument<TextAttributes> {
+	override fun clear() = delete(0, length)
 
 	//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 	fun lineColumnToPos(line: Int, column: Int = 1) = startOffsetOf(line - 1) + column - 1
@@ -36,9 +24,9 @@ interface DevKtDocument<in TextAttributes> : LengthOwner {
 }
 
 class DevKtDocumentHandler<TextAttributes>(
-		internal val document: DevKtDocument<TextAttributes>,
+		val document: DevKtDocument<TextAttributes>,
 		private val colorScheme: ColorScheme<TextAttributes>) :
-		AnnotationHolder<TextAttributes> {
+		IDevKtDocumentHandler<TextAttributes> {
 	private val undoManager = DevKtUndoManager()
 	private var selfMaintainedString = StringBuilder()
 	private val languages: MutableList<DevKtLanguage<TextAttributes>> = arrayListOf(
@@ -47,15 +35,15 @@ class DevKtDocumentHandler<TextAttributes>(
 			PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
 	)
 	private val defaultLanguage = languages[1]
-	fun startOffsetOf(line: Int) = document.startOffsetOf(line)
-	fun endOffsetOf(line: Int) = document.endOffsetOf(line)
-	fun lineOf(offset: Int) = document.lineOf(offset)
-	var selectionStart
+	override fun startOffsetOf(line: Int) = document.startOffsetOf(line)
+	override fun endOffsetOf(line: Int) = document.endOffsetOf(line)
+	override fun lineOf(offset: Int) = document.lineOf(offset)
+	override var selectionStart
 		get() = document.selectionStart
 		set(value) {
 			document.selectionStart = value
 		}
-	var selectionEnd
+	override var selectionEnd
 		get() = document.selectionEnd
 		set(value) {
 			document.selectionEnd = value
@@ -83,31 +71,31 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun getLength() = document.length
 	val lineCommentStart get() = currentLanguage?.lineCommentStart
 	val blockComment get() = currentLanguage?.blockComment
-	val canUndo get() = undoManager.canUndo
-	val canRedo get() = undoManager.canRedo
+	override val canUndo get() = undoManager.canUndo
+	override val canRedo get() = undoManager.canRedo
 
-	fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
-	fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
-	fun undo() = undoManager.undo(this)
-	fun redo() = undoManager.redo(this)
-	fun done() = undoManager.done()
-	fun clearUndo() = undoManager.clear()
-	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
-	fun addEdit(edit: Edit) = undoManager.addEdit(edit)
+	override fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
+	override fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
+	override fun undo() = undoManager.undo(this)
+	override fun redo() = undoManager.redo(this)
+	override fun done() = undoManager.done()
+	override fun clearUndo() = undoManager.clear()
+	override fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
+	override fun addEdit(edit: Edit) = undoManager.addEdit(edit)
 
-	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
-	fun switchLanguage(fileName: String) {
+	override fun useDefaultLanguage() = switchLanguage(defaultLanguage)
+	override fun switchLanguage(fileName: String) {
 		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
 	}
 
-	fun switchLanguage(language: DevKtLanguage<TextAttributes>?) {
+	override fun switchLanguage(language: DevKtLanguage<TextAttributes>?) {
 		currentLanguage = language
 	}
 
 	val psiFile: PsiFile?
 		get() = psiFileCache ?: currentLanguage?.run { Analyzer.parse(text, language) }
 
-	fun adjustFormat(offs: Int = 0, len: Int = document.length - offs) {
+	override fun adjustFormat(offs: Int, len: Int) {
 		if (len <= 0) return
 		document.changeParagraphAttributes(offs, len, colorScheme.tabSize, false)
 		val currentLineNumber = selfMaintainedString.count { it == '\n' } + 1
@@ -149,7 +137,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param offset Int see [delete]
 	 * @param length Int see [delete]
 	 */
-	fun deleteDirectly(offset: Int, length: Int, reparse: Boolean = true) {
+	override fun deleteDirectly(offset: Int, length: Int, reparse: Boolean) {
 		selfMaintainedString.delete(offset, offset + length)
 		with(document) {
 			delete(offset, length)
@@ -166,7 +154,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param offs Int see [insert]
 	 * @param len Int length of deletion
 	 */
-	fun delete(offs: Int, len: Int) {
+	override fun delete(offs: Int, len: Int) {
 		val delString = selfMaintainedString.substring(offs, offs + len)
 		if (delString.isEmpty()) return
 		with(undoManager) {
@@ -184,7 +172,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 *
 	 * @param string String new content.
 	 */
-	fun resetTextTo(string: String) {
+	override fun resetTextTo(string: String) {
 		with(undoManager) {
 			addEdit(0, selfMaintainedString, false)
 			addEdit(0, string, true)
@@ -210,7 +198,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param string String see [insert]
 	 * @param move Int how long the caret should move
 	 */
-	fun insertDirectly(offset: Int, string: String, move: Int = string.length, reparse: Boolean = true) {
+	override fun insertDirectly(offset: Int, string: String, move: Int, reparse: Boolean) {
 		selfMaintainedString.insert(offset, string)
 		with(document) {
 			insert(offset, string)
@@ -228,7 +216,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param offs Int offset from the beginning of the document
 	 * @param str String? text to insert
 	 */
-	fun insert(offs: Int, str: String?) {
+	override fun insert(offs: Int, str: String?) {
 		if (offs < 0) return
 		val normalized = str?.filterNot { it == '\r' } ?: return
 		with(undoManager) {
@@ -249,7 +237,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 	}
 
-	fun reparse() {
+	override fun reparse() {
 		val lang = currentLanguage ?: return
 		while (highlightCache.size <= document.length) highlightCache.add(null)
 		// val time = System.currentTimeMillis()
