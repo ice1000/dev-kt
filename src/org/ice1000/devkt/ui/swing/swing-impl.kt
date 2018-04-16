@@ -194,8 +194,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	override fun updateUndoRedoMenuItem() {
-		undoMenuItem.isEnabled = document.canUndo
-		redoMenuItem.isEnabled = document.canRedo
+		// undoMenuItem.isEnabled = document.canUndo
+		// redoMenuItem.isEnabled = document.canRedo
 	}
 
 	/**
