@@ -117,7 +117,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 			changes.end()
 			fireChangedUpdate(changes)
-			fireUndoableEditUpdate(UndoableEditEvent(GlobalSettings, changes))
 		} finally {
 			writeUnlock()
 		}

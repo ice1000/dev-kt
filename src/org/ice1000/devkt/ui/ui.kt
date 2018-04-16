@@ -168,6 +168,7 @@ abstract class UIBase<TextAttributes> {
 			val path = it.absolutePath.orEmpty()
 			document.switchLanguage(it.name)
 			document.resetTextTo(it.readText().filterNot { it == '\r' })
+			document.clearUndo()
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 			GlobalSettings.recentFiles.add(it)

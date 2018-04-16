@@ -7,6 +7,9 @@ class Edit(val offset: Int, val text: CharSequence, val isInsert: Boolean) {
 	val length get() = text.length
 }
 
+fun <T> Stack<T>.popOrNull() = if (empty()) null else pop()
+fun <T> Stack<T>.peekOrNull() = if (empty()) null else peek()
+
 /**
  * @author ice1000
  * @since v1.3
@@ -23,28 +26,33 @@ class DevKtUndoManager(initialCapacity: Int) {
 	val canUndo get() = undoStack.isNotEmpty()
 	val canRedo get() = redoStack.isNotEmpty()
 
+	fun clear() {
+		undoStack.clear()
+		redoStack.clear()
+	}
+
 	fun undo(host: DevKtDocumentHandler<*>) {
 		if (!canUndo) return
 		while (null == undoStack.peek()) undoStack.pop()
-		generateSequence { undoStack.pop() }.forEach {
+		generateSequence { undoStack.popOrNull() }.forEach {
 			redoStack.push(it)
 			if (it.isInsert) host.deleteDirectly(it.offset, it.length, reparse = false)
-			else host.insertDirectly(it.offset, it.text.toString(), reparse = false)
+			else host.insertDirectly(it.offset, it.text.toString(), move = 0, reparse = false)
 		}
 		host.reparse()
-		redoStack.push(null)
+		doneUndo()
 	}
 
 	fun redo(host: DevKtDocumentHandler<*>) {
 		if (!canRedo) return
 		while (null == redoStack.peek()) redoStack.pop()
-		generateSequence { redoStack.pop() }.forEach {
+		generateSequence { redoStack.popOrNull() }.forEach {
 			undoStack.push(it)
-			if (it.isInsert) host.insertDirectly(it.offset, it.text.toString(), reparse = false)
+			if (it.isInsert) host.insertDirectly(it.offset, it.text.toString(), move = 0, reparse = false)
 			else host.deleteDirectly(it.offset, it.length, reparse = false)
 		}
 		host.reparse()
-		undoStack.push(null)
+		done()
 	}
 
 	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
@@ -54,7 +62,12 @@ class DevKtUndoManager(initialCapacity: Int) {
 	}
 
 	fun done() {
-		if (undoStack.empty() || null != undoStack.peek())
+		if (null != undoStack.peekOrNull())
 			undoStack.push(null)
+	}
+
+	private fun doneUndo() {
+		if (null != redoStack.peekOrNull())
+			redoStack.push(null)
 	}
 }

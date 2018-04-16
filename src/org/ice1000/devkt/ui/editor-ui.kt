@@ -90,6 +90,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
 	fun undo() = undoManager.undo(this)
 	fun redo() = undoManager.redo(this)
+	fun clearUndo() = undoManager.clear()
 
 	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	fun switchLanguage(fileName: String) {
