@@ -1,8 +1,13 @@
 package org.ice1000.devkt.ui
 
+import com.bulenkov.iconloader.util.SystemInfo
+import org.ice1000.devkt.Analyzer
+import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.selfLocation
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
-import javax.swing.text.AttributeSet
+import kotlin.concurrent.thread
 
 /**
  * @author ice1000
@@ -16,7 +21,7 @@ enum class MessageType {
  * @author ice1000
  * @since v1.3
  */
-abstract class UIBase {
+abstract class UIBase<TextAttributes> {
 	var currentFile: File? = null
 		set(value) {
 			val change = field != value
@@ -26,7 +31,7 @@ abstract class UIBase {
 				updateShowInFilesMenuItem()
 			}
 		}
-	protected abstract val document: DevKtDocumentHandler<AttributeSet>
+	protected abstract val document: DevKtDocumentHandler<TextAttributes>
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
 	fun clion() = browse("https://www.jetbrains.com/clion/download/")
@@ -45,4 +50,77 @@ abstract class UIBase {
 			text: String,
 			messageType: MessageType,
 			title: String = messageType.name)
+
+	fun runCommand(file: File) {
+		val ktFile = psiFile() as? KtFile ?: return
+		val className = ktFile.packageFqName.asString().let {
+			if (it.isEmpty()) "${GlobalSettings.javaClassName}Kt" else "$it.${GlobalSettings.javaClassName}Kt"
+		}
+		val java = "java -cp ${file.absolutePath}${File.pathSeparatorChar}$selfLocation $className"
+		val processBuilder = when {
+			SystemInfo.isLinux -> {
+				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
+			}
+			SystemInfo.isMac -> {
+				val trashJava = "/usr/bin/${java.replaceFirst(" devkt.", " ")}"// Why Analyzer has no String.replaceLast
+				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$trashJava\"")
+			}
+			SystemInfo.isWindows -> {
+				ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", java)
+			}
+			else -> {
+				dialog("Unsupported OS!", MessageType.Error)
+				return
+			}
+		}
+		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
+		processBuilder.start()
+	}
+
+
+	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
+		val start = System.currentTimeMillis()
+		val ktFile = psiFile() as? KtFile ?: return@thread
+		try {
+			message("Build started…")
+			Analyzer.compileJar(ktFile)
+			uiThread {
+				message("Build finished in ${System.currentTimeMillis() - start}ms.")
+				callback(true)
+			}
+		} catch (e: Exception) {
+			uiThread {
+				message("Build failed in ${System.currentTimeMillis() - start}ms.")
+				dialog("Build failed: ${e.message}",
+						MessageType.Error,
+						"Build As Jar")
+				callback(false)
+			}
+		}
+	}
+
+	inline fun buildAsJs(crossinline callback: (Boolean) -> Unit = { }) = thread {
+		val start = System.currentTimeMillis()
+		val ktFile = psiFile() as? KtFile ?: return@thread
+		try {
+			message("Build started…")
+			Analyzer.compileJs(ktFile)
+			uiThread {
+				message("Build finished in ${System.currentTimeMillis() - start}ms.")
+				callback(true)
+			}
+		} catch (e: Exception) {
+			uiThread {
+				message("Build failed in ${System.currentTimeMillis() - start}ms.")
+				dialog("Build failed: ${e.message}",
+						MessageType.Error,
+						"Build As JS")
+				callback(false)
+			}
+		}
+	}
+
+	fun buildJarAndRun() {
+		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
+	}
 }

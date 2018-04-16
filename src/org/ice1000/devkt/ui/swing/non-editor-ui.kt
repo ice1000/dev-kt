@@ -150,60 +150,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
 
-	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
-		val start = System.currentTimeMillis()
-		val ktFile = psiFile() as? KtFile ?: return@thread
-		try {
-			message("Build started…")
-			Analyzer.compileJar(ktFile)
-			uiThread {
-				message("Build finished in ${System.currentTimeMillis() - start}ms.")
-				callback(true)
-			}
-		} catch (e: Exception) {
-			uiThread {
-				message("Build failed in ${System.currentTimeMillis() - start}ms.")
-				JOptionPane.showMessageDialog(
-						mainPanel,
-						"Build failed: ${e.message}",
-						"Build As Jar",
-						JOptionPane.ERROR_MESSAGE,
-						DevKtIcons.KOTLIN)
-				callback(false)
-			}
-		}
-	}
-
-	inline fun buildAsJs(crossinline callback: (Boolean) -> Unit = { }) = thread {
-		val start = System.currentTimeMillis()
-		val ktFile = psiFile() as? KtFile ?: return@thread
-		try {
-			message("Build started…")
-			Analyzer.compileJs(ktFile)
-			SwingUtilities.invokeLater {
-				message("Build finished in ${System.currentTimeMillis() - start}ms.")
-				callback(true)
-			}
-		} catch (e: Exception) {
-			SwingUtilities.invokeLater {
-				message("Build failed in ${System.currentTimeMillis() - start}ms.")
-				JOptionPane.showMessageDialog(
-						mainPanel,
-						"Build failed: ${e.message}",
-						"Build As JS",
-						JOptionPane.ERROR_MESSAGE,
-						DevKtIcons.KOTLIN)
-				callback(false)
-			}
-		}
-	}
-
 	fun buildClassAndRun() {
 		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
-	}
-
-	fun buildJarAndRun() {
-		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
 	}
 
 	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
@@ -212,19 +160,16 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		try {
 			message("Build started…")
 			Analyzer.compileJvm(ktFile)
-			SwingUtilities.invokeLater {
+			uiThread {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
 			}
 		} catch (e: Exception) {
-			SwingUtilities.invokeLater {
+			uiThread {
 				message("Build failed in ${System.currentTimeMillis() - start}ms.")
-				JOptionPane.showMessageDialog(
-						mainPanel,
-						"Build failed: ${e.message}",
-						"Build As Classes",
-						JOptionPane.ERROR_MESSAGE,
-						DevKtIcons.KOTLIN)
+				dialog("Build failed: ${e.message}",
+						MessageType.Error,
+						"Build As Classes")
 				callback(false)
 			}
 		}
@@ -244,32 +189,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		reloadSettings()
 		frame.dispose()
 		DevKtFrame()
-	}
-
-	fun runCommand(file: File) {
-		val ktFile = psiFile() as? KtFile ?: return
-		val className = ktFile.packageFqName.asString().let {
-			if (it.isEmpty()) "${GlobalSettings.javaClassName}Kt" else "$it.${GlobalSettings.javaClassName}Kt"
-		}
-		val java = "java -cp ${file.absolutePath}${File.pathSeparatorChar}$selfLocation $className"
-		val processBuilder = when {
-			SystemInfo.isLinux -> {
-				ProcessBuilder("gnome-terminal", "-x", "sh", "-c", "$java; bash")
-			}
-			SystemInfo.isMac -> {
-				val trashJava = "/usr/bin/${java.replaceFirst(" devkt.", " ")}"// Why Analyzer has no String.replaceLast
-				ProcessBuilder("osascript", "-e", "tell app \"Terminal\" to do script \"$trashJava\"")
-			}
-			SystemInfo.isWindows -> {
-				ProcessBuilder("cmd.exe", "/c", "start", "cmd.exe", "/k", java)
-			}
-			else -> {
-				JOptionPane.showMessageDialog(mainPanel, "Unsupported OS!")
-				return
-			}
-		}
-		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
-		processBuilder.start()
 	}
 
 	// TODO 错误处理
