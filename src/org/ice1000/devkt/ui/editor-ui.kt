@@ -314,14 +314,19 @@ class DevKtDocumentHandler<TextAttributes>(
 		message("Started new line")
 		val index = caretPosition
 		val endOfLineIndex = selfMaintainedString.indexOf('\n', index)
-		insert(if (endOfLineIndex < 0) length else endOfLineIndex, "\n")
+		val start = if (endOfLineIndex < 0) length else endOfLineIndex
+		addEdit(start, "\n", true)
+		insert(start, "\n")
+		done()
 		caretPosition = endOfLineIndex + 1
 	}
 
 	fun splitLine() = with(document) {
 		message("Split new line")
 		val index = caretPosition
+		addEdit(index, "\n", true)
 		insert(index, "\n")
+		done()
 		caretPosition = index
 	}
 
@@ -331,7 +336,9 @@ class DevKtDocumentHandler<TextAttributes>(
 		val startOfLineIndex = selfMaintainedString
 				.lastIndexOf('\n', (index - 1).coerceAtLeast(0))
 				.coerceAtLeast(0)
+		addEdit(startOfLineIndex, "\n", true)
 		insert(startOfLineIndex, "\n")
+		done()
 		caretPosition = startOfLineIndex + 1
 	}
 
