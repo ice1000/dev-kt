@@ -140,8 +140,11 @@ class DevKtDocumentHandler<TextAttributes>(
 	fun blockComment() {
 		val (start, end) = blockComment ?: return
 		val selectionStart = selectionStart
+		addEdit(selectionEnd, end, true)
+		addEdit(selectionStart, start, true)
 		insertDirectly(selectionEnd, end, 0)
 		insertDirectly(selectionStart, start, 0)
+		done()
 	}
 
 	/**

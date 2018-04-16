@@ -39,7 +39,10 @@ abstract class UIBase<TextAttributes> {
 		set(value) {
 			val change = field != value
 			field = value
-			if (change) refreshTitle()
+			if (change) {
+				refreshTitle()
+				updateUndoRedoMenuItem()
+			}
 		}
 
 	var currentFile: File? = null
@@ -49,6 +52,7 @@ abstract class UIBase<TextAttributes> {
 			if (change) {
 				refreshTitle()
 				updateShowInFilesMenuItem()
+				updateUndoRedoMenuItem()
 			}
 		}
 	protected abstract val document: DevKtDocumentHandler<TextAttributes>
