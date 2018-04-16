@@ -27,6 +27,8 @@ enum class ChooseFileType {
 	Open, Save, Create
 }
 
+private const val MEGABYTE = 1024 * 1024
+
 /**
  * Platform independent
  * @author ice1000
@@ -43,6 +45,7 @@ abstract class UIBase<TextAttributes> {
 			}
 		}
 	protected abstract val document: DevKtDocumentHandler<TextAttributes>
+	abstract var memoryIndicatorText: String?
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
 	fun clion() = browse("https://www.jetbrains.com/clion/download/")
@@ -80,6 +83,14 @@ abstract class UIBase<TextAttributes> {
 		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let {
 			loadFile(it)
 		}
+	}
+
+	fun refreshMemoryIndicator() {
+		val runtime = Runtime.getRuntime()
+		val total = runtime.totalMemory() / MEGABYTE
+		val free = runtime.freeMemory() / MEGABYTE
+		val used = total - free
+		memoryIndicatorText = "$used of ${total}M"
 	}
 
 	fun importSettings() {
