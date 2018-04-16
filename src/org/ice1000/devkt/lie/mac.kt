@@ -16,9 +16,8 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		System.getProperties()["apple.laf.useScreenMenuBar"] = "true"
 	}
 
-	private val app: Application = getApplication()
-
-	init {
+	fun init() {
+		val app: Application = getApplication()
 		app.setPreferencesHandler(this)
 		app.setQuitHandler(this)
 		app.setAboutHandler(this)

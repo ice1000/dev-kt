@@ -3,15 +3,20 @@
 
 package org.ice1000.devkt
 
+import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.lie.MacSpecific
+import org.ice1000.devkt.lie.mac
+import org.ice1000.devkt.ui.swing.DevKtFrame
+
 /**
  * @author ice1000
  */
 @JvmName("main")
 fun devKt(vararg args: String) {
-	// `{-# LANGUAGE RedirectStdout #-}`
-	`{-# LANGUAGE GlobalSettings #-}`
-	`{-# LANGUAGE MacSpecific #-}`
-	`{-# LANGUAGE DarculaLookAndFeel #-}`
-	`{-# LANGUAGE SarasaGothicFont #-}`
-	`{-# LANGUAGE DevKt #-}`
+	redirectStdout()
+	GlobalSettings.load()
+	if (mac) MacSpecific.init()
+	useDarculaLaf()
+	DevKtFontManager.loadFont()
+	DevKtFrame()
 }

@@ -2,7 +2,7 @@
 
 package org.ice1000.devkt.config
 
-import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`
+import org.ice1000.devkt.DevKtFontManager
 import org.ice1000.devkt.openapi.ColorScheme
 import java.awt.Color
 import java.awt.GraphicsEnvironment
@@ -28,7 +28,7 @@ private fun createFrc() = FontRenderContext(GraphicsEnvironment
  * Modified a little
  */
 fun createTabSizeAttributes(tabSize: Int): SimpleAttributeSet {
-	val spaceSize = `{-# LANGUAGE SarasaGothicFont #-}`.monoFont.getStringBounds(" ", createFrc()).width
+	val spaceSize = DevKtFontManager.monoFont.getStringBounds(" ", createFrc()).width
 	val tabWidth = spaceSize * tabSize
 	val tabs = (1..300).map { TabStop((it * tabWidth).toFloat()) }
 	val tabSet = TabSet(tabs.toTypedArray())

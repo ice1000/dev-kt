@@ -2,7 +2,7 @@ package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
 import net.iharder.dnd.FileDrop
-import org.ice1000.devkt.`{-# LANGUAGE SarasaGothicFont #-}`.loadFont
+import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
 import org.ice1000.devkt.ui.DevKtDocument

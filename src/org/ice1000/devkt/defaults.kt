@@ -6,8 +6,6 @@ package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.lie.MacSpecific
-import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.swing.DevKtFrame
 import java.awt.Font
 import java.awt.GraphicsEnvironment
@@ -15,17 +13,14 @@ import java.io.OutputStream
 import java.io.PrintStream
 import javax.swing.UIManager
 
-val `{-# LANGUAGE RedirectStdout #-}`: Unit
-	get() {
-		System.setOut(PrintStream(object : OutputStream() {
-			override fun write(b: Int) {
-				if (b.toChar() == '\n') DevKtFrame.instance.ui.messageLabel.text = ""
-				else DevKtFrame.instance.ui.messageLabel.run { text = "$text${b.toChar()}" }
-			}
-		}))
+fun redirectStdout() = System.setOut(PrintStream(object : OutputStream() {
+	override fun write(b: Int) {
+		if (b.toChar() == '\n') DevKtFrame.instance.ui.messageLabel.text = ""
+		else DevKtFrame.instance.ui.messageLabel.run { text = "$text${b.toChar()}" }
 	}
+}))
 
-object `{-# LANGUAGE SarasaGothicFont #-}` {
+object DevKtFontManager {
 	var monoFont: Font
 		get() = UIManager.getFont("TextPane.font")
 		set(value) {
@@ -58,10 +53,6 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 		GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
 	}
 
-	init {
-		loadFont()
-	}
-
 	fun loadFont() {
 		val mono = GlobalSettings.monoFontName.trim()
 		if (mono.isEmpty() or
@@ -89,20 +80,7 @@ object `{-# LANGUAGE SarasaGothicFont #-}` {
 	}
 }
 
-val `{-# LANGUAGE DarculaLookAndFeel #-}`: Unit
-	get() {
-		UIManager.getFont("Label.font")
-		UIManager.setLookAndFeel(DarculaLaf())
-	}
-
-val `{-# LANGUAGE GlobalSettings #-}`: Unit
-	get() {
-		GlobalSettings.load()
-	}
-
-val `{-# LANGUAGE DevKt #-}` get() = DevKtFrame()
-
-val `{-# LANGUAGE MacSpecific #-}`: Unit
-	get() {
-		if (mac) MacSpecific
-	}
+fun useDarculaLaf() {
+	UIManager.getFont("Label.font")
+	UIManager.setLookAndFeel(DarculaLaf())
+}
