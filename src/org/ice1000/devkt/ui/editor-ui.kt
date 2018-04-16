@@ -12,6 +12,7 @@ import java.util.*
 
 interface DevKtDocument<in TextAttributes> : IDevKtDocument<TextAttributes> {
 	override fun clear() = delete(0, length)
+	var edited: Boolean
 
 	//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 	fun lineColumnToPos(line: Int, column: Int = 1) = startOffsetOf(line - 1) + column - 1
@@ -81,7 +82,10 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun done() = undoManager.done()
 	override fun clearUndo() = undoManager.clear()
 	override fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
-	override fun addEdit(edit: Edit) = undoManager.addEdit(edit)
+	override fun addEdit(edit: Edit) {
+		document.edited = true
+		undoManager.addEdit(edit)
+	}
 
 	override fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	override fun switchLanguage(fileName: String) {
@@ -256,9 +260,7 @@ class DevKtDocumentHandler<TextAttributes>(
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { (start, end, _, type) ->
 					// println("$text in ($start, $end)")
-					language.attributesOf(type, colorScheme)?.let {
-						highlight(start, end, it)
-					}
+					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}
 	}
 

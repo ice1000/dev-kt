@@ -98,9 +98,7 @@ abstract class UIBase<TextAttributes> {
 	}
 
 	fun open() {
-		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let {
-			loadFile(it)
-		}
+		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let(::loadFile)
 	}
 
 	fun undo() {

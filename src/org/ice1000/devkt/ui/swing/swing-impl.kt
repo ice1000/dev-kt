@@ -48,6 +48,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			set(value) {
 				editor.selectionStart = value
 			}
+		override var edited: Boolean
+			get() = this@UIImpl.edited
+			set(value) {
+				this@UIImpl.edited = value
+			}
 
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
 		override fun startOffsetOf(line: Int) = root.getElement(line).startOffset
