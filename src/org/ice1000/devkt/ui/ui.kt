@@ -4,7 +4,6 @@ import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.handleException
 import org.ice1000.devkt.selfLocation
-import org.ice1000.devkt.ui.swing.DevKtFrame
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
@@ -60,6 +59,7 @@ abstract class UIBase<TextAttributes> {
 	protected abstract fun doBrowse(url: String)
 	protected abstract fun doOpen(file: File)
 	protected abstract fun dispose()
+	protected abstract fun createSelf()
 	abstract fun chooseFile(from: File?, chooseFileType: ChooseFileType): File?
 	abstract fun chooseDir(from: File?, chooseFileType: ChooseFileType): File?
 	abstract fun dialogYesNo(
@@ -115,7 +115,7 @@ abstract class UIBase<TextAttributes> {
 	fun restart() {
 		reloadSettings()
 		dispose()
-		DevKtFrame()
+		createSelf()
 	}
 
 	fun open(file: File) = try {

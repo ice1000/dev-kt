@@ -115,6 +115,9 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	override fun doOpen(file: File) = Desktop.getDesktop().open(file)
 	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
 	override fun dispose() = frame.dispose()
+	override fun createSelf() {
+		DevKtFrame()
+	}
 
 	fun settings() {
 		ConfigurationImpl(this, frame).show
