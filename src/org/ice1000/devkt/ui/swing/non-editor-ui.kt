@@ -1,17 +1,16 @@
 package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
-import com.bulenkov.iconloader.util.SystemInfo
-import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
 import org.ice1000.devkt.selfLocation
-import org.ice1000.devkt.ui.*
-import org.ice1000.devkt.ui.swing.forms.*
-import org.jetbrains.kotlin.com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
+import org.ice1000.devkt.ui.DevKtDocument
+import org.ice1000.devkt.ui.DevKtDocumentHandler
+import org.ice1000.devkt.ui.MessageType
+import org.ice1000.devkt.ui.swing.forms.Find
+import org.ice1000.devkt.ui.swing.forms.GoToLine
+import org.ice1000.devkt.ui.swing.forms.UI
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -22,7 +21,6 @@ import java.util.regex.PatternSyntaxException
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import kotlin.concurrent.thread
 
 private const val MEGABYTE = 1024 * 1024
 
@@ -96,17 +94,11 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	fun open() {
 		JFileChooser(currentFile?.parentFile).apply {
 			// dialogTitle = "Choose a Analyzer file"
-			fileFilter = kotlinFileFilter
 			showOpenDialog(mainPanel)
 			fileSelectionMode = JFileChooser.FILES_ONLY
 		}.selectedFile?.let {
 			loadFile(it)
 		}
-	}
-
-	fun refreshLineNumber() = with(lineNumberLabel) {
-		font = editor.font
-		background = editor.background.brighter()
 	}
 
 	override fun doBrowse(url: String) = Desktop.getDesktop().browse(URL(url).toURI())

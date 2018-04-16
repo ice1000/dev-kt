@@ -1,11 +1,11 @@
 package org.ice1000.devkt.ui
 
-import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.handleException
 import org.ice1000.devkt.selfLocation
 import org.ice1000.devkt.ui.swing.DevKtFrame
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
@@ -21,6 +21,7 @@ enum class MessageType {
 }
 
 /**
+ * Platform independent
  * @author ice1000
  * @since v1.3
  */
