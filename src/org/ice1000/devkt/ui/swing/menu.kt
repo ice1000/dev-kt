@@ -98,12 +98,12 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	}
 	menuBar.subMenu("Edit") {
 		mnemonic = KeyEvent.VK_E
-		item("Undo") {
+		undoMenuItem = item("Undo") {
 			icon = DevKtIcons.UNDO
 			onAction { undo() }
 			keyMap(GlobalSettings.shortcutUndo)
 		}
-		item("Redo") {
+		redoMenuItem = item("Redo") {
 			icon = DevKtIcons.REDO
 			onAction { redo() }
 			keyMap(GlobalSettings.shortcutRedo)

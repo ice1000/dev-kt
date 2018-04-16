@@ -65,6 +65,7 @@ abstract class UIBase<TextAttributes> {
 
 	abstract fun refreshTitle()
 	abstract fun updateShowInFilesMenuItem()
+	abstract fun updateUndoRedoMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
 	abstract fun message(text: String)
 	protected abstract fun reloadSettings()
@@ -108,6 +109,7 @@ abstract class UIBase<TextAttributes> {
 			document.undo()
 			edited = true
 		}
+		updateUndoRedoMenuItem()
 	}
 
 	fun redo() {
@@ -116,6 +118,7 @@ abstract class UIBase<TextAttributes> {
 			document.redo()
 			edited = true
 		}
+		updateUndoRedoMenuItem()
 	}
 
 	fun save() {

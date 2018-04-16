@@ -24,6 +24,8 @@ import javax.swing.undo.UndoManager
  * @since v0.0.1
  */
 class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
+	internal lateinit var undoMenuItem: JMenuItem
+	internal lateinit var redoMenuItem: JMenuItem
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	internal lateinit var buildMenuBar: JMenu
@@ -184,6 +186,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		showInFilesMenuItem.isEnabled = currentFile != null
 		buildMenuBar.isVisible = document.psiFile is KtFile
 		// saveMenuItem.isEnabled = currentFileNotNull
+	}
+
+	override fun updateUndoRedoMenuItem() {
+		undoMenuItem.isEnabled = document.canUndo
+		redoMenuItem.isEnabled = document.canRedo
 	}
 
 	/**
