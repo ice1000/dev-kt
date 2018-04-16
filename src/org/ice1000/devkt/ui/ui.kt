@@ -65,6 +65,7 @@ abstract class UIBase<TextAttributes> {
 
 	abstract fun refreshTitle()
 	abstract fun updateShowInFilesMenuItem()
+	abstract fun updateUndoRedoMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
 	abstract fun message(text: String)
 	protected abstract fun reloadSettings()
@@ -85,7 +86,7 @@ abstract class UIBase<TextAttributes> {
 			messageType: MessageType,
 			title: String = messageType.name)
 
-	fun makeSureLeaveCurrentFile() = edited and dialogYesNo(
+	fun makeSureLeaveCurrentFile() = edited && !dialogYesNo(
 			"${currentFile?.name ?: "Current file"} unsaved, leave?",
 			MessageType.Question)
 
@@ -97,9 +98,25 @@ abstract class UIBase<TextAttributes> {
 	}
 
 	fun open() {
-		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let {
-			loadFile(it)
+		chooseFile(currentFile?.parentFile, ChooseFileType.Open)?.let(::loadFile)
+	}
+
+	fun undo() {
+		if (document.canUndo) {
+			message("Undo!")
+			document.undo()
+			edited = true
 		}
+		updateUndoRedoMenuItem()
+	}
+
+	fun redo() {
+		if (document.canRedo) {
+			message("Redo!")
+			document.redo()
+			edited = true
+		}
+		updateUndoRedoMenuItem()
 	}
 
 	fun save() {
@@ -113,29 +130,8 @@ abstract class UIBase<TextAttributes> {
 		edited = false
 	}
 
-	fun commentCurrent() {
-		val lines = document.lineOf(document.selectionStart)..document.lineOf(document.selectionEnd)
-		val lineCommentStart = document.lineCommentStart ?: return
-		val add = lines.any {
-			val lineStart = document.startOffsetOf(it)
-			val lineEnd = document.endOffsetOf(it)
-			val lineText = document.textWithin(lineStart, lineEnd)
-			!lineText.startsWith(lineCommentStart)
-		}
-		//这上面和下面感觉可以优化emmmm
-		lines.forEach {
-			val lineStart = document.startOffsetOf(it)
-			if (add) document.insertDirectly(lineStart, lineCommentStart)
-			else document.deleteDirectly(lineStart, lineCommentStart.length)
-		}
-	}
-
-	fun blockComment() {
-		val (start, end) = document.blockComment ?: return
-		val selectionStart = document.selectionStart
-		document.insertDirectly(document.selectionEnd, end, 0)
-		document.insertDirectly(selectionStart, start, 0)
-	}
+	fun commentCurrent() = document.commentCurrent()
+	fun blockComment() = document.blockComment()
 
 	fun refreshMemoryIndicator() {
 		val runtime = Runtime.getRuntime()
@@ -152,6 +148,7 @@ abstract class UIBase<TextAttributes> {
 			val path = it.absolutePath.orEmpty()
 			document.switchLanguage(it.name)
 			document.resetTextTo(it.readText().filterNot { it == '\r' })
+			document.clearUndo()
 			edited = false
 			GlobalSettings.lastOpenedFile = path
 			GlobalSettings.recentFiles.add(it)

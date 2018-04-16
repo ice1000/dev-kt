@@ -93,5 +93,6 @@ class ColorScheme<out TextAttributes>(
 	val namespace = wrapColor(settings.colorNamespace)
 	val metaData = wrapColor(settings.colorMetaData)
 	val macro = wrapColor(settings.colorMacro)
+	val default = wrapColor(settings.colorDefault)
 }
 

@@ -2,7 +2,7 @@ package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
-import org.ice1000.devkt.ui.DevKtDocumentHandler
+import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
@@ -58,7 +58,7 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 			offset: Int,
 			text: String?,
 			element: PsiElement?,
-			document: DevKtDocumentHandler<TextAttributes>) {
+			document: IDevKtDocumentHandler<TextAttributes>) {
 		document.insert(offset, text)
 	}
 }
