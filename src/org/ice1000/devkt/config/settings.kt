@@ -84,6 +84,7 @@ object GlobalSettings {
 	var appName: String by properties
 	var monoFontName: String by properties
 	var gothicFontName: String by properties
+	var colorDefault: String by properties
 	var colorKeywords: String by properties
 	var colorPredefined: String by properties
 	var colorString: String by properties
@@ -170,6 +171,7 @@ object GlobalSettings {
 		defaultOf(::appName.name, "Dev Kt")
 		defaultOf(::monoFontName.name, defaultFontName)
 		defaultOf(::gothicFontName.name, defaultFontName)
+		defaultOf(::colorDefault.name, "#A9B7C6")
 		defaultOf(::colorKeywords.name, "#CC7832")
 		defaultOf(::colorPredefined.name, "#507874")
 		defaultOf(::colorString.name, "#6A8759")

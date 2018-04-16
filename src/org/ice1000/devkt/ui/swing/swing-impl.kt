@@ -5,6 +5,7 @@ import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
+import org.ice1000.devkt.ui.ChooseFileType
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,12 +23,6 @@ import javax.swing.undo.UndoManager
  */
 class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val undoManager = UndoManager()
-	var edited = false
-		set(value) {
-			val change = field != value
-			field = value
-			if (change) refreshTitle()
-		}
 
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
@@ -161,31 +156,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 	}
 
-	fun createNewFile(templateName: String) {
-		if (!makeSureLeaveCurrentFile()) {
-			currentFile = null
-			edited = true
-			document.resetTextTo(javaClass
-					.getResourceAsStream("/template/$templateName")
-					.reader()
-					.readText())
-		}
-	}
-
-	override fun loadFile(it: File) {
-		if (it.canRead() and !makeSureLeaveCurrentFile()) {
-			currentFile = it
-			message("Loaded ${it.absolutePath}")
-			val path = it.absolutePath.orEmpty()
-			document.switchLanguage(it.name)
-			document.resetTextTo(it.readText().filterNot { it == '\r' })
-			edited = false
-			GlobalSettings.lastOpenedFile = path
-			GlobalSettings.recentFiles.add(it)
-		}
-		updateShowInFilesMenuItem()
-	}
-
 	//Shortcuts ↓↓↓
 	fun undo() {
 		if (undoManager.canUndo()) {
@@ -236,10 +206,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	fun save() {
-		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
-			showSaveDialog(mainPanel)
-			fileSelectionMode = JFileChooser.FILES_ONLY
-		}.selectedFile ?: return
+		val file = currentFile ?: chooseFile(GlobalSettings.recentFiles.firstOrNull()?.parentFile, ChooseFileType.Save) ?: return
 		currentFile = file
 		if (!file.exists()) file.createNewFile()
 		GlobalSettings.recentFiles.add(file)

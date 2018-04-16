@@ -90,20 +90,20 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	override fun chooseFile(
 			from: File?, chooseFileType: ChooseFileType): File? =
-			jFileChooser(from, chooseFileType).selectedFile
+			jFileChooser(from, chooseFileType, JFileChooser.FILES_ONLY).selectedFile
 
 	override fun chooseDir(
 			from: File?, chooseFileType: ChooseFileType): File? =
-			jFileChooser(from, chooseFileType).currentDirectory
+			jFileChooser(from, chooseFileType, JFileChooser.DIRECTORIES_ONLY).currentDirectory
 
-	private fun jFileChooser(from: File?, chooseFileType: ChooseFileType): JFileChooser {
+	private fun jFileChooser(from: File?, chooseFileType: ChooseFileType, selectionMode: Int): JFileChooser {
 		return JFileChooser(from).apply {
 			dialogType = when (chooseFileType) {
 				ChooseFileType.Open -> JFileChooser.OPEN_DIALOG
 				ChooseFileType.Save,
 				ChooseFileType.Create -> JFileChooser.SAVE_DIALOG
 			}
-			fileSelectionMode = JFileChooser.FILES_ONLY
+			fileSelectionMode = selectionMode
 			showDialog(mainPanel, null)
 		}
 	}

@@ -15,8 +15,10 @@ import org.ice1000.devkt.ui.swing.DevKtFrame
 fun devKt(vararg args: String) {
 	redirectStdout()
 	GlobalSettings.load()
-	if (mac) MacSpecific.init()
-	useDarculaLaf()
+	if (args.firstOrNull() != "--ugly") {
+		if (mac) MacSpecific.init()
+		useDarculaLaf()
+	}
 	DevKtFontManager.loadFont()
 	DevKtFrame()
 }

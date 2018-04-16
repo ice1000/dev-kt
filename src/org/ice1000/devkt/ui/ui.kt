@@ -35,6 +35,13 @@ private const val MEGABYTE = 1024 * 1024
  * @since v1.3
  */
 abstract class UIBase<TextAttributes> {
+	var edited = false
+		set(value) {
+			val change = field != value
+			field = value
+			if (change) refreshTitle()
+		}
+
 	var currentFile: File? = null
 		set(value) {
 			val change = field != value
@@ -53,7 +60,6 @@ abstract class UIBase<TextAttributes> {
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 
 	fun psiFile(): PsiFile? = document.psiFile
-	abstract fun loadFile(it: File)
 	abstract fun refreshTitle()
 	abstract fun updateShowInFilesMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
@@ -91,6 +97,31 @@ abstract class UIBase<TextAttributes> {
 		val free = runtime.freeMemory() / MEGABYTE
 		val used = total - free
 		memoryIndicatorText = "$used of ${total}M"
+	}
+
+	fun loadFile(it: File) {
+		if (it.canRead() and !makeSureLeaveCurrentFile()) {
+			currentFile = it
+			message("Loaded ${it.absolutePath}")
+			val path = it.absolutePath.orEmpty()
+			document.switchLanguage(it.name)
+			document.resetTextTo(it.readText().filterNot { it == '\r' })
+			edited = false
+			GlobalSettings.lastOpenedFile = path
+			GlobalSettings.recentFiles.add(it)
+		}
+		updateShowInFilesMenuItem()
+	}
+
+	fun createNewFile(templateName: String) {
+		if (!makeSureLeaveCurrentFile()) {
+			currentFile = null
+			edited = true
+			document.resetTextTo(javaClass
+					.getResourceAsStream("/template/$templateName")
+					.reader()
+					.readText())
+		}
 	}
 
 	fun importSettings() {
