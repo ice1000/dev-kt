@@ -26,7 +26,7 @@ val isCI = !System.getenv("CI").isNullOrBlank()
 val shortVersion = "v1.3-SNAPSHOT"
 val packageName = "org.ice1000.devkt"
 val kotlinStable = "1.2.31"
-val kotlinEAP = "1.2.40-eap-61"
+val kotlinEAP = "1.2.40-eap-62"
 var kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 val calculatedVersion = if (isCI) "$shortVersion-$commitHash" else shortVersion
 
@@ -179,8 +179,8 @@ dependencies {
 	compile(group = "com.intellij", name = "forms_rt", version = "7.0.3")
 	compile(files(Paths.get("lib", "filedrop.jar")))
 	val plugins = Paths.get("plugins").toFile()
-			.listFiles().orEmpty()
-	runtime(files(*plugins))
+			.listFiles().orEmpty().filterNot(File::isDirectory)
+	runtime(files(*plugins.toTypedArray()))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile("junit", "junit", "4.12")

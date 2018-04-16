@@ -30,6 +30,11 @@ interface AnnotationHolder<in TextAttributes> : LengthOwner {
  */
 interface SyntaxHighlighter<TextAttributes> {
 	/**
+	 * Highlight tokens. This is called after lexing.
+	 *
+	 * @param type IElementType token's type
+	 * @param colorScheme ColorScheme<TextAttributes> the holder of colors
+	 * @return TextAttributes? a member of [colorScheme]
 	 * @see com.intellij.openapi.fileTypes.SyntaxHighlighter.getTokenHighlights
 	 */
 	fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>): TextAttributes?
@@ -46,6 +51,7 @@ interface Annotator<TextAttributes> {
 	 * @param element the [PsiElement] to be highlighted
 	 * @param document similar to [com.intellij.lang.annotation.AnnotationHolder]
 	 * @param colorScheme current color scheme, initialized in [org.ice1000.devkt.config.GlobalSettings]
+	 * @see com.intellij.lang.annotation.Annotator.annotate
 	 */
 	fun annotate(
 			element: PsiElement,
@@ -81,6 +87,7 @@ class ColorScheme<out TextAttributes>(
 	val function = wrapColor(settings.colorFunction)
 	val typeParam = wrapColor(settings.colorTypeParam)
 	val unknown = wrapColor(settings.colorUnknown)
+	val error = wrapColor(settings.colorError)
 	val userTypeRef = wrapColor(settings.colorUserTypeRef)
 	val property = wrapColor(settings.colorProperty)
 	val namespace = wrapColor(settings.colorNamespace)

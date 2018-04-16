@@ -107,6 +107,7 @@ object GlobalSettings {
 	var colorVariable: String by properties
 	var colorFunction: String by properties
 	var colorUnknown: String by properties
+	var colorError: String by properties
 	var colorTypeParam: String by properties
 	var colorUserTypeRef: String by properties
 	var colorProperty: String by properties
@@ -192,6 +193,7 @@ object GlobalSettings {
 		defaultOf(::colorVariable.name, "#BCA5C4")
 		defaultOf(::colorFunction.name, "#FFC66D")
 		defaultOf(::colorUnknown.name, "#BC3F3C")
+		defaultOf(::colorError.name, "#BC3F3C")
 		defaultOf(::colorTypeParam.name, "#6897BB")
 		defaultOf(::colorUserTypeRef.name, "#B5B6E3")
 		defaultOf(::colorProperty.name, "#9876AA")

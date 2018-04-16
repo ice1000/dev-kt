@@ -2,6 +2,7 @@ package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
+import org.ice1000.devkt.ui.DevKtDocument
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
@@ -10,6 +11,7 @@ import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
+import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 
@@ -21,10 +23,34 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 abstract class DevKtLanguage<TextAttributes> internal constructor(
 		val language: Language
 ) : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
-	abstract fun satisfies(fileName: String): Boolean
-	abstract val lineCommentStart: String?
-	abstract val blockComment: Pair<String, String>?
+
+	/**
+	 * Check if a file is of this language
+	 * @param fileName String the file name
+	 * @return Boolean is of this language or not
+	 */
+	open fun satisfies(fileName: String) = false
+
+	/**
+	 * Line comment start, used when pressing <kbd>Ctrl</kbd> + <kbd>/</kbd>
+	 */
+	open val lineCommentStart: String? get() = null
+
+	/**
+	 * Block comment surrounding, used when pressing
+	 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
+	 */
+	open val blockComment: Pair<String, String>? get() = null
+
 	abstract fun createLexer(project: Project): Lexer
+
+	open fun handleTyping(
+			offset: Int,
+			text: String,
+			element: PsiElement,
+			document: DevKtDocument<TextAttributes>) {
+		document.insert(offset, text)
+	}
 }
 
 /**

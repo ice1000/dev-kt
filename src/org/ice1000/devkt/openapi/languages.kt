@@ -5,6 +5,8 @@ import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.ParserDefinition
 import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.com.intellij.psi.TokenType
+import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 
 
 /**
@@ -18,17 +20,6 @@ abstract class ExtendedDevKtLanguage<TextAttributes>(
 		val parserDefinition: ParserDefinition
 ) : DevKtLanguage<TextAttributes>(language) {
 	/**
-	 * Line comment start, used when pressing <kbd>Ctrl</kbd> + <kbd>/</kbd>
-	 */
-	override val lineCommentStart: String? get() = null
-
-	/**
-	 * Block comment surrounding, used when pressing
-	 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
-	 */
-	override val blockComment: Pair<String, String>? get() = null
-
-	/**
 	 * Creates a lexer for syntax highlight
 	 *
 	 * @param project Project current project, mocked from Kotlin compiler
@@ -37,9 +28,10 @@ abstract class ExtendedDevKtLanguage<TextAttributes>(
 	override fun createLexer(project: Project): Lexer = parserDefinition.createLexer(project)
 
 	/**
-	 * Check if a file is of this language
-	 * @param fileName String the file name
-	 * @return Boolean is of this language or not
+	 * @see [org.ice1000.devkt.openapi.SyntaxHighlighter.attributesOf]
 	 */
-	override fun satisfies(fileName: String) = false
+	override fun attributesOf(type: IElementType, colorScheme: ColorScheme<TextAttributes>) = when (type) {
+		TokenType.BAD_CHARACTER, TokenType.ERROR_ELEMENT -> colorScheme.error
+		else -> null
+	}
 }
