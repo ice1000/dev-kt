@@ -80,13 +80,13 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	}
 
 	override fun dialogYesNo(text: String, messageType: MessageType, title: String) =
-			JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mainPanel, text, title, when (messageType) {
+			JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mainPanel, text, title, JOptionPane.YES_NO_OPTION, when (messageType) {
 				MessageType.Error -> JOptionPane.ERROR_MESSAGE
 				MessageType.Information -> JOptionPane.INFORMATION_MESSAGE
 				MessageType.Plain -> JOptionPane.PLAIN_MESSAGE
 				MessageType.Question -> JOptionPane.QUESTION_MESSAGE
 				MessageType.Warning -> JOptionPane.WARNING_MESSAGE
-			}, JOptionPane.YES_NO_OPTION)
+			})
 
 	override fun chooseFile(
 			from: File?, chooseFileType: ChooseFileType): File? =

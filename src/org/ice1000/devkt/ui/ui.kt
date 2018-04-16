@@ -85,7 +85,7 @@ abstract class UIBase<TextAttributes> {
 			messageType: MessageType,
 			title: String = messageType.name)
 
-	fun makeSureLeaveCurrentFile() = edited and dialogYesNo(
+	fun makeSureLeaveCurrentFile() = edited and !dialogYesNo(
 			"${currentFile?.name ?: "Current file"} unsaved, leave?",
 			MessageType.Question)
 
