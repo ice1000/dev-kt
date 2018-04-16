@@ -3,7 +3,8 @@ package org.ice1000.devkt.ui
 import org.ice1000.devkt.*
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
-import org.ice1000.devkt.openapi.*
+import org.ice1000.devkt.openapi.ColorScheme
+import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.ui.IDevKtDocument
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
 import org.jetbrains.kotlin.com.intellij.psi.*
@@ -77,8 +78,16 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	override fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 	override fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
-	override fun undo() = undoManager.undo(this)
-	override fun redo() = undoManager.redo(this)
+	override fun undo() {
+		document.edited = true
+		undoManager.undo(this)
+	}
+
+	override fun redo() {
+		document.edited = true
+		undoManager.redo(this)
+	}
+
 	override fun done() = undoManager.done()
 	override fun clearUndo() = undoManager.clear()
 	override fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
