@@ -196,10 +196,8 @@ class DevKtDocumentHandler<TextAttributes>(
 		else {
 			val char = normalized[0]
 			if (char in paired.values) {
-				val another = paired.keys.first { paired[it] == char }
 				if (offs != 0
-						&& selfMaintainedString[offs - 1] == another
-						&& selfMaintainedString[offs] == char) {
+						&& selfMaintainedString.getOrNull(offs) == char) {
 					insertDirectly(offs, "", 1)
 				} else insertDirectly(offs, normalized, 0)
 			} else if (char in paired) insertDirectly(offs, "$normalized${paired[char]}", -1)

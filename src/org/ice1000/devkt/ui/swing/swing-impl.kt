@@ -5,6 +5,7 @@ import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
+import org.ice1000.devkt.ui.ChooseFileType
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,12 +23,6 @@ import javax.swing.undo.UndoManager
  */
 class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val undoManager = UndoManager()
-	var edited = false
-		set(value) {
-			val change = field != value
-			field = value
-			if (change) refreshTitle()
-		}
 
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
@@ -161,31 +156,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 	}
 
-	fun createNewFile(templateName: String) {
-		if (!makeSureLeaveCurrentFile()) {
-			currentFile = null
-			edited = true
-			document.resetTextTo(javaClass
-					.getResourceAsStream("/template/$templateName")
-					.reader()
-					.readText())
-		}
-	}
-
-	override fun loadFile(it: File) {
-		if (it.canRead() and !makeSureLeaveCurrentFile()) {
-			currentFile = it
-			message("Loaded ${it.absolutePath}")
-			val path = it.absolutePath.orEmpty()
-			document.switchLanguage(it.name)
-			document.resetTextTo(it.readText().filterNot { it == '\r' })
-			edited = false
-			GlobalSettings.lastOpenedFile = path
-			GlobalSettings.recentFiles.add(it)
-		}
-		updateShowInFilesMenuItem()
-	}
-
 	//Shortcuts ↓↓↓
 	fun undo() {
 		if (undoManager.canUndo()) {
@@ -235,51 +205,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		ReplaceDialog(this@UIImpl, document).show
 	}
 
-	fun save() {
-		val file = currentFile ?: JFileChooser(GlobalSettings.recentFiles.firstOrNull()?.parentFile).apply {
-			showSaveDialog(mainPanel)
-			fileSelectionMode = JFileChooser.FILES_ONLY
-		}.selectedFile ?: return
-		currentFile = file
-		if (!file.exists()) file.createNewFile()
-		GlobalSettings.recentFiles.add(file)
-		file.writeText(editor.text) // here, it is better to use `editor.text` instead of `document.text`
-		message("Saved to ${file.absolutePath}")
-		edited = false
-	}
-
-	fun nextLine() = document.nextLine()
-	fun splitLine() = document.splitLine()
-	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
-
-	fun commentCurrent() {
-		val lines = document.lineOf(document.selectionStart)..document.lineOf(document.selectionEnd)
-		val lineCommentStart = document.lineCommentStart ?: return
-		val add = lines.any {
-			val lineStart = document.startOffsetOf(it)
-			val lineEnd = document.endOffsetOf(it)
-			val lineText = document.textWithin(lineStart, lineEnd)
-			!lineText.startsWith(lineCommentStart)
-		}
-		//这上面和下面感觉可以优化emmmm
-		lines.forEach {
-			val lineStart = document.startOffsetOf(it)
-			if (add) document.insertDirectly(lineStart, lineCommentStart)
-			else document.deleteDirectly(lineStart, lineCommentStart.length)
-		}
-	}
-
-	fun blockComment() {
-		val (start, end) = document.blockComment ?: return
-		val selectionStart = document.selectionStart
-		document.insertDirectly(document.selectionEnd, end, 0)
-		document.insertDirectly(selectionStart, start, 0)
-	}
-
-	//Shortcuts ↑↑↑
-
-	override fun makeSureLeaveCurrentFile() =
-			edited && super.makeSureLeaveCurrentFile()
+	override fun editorText() = editor.text.orEmpty()
 
 	override fun updateShowInFilesMenuItem() {
 		showInFilesMenuItem.isEnabled = currentFile != null
@@ -311,12 +237,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	override fun refreshTitle() {
-		frame.title = buildString {
-			if (edited) append("*")
-			append(currentFile?.absolutePath ?: "Untitled")
-			append(" - ")
-			append(GlobalSettings.appName)
-		}
+		frame.title = regenerateTitle()
 	}
 
 	var editorFont: Font
