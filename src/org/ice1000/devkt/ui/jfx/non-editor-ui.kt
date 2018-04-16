@@ -6,6 +6,7 @@ import javafx.scene.control.ButtonType
 import javafx.scene.control.Dialog
 import org.ice1000.devkt.ui.MessageType
 import org.ice1000.devkt.ui.UIBase
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.io.File
 
 /**
@@ -40,6 +41,9 @@ abstract class AbstractJfxUI<T>(private val application: Application) : UIBase<T
 		}, text, ButtonType.OK).let { initAlert(it, title) }
 	}
 
-	override fun doBrowse(url: String) = application.hostServices.showDocument(url)
 	override fun doOpen(file: File) = doBrowse(file.toURI().toString())
+	override fun doBrowse(url: String) =
+			if (SystemInfo.isOracleJvm)
+				application.hostServices.showDocument(url)
+			else throw UnsupportedOperationException("browsing files cannot be done on non-oracle jvm.")
 }
