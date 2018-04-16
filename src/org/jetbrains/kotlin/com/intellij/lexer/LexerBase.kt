@@ -13,21 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jetbrains.kotlin.com.intellij.lexer;
+package org.jetbrains.kotlin.com.intellij.lexer
 
-import org.jetbrains.annotations.NotNull;
-
-public abstract class LexerBase extends Lexer {
-	@Override
-	public @NotNull
-	LexerPosition getCurrentPosition() {
-		final int offset = getTokenStart();
-		final int intState = getState();
-		return new LexerPositionImpl(offset, intState);
+abstract class LexerBase : Lexer() {
+	override fun getCurrentPosition(): LexerPosition {
+		val offset = tokenStart
+		val intState = state
+		return LexerPositionImpl(offset, intState)
 	}
 
-	@Override
-	public void restore(@NotNull LexerPosition position) {
-		start(getBufferSequence(), position.getOffset(), getBufferEnd(), position.getState());
+	override fun restore(position: LexerPosition) {
+		start(bufferSequence, position.offset, bufferEnd, position.state)
 	}
 }
