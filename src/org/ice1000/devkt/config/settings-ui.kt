@@ -102,7 +102,7 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 			if (!it.isEmpty()) {
 				JOptionPane.showMessageDialog(contentPane,
 						"Image is invalid!",
-						"Message",
+						"Information",
 						JOptionPane.ERROR_MESSAGE)
 			}
 			it to null

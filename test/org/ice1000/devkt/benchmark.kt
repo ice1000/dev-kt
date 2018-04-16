@@ -12,7 +12,7 @@ fun benchmark(vararg args: String) {
 	val init = System.currentTimeMillis()
 	if (mac) MacSpecific
 	val time = System.currentTimeMillis()
-	get { -# LANGUAGE DarculaLookAndFeel #- }()
+	useDarculaLaf()
 	val time2 = System.currentTimeMillis()
 	DevKtFontManager.loadFont()
 	val time3 = System.currentTimeMillis()

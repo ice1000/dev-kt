@@ -44,15 +44,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	var imageCache: Image? = null
 	var backgroundColorCache: Color? = null
-	var currentFile: File? = null
-		set(value) {
-			val change = field != value
-			field = value
-			if (change) {
-				refreshTitle()
-				updateShowInFilesMenuItem()
-			}
-		}
 
 	final override fun createUIComponents() {
 		mainPanel = object : JPanel() {
@@ -79,10 +70,18 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		memoryIndicator.text = "$used of ${total}M"
 	}
 
-	abstract fun loadFile(it: File)
-
-	fun message(text: String) {
+	override fun message(text: String) {
 		messageLabel.text = text
+	}
+
+	override fun dialog(text: String, messageType: MessageType, title: String) {
+		JOptionPane.showMessageDialog(mainPanel, text, title, when (messageType) {
+			MessageType.Error -> JOptionPane.ERROR_MESSAGE
+			MessageType.Information -> JOptionPane.INFORMATION_MESSAGE
+			MessageType.Plain -> JOptionPane.PLAIN_MESSAGE
+			MessageType.Question -> JOptionPane.QUESTION_MESSAGE
+			MessageType.Warning -> JOptionPane.WARNING_MESSAGE
+		})
 	}
 
 	fun open() {
@@ -105,19 +104,19 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		background = editor.background.brighter()
 	}
 
-	private fun browse(url: String) = try {
+	override fun browse(url: String) = try {
 		Desktop.getDesktop().browse(URL(url).toURI())
 		message("Browsing $url")
 	} catch (e: Exception) {
-		JOptionPane.showMessageDialog(mainPanel, "Error when browsing $url:\n${e.message}")
+		dialog("Error when browsing $url:\n${e.message}", MessageType.Error)
 		message("Failed to browse $url")
 	}
 
-	private fun open(file: File) = try {
+	override fun open(file: File) = try {
 		Desktop.getDesktop().open(file)
 		message("Opened $file")
 	} catch (e: Exception) {
-		JOptionPane.showMessageDialog(mainPanel, "Error when opening ${file.absolutePath}:\n${e.message}")
+		dialog("Error when opening ${file.absolutePath}:\n${e.message}", MessageType.Error)
 		message("Failed to open $file")
 	}
 
@@ -125,12 +124,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		currentFile?.run { open(parentFile) }
 	}
 
-	abstract fun refreshTitle()
-
-	fun idea() = browse("https://www.jetbrains.com/idea/download/")
-	fun clion() = browse("https://www.jetbrains.com/clion/download/")
-	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
-	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 	fun settings() {
 		ConfigurationImpl(this, frame).show
 	}
@@ -155,18 +148,20 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		restart()
 	}
 
+	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
+
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		val start = System.currentTimeMillis()
 		val ktFile = psiFile() as? KtFile ?: return@thread
 		try {
 			message("Build started…")
 			Analyzer.compileJar(ktFile)
-			SwingUtilities.invokeLater {
+			uiThread {
 				message("Build finished in ${System.currentTimeMillis() - start}ms.")
 				callback(true)
 			}
 		} catch (e: Exception) {
-			SwingUtilities.invokeLater {
+			uiThread {
 				message("Build failed in ${System.currentTimeMillis() - start}ms.")
 				JOptionPane.showMessageDialog(
 						mainPanel,
@@ -244,7 +239,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 					JOptionPane.QUESTION_MESSAGE,
 					DevKtIcons.KOTLIN)
 
-	abstract fun psiFile(): PsiFile?
 	protected abstract fun reloadSettings()
 	fun restart() {
 		reloadSettings()
@@ -252,7 +246,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		DevKtFrame()
 	}
 
-	abstract fun updateShowInFilesMenuItem()
 	fun runCommand(file: File) {
 		val ktFile = psiFile() as? KtFile ?: return
 		val className = ktFile.packageFqName.asString().let {

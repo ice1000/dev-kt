@@ -32,7 +32,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	internal lateinit var buildMenuBar: JMenu
-	private val document: DevKtDocumentHandler<AttributeSet>
+	override val document: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
 		private val root = defaultRootElement
@@ -278,8 +278,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	//Shortcuts ↑↑↑
 
-	override fun psiFile() = document.psiFile
-
 	override fun makeSureLeaveCurrentFile() =
 			edited && super.makeSureLeaveCurrentFile()
 
@@ -320,6 +318,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	var editorFont: Font
 		set(value) {
+			lineNumberLabel.font = value
 			editor.font = value
 		}
 		get() = editor.font
