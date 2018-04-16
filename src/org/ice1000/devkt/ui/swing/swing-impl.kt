@@ -22,7 +22,7 @@ import javax.swing.undo.UndoManager
  */
 class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	private val undoManager = UndoManager()
-	private var edited = false
+	override var edited = false
 		set(value) {
 			val change = field != value
 			field = value
@@ -291,7 +291,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	 * Just to reuse some codes in [reloadSettings] and [postInit]
 	 */
 	private fun init() {
-		refreshLineNumber()
+		with(lineNumberLabel) {
+			font = editor.font
+			background = editor.background.brighter()
+		}
 		memoryIndicator.font = messageLabel.font.run { deriveFont(size2D - 2.5F) }
 	}
 

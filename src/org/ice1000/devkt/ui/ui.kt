@@ -5,6 +5,7 @@ import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.handleException
 import org.ice1000.devkt.selfLocation
+import org.ice1000.devkt.ui.swing.DevKtFrame
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
@@ -34,6 +35,7 @@ abstract class UIBase<TextAttributes> {
 			}
 		}
 	protected abstract val document: DevKtDocumentHandler<TextAttributes>
+	protected abstract var edited: Boolean
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")
 	fun clion() = browse("https://www.jetbrains.com/clion/download/")
@@ -49,10 +51,19 @@ abstract class UIBase<TextAttributes> {
 	protected abstract fun reloadSettings()
 	protected abstract fun doBrowse(url: String)
 	protected abstract fun doOpen(file: File)
+	abstract fun dialogYesNo(
+			text: String,
+			messageType: MessageType,
+			title: String = messageType.name): Boolean
+
 	abstract fun dialog(
 			text: String,
 			messageType: MessageType,
 			title: String = messageType.name)
+
+	open fun makeSureLeaveCurrentFile() = dialogYesNo(
+			"${currentFile?.name ?: "Current file"} unsaved, leave?",
+			MessageType.Question)
 
 	fun browse(url: String) = try {
 		doBrowse(url)
@@ -60,6 +71,28 @@ abstract class UIBase<TextAttributes> {
 	} catch (e: Exception) {
 		dialog("Error when browsing $url:\n${e.message}", MessageType.Error)
 		message("Failed to browse $url")
+	}
+
+	fun sync() {
+		currentFile?.let(::loadFile)
+	}
+
+	fun showInFiles() {
+		currentFile?.run { open(parentFile) }
+	}
+
+	fun exit() {
+		GlobalSettings.save()
+		if (!makeSureLeaveCurrentFile()) {
+			dispose()
+			System.exit(0)
+		}
+	}
+
+	fun restart() {
+		reloadSettings()
+		dispose()
+		DevKtFrame()
 	}
 
 	fun open(file: File) = try {
@@ -174,4 +207,6 @@ abstract class UIBase<TextAttributes> {
 			tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
 		}
 	}
+
+	protected abstract fun dispose()
 }

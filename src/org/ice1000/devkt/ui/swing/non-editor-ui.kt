@@ -84,6 +84,15 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		})
 	}
 
+	override fun dialogYesNo(text: String, messageType: MessageType, title: String) =
+			JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mainPanel, text, title, when (messageType) {
+				MessageType.Error -> JOptionPane.ERROR_MESSAGE
+				MessageType.Information -> JOptionPane.INFORMATION_MESSAGE
+				MessageType.Plain -> JOptionPane.PLAIN_MESSAGE
+				MessageType.Question -> JOptionPane.QUESTION_MESSAGE
+				MessageType.Warning -> JOptionPane.WARNING_MESSAGE
+			}, JOptionPane.YES_NO_OPTION)
+
 	fun open() {
 		JFileChooser(currentFile?.parentFile).apply {
 			// dialogTitle = "Choose a Analyzer file"
@@ -95,26 +104,15 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		}
 	}
 
-	fun sync() {
-		currentFile?.let(::loadFile)
-	}
-
 	fun refreshLineNumber() = with(lineNumberLabel) {
 		font = editor.font
 		background = editor.background.brighter()
 	}
 
-	override fun doBrowse(url: String) {
-		Desktop.getDesktop().browse(URL(url).toURI())
-	}
-
-	override fun doOpen(file: File) {
-		Desktop.getDesktop().open(file)
-	}
-
-	fun showInFiles() {
-		currentFile?.run { open(parentFile) }
-	}
+	override fun doBrowse(url: String) = Desktop.getDesktop().browse(URL(url).toURI())
+	override fun doOpen(file: File) = Desktop.getDesktop().open(file)
+	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
+	override fun dispose() = frame.dispose()
 
 	fun settings() {
 		ConfigurationImpl(this, frame).show
@@ -124,37 +122,12 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		psiFile()?.let { PsiViewerImpl(it, frame).show }
 	}
 
-	fun exit() {
-		GlobalSettings.save()
-		if (!makeSureLeaveCurrentFile()) {
-			frame.dispose()
-			System.exit(0)
-		}
-	}
-
 	fun importSettings() {
 		val file = JFileChooser(selfLocation).apply {
 			showOpenDialog(mainPanel)
 		}.selectedFile ?: return
 		GlobalSettings.loadFile(file)
 		restart()
-	}
-
-	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
-
-	open fun makeSureLeaveCurrentFile() = JOptionPane.YES_OPTION !=
-			JOptionPane.showConfirmDialog(
-					mainPanel,
-					"${currentFile?.name ?: "Current file"} unsaved, leave?",
-					UIManager.getString("OptionPane.titleText"),
-					JOptionPane.YES_NO_OPTION,
-					JOptionPane.QUESTION_MESSAGE,
-					DevKtIcons.KOTLIN)
-
-	fun restart() {
-		reloadSettings()
-		frame.dispose()
-		DevKtFrame()
 	}
 }
 
