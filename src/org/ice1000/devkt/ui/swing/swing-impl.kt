@@ -5,16 +5,18 @@ import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
-import org.ice1000.devkt.ui.ChooseFileType
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
-import javax.swing.*
+import javax.swing.JMenu
+import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
 import javax.swing.event.UndoableEditEvent
-import javax.swing.text.*
+import javax.swing.text.AttributeSet
+import javax.swing.text.DefaultStyledDocument
+import javax.swing.text.MutableAttributeSet
 import javax.swing.undo.UndoManager
 
 /**
@@ -22,8 +24,6 @@ import javax.swing.undo.UndoManager
  * @since v0.0.1
  */
 class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
-	private val undoManager = UndoManager()
-
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	internal lateinit var buildMenuBar: JMenu
@@ -46,14 +46,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			set(value) {
 				editor.selectionStart = value
 			}
-
-		init {
-			addUndoableEditListener {
-				if (it.source !== this) return@addUndoableEditListener
-				undoManager.addEdit(it.edit)
-				edited = true
-			}
-		}
 
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
 		override fun startOffsetOf(line: Int) = root.getElement(line).startOffset
@@ -105,7 +97,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			}
 			changes.end()
 			fireChangedUpdate(changes)
-			fireUndoableEditUpdate(UndoableEditEvent(document, changes))
 		}
 
 		/**
@@ -153,23 +144,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		if (lastOpenedFile.canRead()) {
 			edited = false
 			loadFile(lastOpenedFile)
-		}
-	}
-
-	//Shortcuts ↓↓↓
-	fun undo() {
-		if (undoManager.canUndo()) {
-			message("Undo!")
-			undoManager.undo()
-			edited = true
-		}
-	}
-
-	fun redo() {
-		if (undoManager.canRedo()) {
-			message("Redo!")
-			undoManager.redo()
-			edited = true
 		}
 	}
 

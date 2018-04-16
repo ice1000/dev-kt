@@ -2,7 +2,7 @@ package org.ice1000.devkt.ui
 
 import org.jetbrains.kotlin.com.intellij.util.containers.Stack
 
-class Edit(val offset: Int, val text: String, val isInsert: Boolean) {
+class Edit(val offset: Int, val text: CharSequence, val isInsert: Boolean) {
 	fun invert() = Edit(offset, text, !isInsert)
 	val length get() = text.length
 }
@@ -15,9 +15,11 @@ class Edit(val offset: Int, val text: String, val isInsert: Boolean) {
  * @property canUndo Boolean if there's undo available
  * @property canRedo Boolean if there's undo available
  */
-class DevKtUndoManager {
-	private val undoStack = Stack<Edit?>()
-	private val redoStack = Stack<Edit?>()
+class DevKtUndoManager(initialCapacity: Int) {
+	constructor() : this(160)
+
+	private val undoStack = Stack<Edit?>(initialCapacity)
+	private val redoStack = Stack<Edit?>(initialCapacity)
 	val canUndo get() = undoStack.isNotEmpty()
 	val canRedo get() = redoStack.isNotEmpty()
 
@@ -27,7 +29,7 @@ class DevKtUndoManager {
 		generateSequence { undoStack.pop() }.forEach {
 			redoStack.push(it)
 			if (it.isInsert) host.deleteDirectly(it.offset, it.length, reparse = false)
-			else host.insertDirectly(it.offset, it.text, reparse = false)
+			else host.insertDirectly(it.offset, it.text.toString(), reparse = false)
 		}
 		host.reparse()
 		redoStack.push(null)
@@ -38,13 +40,14 @@ class DevKtUndoManager {
 		while (null == redoStack.peek()) redoStack.pop()
 		generateSequence { redoStack.pop() }.forEach {
 			undoStack.push(it)
-			if (it.isInsert) host.insertDirectly(it.offset, it.text, reparse = false)
+			if (it.isInsert) host.insertDirectly(it.offset, it.text.toString(), reparse = false)
 			else host.deleteDirectly(it.offset, it.length, reparse = false)
 		}
 		host.reparse()
 		undoStack.push(null)
 	}
 
+	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
 	fun addEdit(edit: Edit) {
 		undoStack.add(edit)
 		redoStack.clear()

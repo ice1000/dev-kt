@@ -102,6 +102,22 @@ abstract class UIBase<TextAttributes> {
 		}
 	}
 
+	fun undo() {
+		if (document.canUndo) {
+			message("Undo!")
+			document.undo()
+			edited = true
+		}
+	}
+
+	fun redo() {
+		if (document.canRedo) {
+			message("Redo!")
+			document.redo()
+			edited = true
+		}
+	}
+
 	fun save() {
 		val file = currentFile ?: chooseFile(GlobalSettings.recentFiles.firstOrNull()?.parentFile, ChooseFileType.Save)
 		?: return

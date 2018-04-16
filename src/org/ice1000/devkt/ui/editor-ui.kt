@@ -39,6 +39,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		internal val document: DevKtDocument<TextAttributes>,
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		AnnotationHolder<TextAttributes> {
+	private val undoManager = DevKtUndoManager()
 	private var selfMaintainedString = StringBuilder()
 	private val languages: MutableList<DevKtLanguage<TextAttributes>> = arrayListOf(
 			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
@@ -82,9 +83,13 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun getLength() = document.length
 	val lineCommentStart get() = currentLanguage?.lineCommentStart
 	val blockComment get() = currentLanguage?.blockComment
+	val canUndo get() = undoManager.canUndo
+	val canRedo get() = undoManager.canRedo
 
 	fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 	fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
+	fun undo() = undoManager.undo(this)
+	fun redo() = undoManager.redo(this)
 
 	fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	fun switchLanguage(fileName: String) {
@@ -109,8 +114,6 @@ class DevKtDocumentHandler<TextAttributes>(
 				separator = "<br/>", prefix = "<html>", postfix = "&nbsp;</html>"))
 	}
 
-	fun clear() = deleteDirectly(0, document.length, false)
-
 	/**
 	 * Delete without checking
 	 *
@@ -129,27 +132,35 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	/**
-	 * Handles user input, delete with checks
+	 * Handles user input, delete with checks and undo recording
 	 *
 	 * @param offs Int see [insert]
 	 * @param len Int length of deletion
 	 */
 	fun delete(offs: Int, len: Int) {
 		val delString = selfMaintainedString.substring(offs, offs + len)
-		return if (delString.isNotEmpty()) {
-			val char = delString[0]
-			if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
-				deleteDirectly(offs, 2)
-			} else deleteDirectly(offs, len)
+		if (delString.isEmpty()) return
+		with(undoManager) {
+			addEdit(offs, delString, false)
+			done()
+		}
+		val char = delString[0]
+		if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
+			deleteDirectly(offs, 2)
 		} else deleteDirectly(offs, len)
 	}
 
 	/**
-	 * Clear the editor and set the content.
+	 * Clear the editor and set the content with undo recording
 	 *
 	 * @param string String new content.
 	 */
 	fun resetTextTo(string: String) {
+		with(undoManager) {
+			addEdit(0, selfMaintainedString, false)
+			addEdit(0, string, true)
+			done()
+		}
 		with(selfMaintainedString) {
 			setLength(0)
 			append(string)
@@ -183,7 +194,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	/**
-	 * Handles user input, insert with checks
+	 * Handles user input, insert with checks and undo recording
 	 *
 	 * @param offs Int offset from the beginning of the document
 	 * @param str String? text to insert
@@ -191,6 +202,10 @@ class DevKtDocumentHandler<TextAttributes>(
 	fun insert(offs: Int, str: String?) {
 		if (offs < 0) return
 		val normalized = str?.filterNot { it == '\r' } ?: return
+		with(undoManager) {
+			addEdit(offs, normalized, true)
+			done()
+		}
 		return if (normalized.length > 1)
 			insertDirectly(offs, normalized, 0)
 		else {
