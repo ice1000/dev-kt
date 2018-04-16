@@ -22,8 +22,6 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-private const val MEGABYTE = 1024 * 1024
-
 abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 	init {
 		frame.jMenuBar = menuBar
@@ -60,13 +58,12 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		}
 	}
 
-	fun refreshMemoryIndicator() {
-		val runtime = Runtime.getRuntime()
-		val total = runtime.totalMemory() / MEGABYTE
-		val free = runtime.freeMemory() / MEGABYTE
-		val used = total - free
-		memoryIndicator.text = "$used of ${total}M"
-	}
+	override var memoryIndicatorText
+		get() = memoryIndicator.text
+		set(value) {
+			memoryIndicator.text = value
+		}
+
 
 	override fun message(text: String) {
 		messageLabel.text = text
