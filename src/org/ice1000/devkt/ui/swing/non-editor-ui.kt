@@ -104,20 +104,12 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		background = editor.background.brighter()
 	}
 
-	override fun browse(url: String) = try {
+	override fun doBrowse(url: String) {
 		Desktop.getDesktop().browse(URL(url).toURI())
-		message("Browsing $url")
-	} catch (e: Exception) {
-		dialog("Error when browsing $url:\n${e.message}", MessageType.Error)
-		message("Failed to browse $url")
 	}
 
-	override fun open(file: File) = try {
+	override fun doOpen(file: File) {
 		Desktop.getDesktop().open(file)
-		message("Opened $file")
-	} catch (e: Exception) {
-		dialog("Error when opening ${file.absolutePath}:\n${e.message}", MessageType.Error)
-		message("Failed to open $file")
 	}
 
 	fun showInFiles() {
@@ -150,31 +142,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
 
-	fun buildClassAndRun() {
-		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
-	}
-
-	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
-		val start = System.currentTimeMillis()
-		val ktFile = psiFile() as? KtFile ?: return@thread
-		try {
-			message("Build started…")
-			Analyzer.compileJvm(ktFile)
-			uiThread {
-				message("Build finished in ${System.currentTimeMillis() - start}ms.")
-				callback(true)
-			}
-		} catch (e: Exception) {
-			uiThread {
-				message("Build failed in ${System.currentTimeMillis() - start}ms.")
-				dialog("Build failed: ${e.message}",
-						MessageType.Error,
-						"Build As Classes")
-				callback(false)
-			}
-		}
-	}
-
 	open fun makeSureLeaveCurrentFile() = JOptionPane.YES_OPTION !=
 			JOptionPane.showConfirmDialog(
 					mainPanel,
@@ -184,18 +151,10 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 					JOptionPane.QUESTION_MESSAGE,
 					DevKtIcons.KOTLIN)
 
-	protected abstract fun reloadSettings()
 	fun restart() {
 		reloadSettings()
 		frame.dispose()
 		DevKtFrame()
-	}
-
-	// TODO 错误处理
-	fun runScript() {
-		val currentFile = currentFile ?: return
-		val `class` = currentFile.let(Analyzer::compileScript) ?: return
-		tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
 	}
 }
 

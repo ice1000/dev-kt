@@ -3,9 +3,11 @@ package org.ice1000.devkt.ui
 import com.bulenkov.iconloader.util.SystemInfo
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.handleException
 import org.ice1000.devkt.selfLocation
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import java.io.File
 import kotlin.concurrent.thread
 
@@ -44,12 +46,29 @@ abstract class UIBase<TextAttributes> {
 	abstract fun updateShowInFilesMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
 	abstract fun message(text: String)
-	protected abstract fun browse(url: String)
-	protected abstract fun open(file: File)
+	protected abstract fun reloadSettings()
+	protected abstract fun doBrowse(url: String)
+	protected abstract fun doOpen(file: File)
 	abstract fun dialog(
 			text: String,
 			messageType: MessageType,
 			title: String = messageType.name)
+
+	fun browse(url: String) = try {
+		doBrowse(url)
+		message("Browsing $url")
+	} catch (e: Exception) {
+		dialog("Error when browsing $url:\n${e.message}", MessageType.Error)
+		message("Failed to browse $url")
+	}
+
+	fun open(file: File) = try {
+		doOpen(file)
+		message("Opened $file")
+	} catch (e: Exception) {
+		dialog("Error when opening ${file.absolutePath}:\n${e.message}", MessageType.Error)
+		message("Failed to open $file")
+	}
 
 	fun runCommand(file: File) {
 		val ktFile = psiFile() as? KtFile ?: return
@@ -76,7 +95,6 @@ abstract class UIBase<TextAttributes> {
 		currentFile?.run { processBuilder.directory(parentFile.absoluteFile) }
 		processBuilder.start()
 	}
-
 
 	inline fun buildAsJar(crossinline callback: (Boolean) -> Unit = { }) = thread {
 		val start = System.currentTimeMillis()
@@ -120,7 +138,40 @@ abstract class UIBase<TextAttributes> {
 		}
 	}
 
+	fun buildClassAndRun() {
+		buildAsClasses { if (it) runCommand(Analyzer.targetDir) }
+	}
+
+	inline fun buildAsClasses(crossinline callback: (Boolean) -> Unit = { }) = thread {
+		val start = System.currentTimeMillis()
+		val ktFile = psiFile() as? KtFile ?: return@thread
+		try {
+			message("Build started…")
+			Analyzer.compileJvm(ktFile)
+			uiThread {
+				message("Build finished in ${System.currentTimeMillis() - start}ms.")
+				callback(true)
+			}
+		} catch (e: Exception) {
+			uiThread {
+				message("Build failed in ${System.currentTimeMillis() - start}ms.")
+				dialog("Build failed: ${e.message}",
+						MessageType.Error,
+						"Build As Classes")
+				callback(false)
+			}
+		}
+	}
+
 	fun buildJarAndRun() {
 		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
+	}
+
+	fun runScript() {
+		val currentFile = currentFile ?: return
+		val `class` = currentFile.let(Analyzer::compileScript) ?: return
+		handleException {
+			tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
+		}
 	}
 }
