@@ -8,8 +8,6 @@ import java.awt.HeadlessException
 import java.io.*
 import java.nio.file.*
 import java.util.concurrent.*
-import java.util.stream.Collectors
-import javax.swing.*
 
 val commitHash by lazy {
 	val process: Process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
