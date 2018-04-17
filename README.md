@@ -32,6 +32,16 @@ IntelliJ IDEA<br/><br/>Correct,<br/>with inspections|<img width=200 src="https:/
 Emacs<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38292966-6670c57e-3818-11e8-8a26-3eccf864b93e.png">
 VSCode<br/><br/>Incorrect|<img width=200 src="https://user-images.githubusercontent.com/16398479/38293034-95d721be-3818-11e8-9141-19faabae161e.png">
 
+# For Linux users
+
+To use the JavaFX version on Linux, please install oraclejdk instead of openjdk:
+
+```
+$ sudo add-apt-repository ppa:webupd8team/java
+$ sudo apt-get update
+$ sudo apt-get install oracle-java8-installer
+```
+
 # Plugin development guide
 
 See:

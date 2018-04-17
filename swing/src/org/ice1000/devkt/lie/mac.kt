@@ -3,7 +3,6 @@ package org.ice1000.devkt.lie
 import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.ui.swing.DevKtFrame.Companion.instance
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
 
@@ -24,7 +23,7 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 		// TODO replace with my own icon
 	}
 
-	override fun handlePreferences(event: AppEvent.PreferencesEvent) = instance.ui.settings()
+	override fun handlePreferences(event: AppEvent.PreferencesEvent) = TODO()
 	override fun handleAbout(event: AppEvent.AboutEvent) = Unit
-	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) = instance.ui.exit()
+	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) = TODO()
 }

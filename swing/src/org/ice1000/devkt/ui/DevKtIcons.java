@@ -1,7 +1,7 @@
 package org.ice1000.devkt.ui;
 
-import com.bulenkov.iconloader.IconLoader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.com.intellij.openapi.util.IconLoader;
 
 import javax.swing.*;
 
