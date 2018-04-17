@@ -34,7 +34,7 @@ idea {
 		// https://github.com/gradle/kotlin-dsl/issues/537/
 		excludeDirs = excludeDirs +
 				file("pinpoint_piggy") +
-				file("build-cache") +
+				file("common/res/template") +
 				file(".build-cache")
 	}
 }
