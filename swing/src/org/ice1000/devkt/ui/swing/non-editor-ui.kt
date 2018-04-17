@@ -4,7 +4,7 @@ import charlie.gensokyo.show
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import org.ice1000.devkt.LaunchInfo
-import org.ice1000.devkt.config.ConfigurationImpl
+import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.ChooseFileType
 import org.ice1000.devkt.ui.MessageType

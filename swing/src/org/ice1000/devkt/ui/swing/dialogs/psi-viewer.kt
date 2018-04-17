@@ -22,11 +22,11 @@ typealias UINode = DefaultMutableTreeNode
  * @author ice1000
  */
 class PsiViewerImpl(file: PsiFile, owner: Window? = null) : JDialog(owner) {
-	var mainPanel = JPanel()
-	var buttonClose = JButton()
-	var pane = JScrollPane()
-	var expandAll = JButton()
-	var collapseAll = JButton()
+	private val mainPanel = JPanel()
+	private val buttonClose = JButton()
+	private val pane = JScrollPane()
+	private val expandAll = JButton()
+	private val collapseAll = JButton()
 
 	init {
 		mainPanel.layout = GridLayoutManager(2, 4, Insets(10, 10, 10, 10), -1, -1)

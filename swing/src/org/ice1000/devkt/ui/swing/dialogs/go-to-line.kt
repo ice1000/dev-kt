@@ -10,7 +10,7 @@ import java.awt.Insets
 import javax.swing.*
 
 class GoToLineDialog(uiImpl: AbstractUI, private val document: DevKtDocument<*>) : JDialog() {
-	val mainPanel = JPanel()
+	private val mainPanel = JPanel()
 	private val lineColumn = JTextField()
 	private val cancelButton = JButton()
 	private val okButton = JButton()

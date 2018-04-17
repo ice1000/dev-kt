@@ -1,10 +1,11 @@
-package org.ice1000.devkt.config
+package org.ice1000.devkt.ui.swing.dialogs
 
 import charlie.gensokyo.doNothingOnClose
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.uiDesigner.core.Spacer
 import org.ice1000.devkt.DevKtFontManager.allFonts
+import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.defaultFontName
 import org.ice1000.devkt.ui.swing.AbstractUI
 import org.ice1000.devkt.ui.swing.DevKtFrame
@@ -208,11 +209,11 @@ class ConfigurationImpl(private val uiImpl: AbstractUI, parent: DevKtFrame? = nu
 		gothicFontName = uiFontField.selectedItem.toString()
 		javaClassName = classNameField.text
 		jarName = jarNameField.text
-		(fontSizeSpinner.value as? Number)?.let { GlobalSettings.fontSize = it.toFloat() }
-		(backgroundImageAlphaSlider.value as? Number)?.let { GlobalSettings.backgroundAlpha = it.toInt() }
+		(fontSizeSpinner.value as? Number)?.let { fontSize = it.toFloat() }
+		(backgroundImageAlphaSlider.value as? Number)?.let { backgroundAlpha = it.toInt() }
 		monoFontName.apply {
 			(parent as? DevKtFrame)?.let {
-				it.ui.editorFont = Font(this, Font.PLAIN, GlobalSettings.fontSize.toInt())
+				it.ui.editorFont = Font(this, Font.PLAIN, fontSize.toInt())
 			}
 		}
 		highlightTokenBased = useLexer.isSelected

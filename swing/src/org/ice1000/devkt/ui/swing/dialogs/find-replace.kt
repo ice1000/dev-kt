@@ -21,22 +21,23 @@ open class FindDialog(
 		uiImpl: AbstractUI,
 		val document: DevKtDocumentHandler<*>) : JDialog() {
 	companion object {
-		val NO_REGEXP_CHARS = arrayOf('\\', '{', '[', '(', '+', '*', '^', '$', '.', '?', '|')
+		val NO_REGEXP_CHARS = "\\{[(+*^\$.?|".toCharArray()
 	}
 
 	protected val searchResult = arrayListOf<SearchResult>()
 	protected var currentIndex = 0
-	var mainPanel = JPanel()
-	var isMatchCase = JCheckBox()
-	var isRegex = JCheckBox()
-	var input = JTextField()
-	var moveUp = JButton()
-	var moveDown = JButton()
-	var regex = JPanel()
-	var replaceInput = JTextField()
-	var replace = JButton()
-	var replaceAll = JButton()
-	var separator = JSeparator()
+
+	private val mainPanel = JPanel()
+	private val isMatchCase = JCheckBox()
+	private val moveUp = JButton()
+	private val moveDown = JButton()
+	private val regex = JPanel()
+	protected val isRegex = JCheckBox()
+	protected val input = JTextField()
+	protected val replaceInput = JTextField()
+	protected val replace = JButton()
+	protected val replaceAll = JButton()
+	protected val separator = JSeparator()
 
 	init {
 		mainPanel.layout = GridLayoutManager(5, 1, Insets(0, 0, 0, 0), -1, -1)
@@ -102,7 +103,7 @@ open class FindDialog(
 	final override fun setLocationRelativeTo(c: Component?) = super.setLocationRelativeTo(c)
 	final override fun pack() = super.pack()
 
-	protected open fun search() {
+	protected fun search() {
 		searchResult.clear()
 		document.selectionEnd = document.selectionStart
 
@@ -141,8 +142,8 @@ open class FindDialog(
 		}
 	}
 
-	protected fun moveUp() = select(currentIndex - 1)
-	protected fun moveDown() = select(currentIndex + 1)
+	private fun moveUp() = select(currentIndex - 1)
+	private fun moveDown() = select(currentIndex + 1)
 }
 
 class ReplaceDialog(
