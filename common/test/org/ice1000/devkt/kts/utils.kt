@@ -1,8 +1,9 @@
 package org.ice1000.devkt.kts
 
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.*
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.junit.Assert
 import java.io.ByteArrayOutputStream
@@ -24,7 +25,7 @@ fib(4)=5
 
 fun newConfiguration(): CompilerConfiguration {
 	val configuration = CompilerConfiguration()
-	configuration.put(CommonConfigurationKeys.MODULE_NAME, LightProjectDescriptor.TEST_MODULE_NAME)
+	configuration.put(CommonConfigurationKeys.MODULE_NAME, "www")
 	if ("true" == System.getProperty("kotlin.ni")) {
 		// Enable new inference for tests which do not declare their own language version settings
 		configuration.languageVersionSettings = CompilerTestLanguageVersionSettings(emptyMap(),

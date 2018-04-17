@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.script.*
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import java.io.File
 import kotlin.script.templates.ScriptTemplateDefinition
@@ -22,8 +23,8 @@ open class AbstractScriptTemplate(val args: Array<String>)
 open class ScriptTemplate(args: Array<String>) : AbstractScriptTemplate(args)
 
 @Ignore
-class ScriptTest : KtUsefulTestCase() {
-	fun testStandardScriptWithParams() {
+class ScriptTest {
+	fun standardScriptWithParams() {
 		val aClass = compileScript("die_home_guy_so_disgusting.kts", StandardScriptDefinition)
 		Assert.assertNotNull(aClass)
 		val out = captureOut {
@@ -33,7 +34,7 @@ class ScriptTest : KtUsefulTestCase() {
 		// 	assertEqualsTrimmed("$NUM_4_LINE (commentCurrent)$FIB_SCRIPT_OUTPUT_TAIL", out)
 	}
 
-	fun testStandardScriptWithoutParams() {
+	fun standardScriptWithoutParams() {
 		val aClass = compileScript("die_home_guy_so_disgusting.kts",
 				KotlinScriptDefinition(ScriptTemplate::class))!!
 		val out = captureOut {
@@ -43,7 +44,7 @@ class ScriptTest : KtUsefulTestCase() {
 		assertEqualsTrimmed("我永远喜欢灵乌路空", out)
 	}
 
-	fun testUseCompilerInternals() {
+	fun useCompilerInternals() {
 		val scriptClass = compileScript("use_compiler_internals.kts",
 				KotlinScriptDefinition(ScriptTemplate::class), false)!!
 		assertEquals("OK", captureOut {
