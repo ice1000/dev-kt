@@ -111,8 +111,7 @@ dependencies {
 	val kotlinStable: String by rootProject.extra
 	compile(project(":common"))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
-	compile(group = "com.github.ice1k", name = "darcula", version = "2018.1")
-	compile(group = "com.intellij", name = "forms_rt", version = "7.0.3")
+	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
 	compile(files(Paths.get("lib", "filedrop.jar")))
 	configurations.compileOnly.exclude(group = "com.jetbrains", module = "ideaLocal")
 	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
