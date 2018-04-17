@@ -1,6 +1,7 @@
 package org.ice1000.devkt.kts
 
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory
+import org.jetbrains.kotlin.script.jsr223.KotlinStandardJsr223ScriptTemplate
 import javax.script.ScriptEngineManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,5 +34,10 @@ class EngineTest {
 		assertEquals(2, factory.eval("{1+1}()"))
 		//language=kotlin
 		assertEquals(3, factory.eval("1.let(2::plus)"))
+	}
+
+	@Test
+	fun testQualifiedName() {
+		println(KotlinStandardJsr223ScriptTemplate::class.qualifiedName)
 	}
 }

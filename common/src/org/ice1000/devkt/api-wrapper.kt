@@ -4,14 +4,19 @@
  */
 package org.ice1000.devkt
 
+import org.ice1000.devkt.openapi.util.selfLocation
+import org.ice1000.devkt.openapi.util.selfLocationFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
+import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
+import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport.*
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -20,7 +25,13 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory
+import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
+import org.jetbrains.kotlin.script.jsr223.KotlinStandardJsr223ScriptTemplate
 import java.io.File
+import javax.script.Bindings
+import javax.script.ScriptContext
+import javax.script.ScriptEngine
 
 fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
 		analyzeAndCheckForErrors(setOf(file), environment)
@@ -101,6 +112,18 @@ fun compileFiles(
 	// For JVM-specific errors
 	AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
 	return state
+}
+
+object DevKtScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
+	override fun getScriptEngine(): ScriptEngine = KotlinJsr223JvmLocalScriptEngine(
+			this,
+			listOf(selfLocationFile),
+			KotlinStandardJsr223ScriptTemplate::class.java.canonicalName,
+			{ ctx, types ->
+				ScriptArgsWithTypes(arrayOf(ctx.getBindings(ScriptContext.ENGINE_SCOPE)), types ?: emptyArray())
+			},
+			arrayOf(Bindings::class)
+	)
 }
 
 fun compileScript(file: KtFile, configuration: CompilerConfiguration) {

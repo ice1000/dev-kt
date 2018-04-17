@@ -3,6 +3,7 @@ package org.ice1000.devkt.openapi.util
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.ShortCut
 import java.awt.event.KeyEvent
+import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
 import javax.swing.*
@@ -36,6 +37,7 @@ inline fun handleException(lambda: () -> Unit) {
 }
 
 val selfLocation: String = Analyzer::class.java.protectionDomain.codeSource.location.file
+val selfLocationFile: File = File(selfLocation)
 
 val paired = mapOf(
 		'"' to '"',

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
-import javax.script.ScriptEngineManager
 
 data class ASTToken(
 		val start: Int,
@@ -40,6 +39,7 @@ data class ASTToken(
 		val type: IElementType
 )
 
+@Suppress("unused")
 /**
  * @author ice1000
  * @since v0.0.1
@@ -47,7 +47,7 @@ data class ASTToken(
 object Analyzer : Disposable {
 	val targetDir = File("./.build-cache")
 	val targetJar get() = targetDir.resolve(GlobalSettings.jarName)
-	private val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")
+	private val scriptEngine = DevKtScriptEngineFactory.scriptEngine
 	// private val originalStdout = System.out
 	// private val originalStderr = System.err
 	private val jvmEnvironment: KotlinCoreEnvironment

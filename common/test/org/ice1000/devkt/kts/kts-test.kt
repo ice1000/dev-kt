@@ -90,7 +90,7 @@ class ScriptTest {
 fun main(args: Array<String>) {
 	val file = File("res/template/script.kts")
 	GlobalSettings.load()
-	Analyzer.runScript(file)
+	Analyzer.runScript(file.readText())
 }
 
 
