@@ -41,23 +41,23 @@
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
 + Plugin system
-    + [X] Load plugins in classpath
-    + [X] [Official CovScript plugin](https://github.com/covscript/covscript-devkt)
-    + [X] [Official Clojure plugin based on Clojure-Kit](https://github.com/devkt-plugins/clojure-devkt) (deprecated)
-    + [X] [Official Clojure plugin based on la-clojuer](https://github.com/devkt-plugins/la-clojure-devkt)
-    + [X] [Official Julia plugin](https://github.com/devkt-plugins/julia-devkt)
-    + [X] [Official JSON plugin](https://github.com/devkt-plugins/json-devkt)
-    + [ ] Official Zig plugin
-    + [ ] Official Lua plugin based on EmmyLua
-    + [ ] Official Python plugin
-    + [ ] Official Groovy plugin
-    + [ ] Official Ruby plugin
-    + [ ] Official HTML plugin
-    + [ ] Official XML plugin
-    + [ ] Official CSS plugin
-    + [ ] Official Lice plugin
-    + [ ] Official Markdown plugin
-    + [ ] Official Scala plugin
+	+ [X] Load plugins in classpath
+	+ [X] [Official CovScript plugin](https://github.com/covscript/covscript-devkt)
+	+ [X] [Official Clojure plugin based on Clojure-Kit](https://github.com/devkt-plugins/clojure-devkt) (deprecated)
+	+ [X] [Official Clojure plugin based on la-clojuer](https://github.com/devkt-plugins/la-clojure-devkt)
+	+ [X] [Official Julia plugin](https://github.com/devkt-plugins/julia-devkt)
+	+ [X] [Official JSON plugin](https://github.com/devkt-plugins/json-devkt)
+	+ [ ] Official Zig plugin
+	+ [ ] Official Lua plugin based on EmmyLua
+	+ [ ] Official Python plugin
+	+ [ ] Official Groovy plugin
+	+ [ ] Official Ruby plugin
+	+ [ ] Official HTML plugin
+	+ [ ] Official XML plugin
+	+ [ ] Official CSS plugin
+	+ [ ] Official Lice plugin
+	+ [ ] Official Markdown plugin
+	+ [ ] Official Scala plugin
 + Build and run (Kotlin specific)
 	+ Build
 		+ [X] Build as class files

@@ -9,7 +9,7 @@ $ git clone https://github.com/ice1000/dev-kt.git
 Then:
 
 + (Optional) Download and decompress [Sarasa Gothic](https://github.com/be5invis/Sarasa-Gothic/releases) font to `res/font`
-  + As reference you can see [this shell script](./download-font.sh)
+  + As reference you can see [this shell script](swing/download-font.sh)
 + (Optional) Create `gradle.properties`, set your IntelliJ IDEA installation path to `ideaC_path`
   + If you don't do this, gradle will download an IntelliJ IDEA 2018.1
 + (Optional) Run `gradlew :swing:downloadFiraCode`

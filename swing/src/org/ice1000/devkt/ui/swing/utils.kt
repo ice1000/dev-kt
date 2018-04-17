@@ -15,4 +15,4 @@ fun JMenuItem.keyMap(key: Int, modifiers: Int) {
 		accelerator = KeyStroke.getKeyStroke(key, modifiers)
 }
 
-fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.keyCode, shortcut.modifier)
+fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.key, shortcut.modifier)

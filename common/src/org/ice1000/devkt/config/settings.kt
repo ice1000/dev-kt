@@ -3,7 +3,6 @@ package org.ice1000.devkt.config
 import org.ice1000.devkt.defaultFontName
 import org.ice1000.devkt.openapi.util.handleException
 import org.ice1000.devkt.openapi.util.ignoreException
-import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
@@ -11,61 +10,6 @@ import java.io.File
 import java.util.*
 import javax.imageio.ImageIO
 import kotlin.reflect.KMutableProperty
-
-class ShortCut {
-	companion object Keys {
-		const val SHIFT_MASK = 1
-		const val CTRL_MASK = 2
-		const val META_MASK = 4
-		const val ALT_MASK = 8
-		const val ALT_GRAPH_MASK = 32
-		const val SHIFT_DOWN_MASK = 64
-		const val CTRL_DOWN_MASK = 128
-		const val META_DOWN_MASK = 256
-		const val ALT_DOWN_MASK = 512
-
-		fun parse(str: String): ShortCut? {
-			str.split("|").run {
-				val keyCode = firstOrNull()?.toIntOrNull() ?: return null
-				val modifier = getOrNull(1)?.toIntOrNull() ?: return null
-				return ShortCut(modifier, keyCode)
-			}
-		}
-	}
-
-	val isControl: Boolean
-	val isAlt: Boolean
-	val isShift: Boolean
-	val keyCode: Int
-	val modifier: Int
-
-	constructor(isControl: Boolean, isAlt: Boolean, isShift: Boolean, keyCode: Int) {
-		this.isControl = isControl
-		this.isAlt = isAlt
-		this.isShift = isShift
-		this.keyCode = keyCode
-		this.modifier = (if (isControl) CTRL_DOWN_MASK else 0) or
-				(if (isAlt) ALT_DOWN_MASK else 0) or
-				(if (isShift) SHIFT_DOWN_MASK else 0)
-	}
-
-	/**
-	 * @param modifier Int
-	 * @param keyCode Int
-	 * @constructor use this constructor to prevent `ctrl` being transformed into `meta` in Mac
-	 */
-	constructor(modifier: Int, keyCode: Int) {
-		this.modifier = modifier
-		this.keyCode = keyCode
-		this.isControl = modifier and CTRL_DOWN_MASK != 0
-		this.isShift = modifier and SHIFT_DOWN_MASK != 0
-		this.isAlt = modifier and ALT_DOWN_MASK != 0
-	}
-
-	fun check(e: KeyEvent) = e.modifiers == modifier
-
-	override fun toString(): String = "$keyCode|$modifier"
-}
 
 /**
  * @author ice1000
@@ -126,21 +70,21 @@ object GlobalSettings {
 	var colorBackground: String by properties
 	var colorInputError: String by properties
 
-	var shortcutUndo = ShortCut(true, false, false, KeyEvent.VK_Z)
-	var shortcutSave = ShortCut(true, false, false, KeyEvent.VK_S)
-	var shortcutRedo = ShortCut(true, false, true, KeyEvent.VK_Z)
-	var shortcutSync = ShortCut(true, true, false, KeyEvent.VK_Y)
-	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
-	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
+	var shortcutUndo = ShortCut(true, false, false, Key.Z)
+	var shortcutSave = ShortCut(true, false, false, Key.S)
+	var shortcutRedo = ShortCut(true, false, true, Key.Z)
+	var shortcutSync = ShortCut(true, true, false, Key.Y)
+	var shortcutGoto = ShortCut(true, false, false, Key.G)
+	var shortcutOpen = ShortCut(true, false, false, Key.O)
 	// Build | Run As | Class, force to use ctrl + R even though it is in Mac.
-	var shortcutBuildRunAsClass = ShortCut(if (SystemInfo.isMac) KeyEvent.CTRL_DOWN_MASK else 0, KeyEvent.VK_R)
-	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
-	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
-	var shortcutNewLineBefore = ShortCut(true, true, false, KeyEvent.VK_ENTER)
-	var shortcutComment = ShortCut(true, false, false, KeyEvent.VK_SLASH)
-	var shortcutBlockComment = ShortCut(true, false, true, KeyEvent.VK_SLASH)
-	var shortcutFind = ShortCut(true, false, false, KeyEvent.VK_F)
-	var shortcutReplace = ShortCut(true, false, false, KeyEvent.VK_R)
+	var shortcutBuildRunAsClass = ShortCut(true, false, false, Key.R)
+	var shortcutNextLine = ShortCut(false, false, true, Key.ENTER)
+	var shortcutSplitLine = ShortCut(true, false, false, Key.ENTER)
+	var shortcutNewLineBefore = ShortCut(true, true, false, Key.ENTER)
+	var shortcutComment = ShortCut(true, false, false, Key.SLASH)
+	var shortcutBlockComment = ShortCut(true, false, true, Key.SLASH)
+	var shortcutFind = ShortCut(true, false, false, Key.F)
+	var shortcutReplace = ShortCut(true, false, false, Key.R)
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value
@@ -164,7 +108,7 @@ object GlobalSettings {
 
 	private fun initShortCutProperty(property: KMutableProperty<ShortCut>) {
 		properties[property.name]?.toString()?.also {
-			ShortCut.parse(it)?.let { property.setter.call(it) }
+			ShortCut.valueOf(it)?.let { property.setter.call(it) }
 		}
 	}
 

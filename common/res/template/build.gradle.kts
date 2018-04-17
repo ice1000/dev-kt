@@ -9,7 +9,7 @@ import java.util.concurrent.*
 import java.util.stream.Collectors
 
 val commitHash by lazy {
-	val process: Process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
+	val process: Process = Runtime.getRuntime().exec("git rev-valueOf --short HEAD")
 	process.waitFor()
 	val output = process.inputStream.use {
 		it.bufferedReader().use(BufferedReader::readText)

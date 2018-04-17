@@ -5,5 +5,6 @@ package org.ice1000.devkt.ui.jfx
  * @since v2.0
  */
 class UIImpl {
-
+	fun a() {
+	}
 }

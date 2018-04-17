@@ -1,11 +1,8 @@
 import de.undercouch.gradle.tasks.download.Download
-import groovy.lang.Closure
 import org.gradle.internal.deployment.RunApplication
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.awt.HeadlessException
-import java.io.*
 import java.nio.file.*
 import java.util.concurrent.*
 
@@ -36,7 +33,7 @@ intellij {
 		try {
 			println("Please specify your IntelliJ IDEA installation path:")
 			val line = readLine()?.trim()
-			if (null != line && Files.exists(Paths.get(line))) {
+			if (null != line && file(line).exists()) {
 				localPath = line
 				file("gradle.properties").writeText("ideaC_path=$line")
 			} else version = "2018.1"
