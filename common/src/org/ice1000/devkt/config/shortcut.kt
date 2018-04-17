@@ -7,6 +7,10 @@ import org.ice1000.devkt.config.Key.Companion.CTRL_DOWN_MASK
 import org.ice1000.devkt.config.Key.Companion.SHIFT_DOWN_MASK
 import java.awt.event.KeyEvent
 
+/**
+ * @author HoshinoTented, ice1000
+ * @since v1.2
+ */
 class ShortCut {
 	companion object Modifiers {
 		fun valueOf(str: String) = try {
@@ -52,6 +56,10 @@ class ShortCut {
 	override fun toString(): String = "$key|$modifier"
 }
 
+/**
+ * @author ice1000
+ * @since v1.3
+ */
 enum class Key {
 	A,
 	B,
@@ -89,6 +97,10 @@ enum class Key {
 	`7`,
 	`8`,
 	SLASH,
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
 	ENTER;
 
 	companion object {

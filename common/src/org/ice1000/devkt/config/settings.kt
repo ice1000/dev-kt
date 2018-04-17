@@ -4,7 +4,6 @@ import org.ice1000.devkt.defaultFontName
 import org.ice1000.devkt.openapi.util.handleException
 import org.ice1000.devkt.openapi.util.ignoreException
 import java.awt.Rectangle
-import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
 import java.io.File
 import java.util.*
