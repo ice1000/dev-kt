@@ -64,6 +64,7 @@ abstract class UIBase<TextAttributes> {
 	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
 	fun viewSource() = browse("https://github.com/ice1000/dev-kt")
+	fun createIssue() = browse("https://github.com/ice1000/dev-kt/issues/new")
 	fun psiFile(): PsiFile? = document.psiFile
 	fun nextLine() = document.nextLine()
 	fun splitLine() = document.splitLine()

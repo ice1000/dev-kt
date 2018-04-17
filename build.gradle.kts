@@ -40,7 +40,7 @@ idea {
 }
 
 allprojects {
-	val shortVersion = "v1.3-SNAPSHOT"
+	val shortVersion = "v1.3"
 	val packageName = "org.ice1000.devkt"
 
 	group = packageName

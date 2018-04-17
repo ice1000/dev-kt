@@ -201,6 +201,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			onAction { viewPsi() }
 		}
 		item("Source Code") { onAction { viewSource() } }
+		item("Create Issue") { onAction { createIssue() } }
 		subMenu("Alternatives") {
 			item("IntelliJ IDEA") {
 				icon = DevKtIcons.IDEA
@@ -208,7 +209,6 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 			item("CLion") {
 				icon = DevKtIcons.CLION
-
 				onAction { clion() }
 			}
 			item("Eclipse") {
