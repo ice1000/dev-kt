@@ -29,6 +29,8 @@ dependencies {
 	compile(kotlin("stdlib-jdk8", kotlinVersion))
 	compile(kotlin("reflect", kotlinVersion))
 	compile(kotlin("compiler-embeddable", kotlinVersion))
+	compile(kotlin("script-runtime", kotlinVersion))
+	compile(kotlin("script-util", kotlinVersion))
 	compileOnly(files(*file("lib").listFiles().orEmpty()))
 	val plugins = file("plugins").listFiles().orEmpty().filterNot { it.isDirectory }
 	runtime(files(*plugins.toTypedArray()))
