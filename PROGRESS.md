@@ -49,7 +49,7 @@
 	+ [X] [Official JSON plugin](https://github.com/devkt-plugins/json-devkt)
 	+ [ ] Official Zig plugin
 	+ [ ] Official Lua plugin based on EmmyLua
-	+ [ ] Official Python plugin
+	+ [ ] Official Python plugin (too hard since PyCharm has used countless black magics)
 	+ [ ] Official Groovy plugin
 	+ [ ] Official Ruby plugin
 	+ [ ] Official HTML plugin
