@@ -1,5 +1,4 @@
 import de.undercouch.gradle.tasks.download.Download
-import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.util.concurrent.*
 
@@ -14,8 +13,8 @@ plugins {
 }
 
 application {
-	if (SystemInfo.isMac)
-		applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
+	val isMac: Boolean by rootProject.extra
+	if (isMac) applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
 	mainClassName = "org.ice1000.devkt.Main"
 }
 

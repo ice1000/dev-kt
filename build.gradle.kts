@@ -1,10 +1,6 @@
-import groovy.lang.Closure
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.awt.HeadlessException
 import java.io.*
-import java.nio.file.*
-import java.util.concurrent.*
 
 var commitHash: String by extra
 commitHash = run {
@@ -18,11 +14,13 @@ commitHash = run {
 }
 
 var isCI: Boolean by extra
-isCI = !System.getenv("CI").isNullOrBlank()
+var isMac: Boolean by extra
 var kotlinStable: String by extra
-kotlinStable = "1.2.31"
 val kotlinEAP = "1.2.40-eap-62"
 var kotlinVersion: String by extra
+isCI = !System.getenv("CI").isNullOrBlank()
+isMac = SystemInfo.isMac
+kotlinStable = "1.2.31"
 kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {

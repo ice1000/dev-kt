@@ -13,3 +13,4 @@ gradle.properties
 common/plugins
 swing/src/org/ice1000/devkt/ui/swing/forms/*.java
 swing/src/org/ice1000/devkt/ui/swing/forms/*.kt
+plugins

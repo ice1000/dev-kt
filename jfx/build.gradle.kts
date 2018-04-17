@@ -1,8 +1,4 @@
-import org.gradle.internal.deployment.RunApplication
-import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import java.io.*
-import java.nio.file.*
 import java.util.concurrent.*
 
 val commitHash: String by rootProject.extra
@@ -15,8 +11,8 @@ plugins {
 }
 
 application {
-	if (SystemInfo.isMac)
-		applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
+	val isMac: Boolean by rootProject.extra
+	if (isMac) applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
 	mainClassName = "org.ice1000.devkt.Main"
 }
 
@@ -61,7 +57,6 @@ java.sourceSets {
 dependencies {
 	val kotlinStable: String by rootProject.extra
 	compile(project(":common"))
-	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
 	testCompile(project(":common"))
 	testCompile("junit", "junit", "4.12")
 	testCompile(kotlin("test-junit", kotlinStable))
