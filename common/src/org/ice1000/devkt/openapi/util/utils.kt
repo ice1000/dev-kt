@@ -1,12 +1,8 @@
 package org.ice1000.devkt.openapi.util
 
 import org.ice1000.devkt.Analyzer
-import org.ice1000.devkt.config.ShortCut
-import java.awt.event.KeyEvent
-import java.io.File
-import java.io.OutputStream
-import java.io.PrintStream
-import javax.swing.*
+import java.io.*
+import javax.swing.JOptionPane
 
 data class Quad<out A, out B, out C, out D>(val first: A, val second: B, val third: C, val fourth: D)
 

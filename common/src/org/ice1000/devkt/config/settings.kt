@@ -76,7 +76,8 @@ object GlobalSettings {
 	var shortcutGoto = ShortCut(true, false, false, Key.G)
 	var shortcutOpen = ShortCut(true, false, false, Key.O)
 	// Build | Run As | Class, force to use ctrl + R even though it is in Mac.
-	var shortcutBuildRunAsClass = ShortCut(true, false, false, Key.R)
+	var shortcutBuildRunAsClass = ShortCut(true, false, true, Key.F10)
+	var shortcutRunAsScript = ShortCut(true, false, false, Key.R)
 	var shortcutNextLine = ShortCut(false, false, true, Key.ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, Key.ENTER)
 	var shortcutNewLineBefore = ShortCut(true, true, false, Key.ENTER)

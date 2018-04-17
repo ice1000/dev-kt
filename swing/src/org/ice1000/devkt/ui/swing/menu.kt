@@ -129,16 +129,16 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 		}
 		separator
 		item("New Line") {
-			onAction { nextLine() }
 			keyMap(GlobalSettings.shortcutNextLine)
+			onAction { nextLine() }
 		}
 		item("New Line Before") {
-			onAction { newLineBeforeCurrent() }
 			keyMap(GlobalSettings.shortcutNewLineBefore)
+			onAction { newLineBeforeCurrent() }
 		}
 		item("Split Line") {
-			onAction { splitLine() }
 			keyMap(GlobalSettings.shortcutSplitLine)
+			onAction { splitLine() }
 		}
 		item("Go to Line") {
 			keyMap(GlobalSettings.shortcutGoto)
@@ -188,14 +188,15 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 			item("Classes") {
 				icon = DevKtIcons.CLASS
-				onAction { buildClassAndRun() }
 				keyMap(GlobalSettings.shortcutBuildRunAsClass)
+				onAction { buildClassAndRun() }
 			}
 		}
 		subMenu("Run As") {
 			icon = DevKtIcons.EXECUTE
 			item("Kotlin Script") {
 				icon = DevKtIcons.KOTLIN_FILE
+				keyMap(GlobalSettings.shortcutRunAsScript)
 				onAction { runScript() }
 			}
 		}
