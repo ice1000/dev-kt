@@ -1,13 +1,16 @@
 package org.ice1000.devkt.ui.swing
 
-import charlie.gensokyo.*
+import charlie.gensokyo.item
+import charlie.gensokyo.onAction
+import charlie.gensokyo.separator
+import charlie.gensokyo.subMenu
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtIcons
 import java.awt.event.KeyEvent
-import java.io.File
-import javax.swing.*
-import javax.swing.filechooser.FileFilter
+import javax.swing.JFrame
+import javax.swing.JMenuBar
+import javax.swing.JOptionPane
 
 /**
  * DSL that initializes [menuBar]

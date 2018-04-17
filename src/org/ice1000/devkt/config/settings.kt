@@ -77,7 +77,7 @@ object GlobalSettings {
 	var useTab: Boolean = true
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
-	var recentFiles = hashSetOf<File>()
+	var recentFiles: MutableSet<File> = hashSetOf()
 
 	var javaClassName: String by properties
 	var jarName: String by properties
