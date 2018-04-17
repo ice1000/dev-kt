@@ -31,21 +31,21 @@ class DevKtUndoManager(initialCapacity: Int) {
 	fun clear() {
 		undoStack.clear()
 		redoStack.clear()
-		println("Cleared.")
+		// println("Cleared.")
 	}
 
 	@Synchronized
 	fun undo(host: DevKtDocumentHandler<*>) {
 		if (!canUndo) return
 		while (null == undoStack.peek()) undoStack.pop()
-		println("Undo:")
+		// println("Undo:")
 		generateSequence { undoStack.popOrNull() }.forEach {
-			println("  $it")
+			// println("  $it")
 			redoStack.push(it)
 			if (it.isInsert) host.deleteDirectly(it.offset, it.length, reparse = false)
 			else host.insertDirectly(it.offset, it.text.toString(), move = 0, reparse = false)
 		}
-		println("  (${undoStack.size}, ${redoStack.size})")
+		// println("  (${undoStack.size}, ${redoStack.size})")
 		host.reparse()
 		doneUndo()
 	}
@@ -54,14 +54,14 @@ class DevKtUndoManager(initialCapacity: Int) {
 	fun redo(host: DevKtDocumentHandler<*>) {
 		if (!canRedo) return
 		while (null == redoStack.peek()) redoStack.pop()
-		println("Redo:")
+		// println("Redo:")
 		generateSequence { redoStack.popOrNull() }.forEach {
-			println("  $it")
+			// println("  $it")
 			undoStack.push(it)
 			if (it.isInsert) host.insertDirectly(it.offset, it.text.toString(), move = 0, reparse = false)
 			else host.deleteDirectly(it.offset, it.length, reparse = false)
 		}
-		println("  (${undoStack.size}, ${redoStack.size})")
+		// println("  (${undoStack.size}, ${redoStack.size})")
 		host.reparse()
 		done()
 	}
@@ -69,7 +69,7 @@ class DevKtUndoManager(initialCapacity: Int) {
 	fun addEdit(edit: Edit) {
 		undoStack.add(edit)
 		redoStack.clear()
-		println("Added $edit, (${undoStack.size}, ${redoStack.size})")
+		// println("Added $edit, (${undoStack.size}, ${redoStack.size})")
 	}
 
 	fun done() {
