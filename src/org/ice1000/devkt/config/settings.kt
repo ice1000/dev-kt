@@ -1,8 +1,8 @@
 package org.ice1000.devkt.config
 
 import org.ice1000.devkt.DevKtFontManager.defaultFontName
-import org.ice1000.devkt.handleException
-import org.ice1000.devkt.ignoreException
+import org.ice1000.devkt.openapi.util.handleException
+import org.ice1000.devkt.openapi.util.ignoreException
 import org.ice1000.devkt.lie.ctrlOrMeta
 import org.ice1000.devkt.lie.mac
 import java.awt.Rectangle

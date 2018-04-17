@@ -3,9 +3,12 @@ package org.ice1000.devkt.ui
 import org.ice1000.devkt.*
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
-import org.ice1000.devkt.openapi.*
+import org.ice1000.devkt.openapi.ColorScheme
+import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.ui.IDevKtDocument
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
+import org.ice1000.devkt.openapi.util.handleException
+import org.ice1000.devkt.openapi.util.paired
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import java.util.*
@@ -77,8 +80,16 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	override fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 	override fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
-	override fun undo() = undoManager.undo(this)
-	override fun redo() = undoManager.redo(this)
+	override fun undo() {
+		document.edited = true
+		undoManager.undo(this)
+	}
+
+	override fun redo() {
+		document.edited = true
+		undoManager.redo(this)
+	}
+
 	override fun done() = undoManager.done()
 	override fun clearUndo() = undoManager.clear()
 	override fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
@@ -131,8 +142,11 @@ class DevKtDocumentHandler<TextAttributes>(
 	fun blockComment() {
 		val (start, end) = blockComment ?: return
 		val selectionStart = selectionStart
+		addEdit(selectionEnd, end, true)
+		addEdit(selectionStart, start, true)
 		insertDirectly(selectionEnd, end, 0)
 		insertDirectly(selectionStart, start, 0)
+		done()
 	}
 
 	/**

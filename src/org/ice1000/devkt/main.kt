@@ -14,11 +14,14 @@ import org.ice1000.devkt.ui.jfx.DevKtApplication
  */
 @JvmName("main")
 fun devKt(vararg args: String) {
-	// redirectStdout()
-	GlobalSettings.load()
-	if (args.firstOrNull() != "--ugly") {
-		if (mac) MacSpecific.init()
+	with(LaunchInfo) {
+		load(*args)
+		if (redirectStdout) redirectStdout()
+		GlobalSettings.load()
+		if (!ugly) {
+			if (mac) MacSpecific.init()
+		}
+		if (!noFont) DevKtFontManager.loadFont()
+		Application.launch(DevKtApplication::class.java, *args)
 	}
-	DevKtFontManager.loadFont()
-	Application.launch(DevKtApplication::class.java, *args)
 }

@@ -4,10 +4,21 @@
 
 package org.ice1000.devkt
 
+import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.ui.swing.DevKtFrame
 import java.awt.Font
 import java.awt.GraphicsEnvironment
+import java.io.OutputStream
+import java.io.PrintStream
 import javax.swing.UIManager
+
+fun redirectStdout() = System.setOut(PrintStream(object : OutputStream() {
+	override fun write(b: Int) {
+		if (b.toChar() == '\n') DevKtFrame.instance.ui.messageLabel.text = ""
+		else DevKtFrame.instance.ui.messageLabel.run { text = "$text${b.toChar()}" }
+	}
+}))
 
 object DevKtFontManager {
 	var monoFont: Font
@@ -69,3 +80,23 @@ object DevKtFontManager {
 	}
 }
 
+fun useDarculaLaf() {
+	UIManager.getFont("Label.font")
+	UIManager.setLookAndFeel(DarculaLaf())
+}
+
+object LaunchInfo {
+	fun load(vararg args: String) = args.forEach { arg ->
+		when (arg) {
+			"--ugly" -> ugly = true
+			"--no-font" -> noFont = true
+			"--no-bg" -> noBg = true
+			"--redirect-stdout" -> redirectStdout = true
+		}
+	}
+
+	var ugly = false
+	var noFont = false
+	var noBg = false
+	var redirectStdout = false
+}
