@@ -1,16 +1,12 @@
 package org.ice1000.devkt.ui.swing
 
-import charlie.gensokyo.item
-import charlie.gensokyo.onAction
-import charlie.gensokyo.separator
-import charlie.gensokyo.subMenu
+import charlie.gensokyo.*
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.DevKtIcons
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
 import javax.swing.JFrame
 import javax.swing.JMenuBar
-import javax.swing.JOptionPane
 
 /**
  * DSL that initializes [menuBar]
@@ -192,13 +188,10 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 				onAction { buildClassAndRun() }
 			}
 		}
-		subMenu("Run As") {
-			icon = DevKtIcons.EXECUTE
-			item("Kotlin Script") {
-				icon = DevKtIcons.KOTLIN_FILE
-				keyMap(GlobalSettings.shortcutRunAsScript)
-				onAction { runScript() }
-			}
+		item("Run As KtScript") {
+			icon = DevKtIcons.KOTLIN_FILE
+			keyMap(GlobalSettings.shortcutRunAsScript)
+			onAction { runScript() }
 		}
 	}
 	menuBar.subMenu("Help") {
@@ -207,6 +200,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = DevKtIcons.DUMP
 			onAction { viewPsi() }
 		}
+		item("Source Code") { onAction { viewSource() } }
 		subMenu("Alternatives") {
 			item("IntelliJ IDEA") {
 				icon = DevKtIcons.IDEA
