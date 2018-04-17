@@ -1,25 +1,82 @@
 package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
+import com.intellij.uiDesigner.core.GridConstraints
+import com.intellij.uiDesigner.core.GridLayoutManager
 import org.ice1000.devkt.LaunchInfo
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.lang.PsiViewerImpl
-import org.ice1000.devkt.ui.*
-import org.ice1000.devkt.ui.swing.forms.*
+import org.ice1000.devkt.ui.ChooseFileType
+import org.ice1000.devkt.ui.MessageType
+import org.ice1000.devkt.ui.UIBase
+import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.io.File
 import java.net.URL
-import java.util.regex.Pattern
-import java.util.regex.PatternSyntaxException
 import javax.swing.*
-import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
+import javax.swing.text.AttributeSet
 
-abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
+abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet>() {
+	lateinit var mainPanel: JPanel
+	var messageLabel = JLabel()
+	protected var menuBar = JMenuBar()
+	protected var editor = JTextPane()
+	protected var lineNumberLabel = JLabel()
+	private var scrollPane = JScrollPane()
+	protected var memoryIndicator = JButton()
+
 	init {
+		mainPanel = object : JPanel() {
+			public override fun paintComponent(g: Graphics) {
+				super.paintComponent(g)
+				if (LaunchInfo.noBg) return
+				val image = GlobalSettings.backgroundImage.second
+				if (null != image) g.drawImage(imageCache ?: image
+						.getScaledInstance(mainPanel.width, mainPanel.height, Image.SCALE_SMOOTH)
+						.also { imageCache = it }, 0, 0, null)
+				g.color = backgroundColorCache ?: Color.decode(GlobalSettings.colorBackground)
+						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
+						.also { backgroundColorCache = it }
+				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
+				refreshMemoryIndicator()
+			}
+		}
+		mainPanel.layout = GridLayoutManager(3, 1, Insets(0, 0, 0, 0), -1, -1)
+		mainPanel.preferredSize = Dimension(800, 600)
+		menuBar.layout = FlowLayout(FlowLayout.LEFT, 0, 0)
+		mainPanel.add(menuBar, GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false))
+		scrollPane.isOpaque = false
+		scrollPane.putClientProperty("html.disable", java.lang.Boolean.TRUE)
+		mainPanel.add(scrollPane, GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
+		val panel1 = JPanel()
+		panel1.layout = BorderLayout(0, 0)
+		panel1.isDoubleBuffered = false
+		panel1.isOpaque = false
+		panel1.putClientProperty("html.disable", java.lang.Boolean.TRUE)
+		scrollPane.setViewportView(panel1)
+		editor.dragEnabled = true
+		editor.isOpaque = false
+		panel1.add(editor, BorderLayout.CENTER)
+		lineNumberLabel.isFocusable = false
+		lineNumberLabel.horizontalAlignment = 4
+		lineNumberLabel.inheritsPopupMenu = false
+		lineNumberLabel.isOpaque = false
+		lineNumberLabel.isRequestFocusEnabled = false
+		lineNumberLabel.verticalAlignment = 1
+		lineNumberLabel.verticalTextPosition = 1
+		panel1.add(lineNumberLabel, BorderLayout.WEST)
+		val panel2 = JPanel()
+		panel2.layout = GridLayoutManager(1, 2, Insets(0, 0, 0, 0), -1, -1)
+		mainPanel.add(panel2, GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false))
+		messageLabel.text = ""
+		messageLabel.putClientProperty("html.disable", true)
+		panel2.add(messageLabel, GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false))
+		memoryIndicator.isFocusable = true
+		memoryIndicator.isOpaque = false
+		panel2.add(memoryIndicator, GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, 1, null, null, null, 0, false))
+		lineNumberLabel.labelFor = editor
 		frame.jMenuBar = menuBar
 		with(scrollPane) {
 			viewport.isOpaque = false
@@ -36,24 +93,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	var imageCache: Image? = null
 	var backgroundColorCache: Color? = null
-
-	final override fun createUIComponents() {
-		mainPanel = object : JPanel() {
-			public override fun paintComponent(g: Graphics) {
-				super.paintComponent(g)
-				if (LaunchInfo.noBg) return
-				val image = GlobalSettings.backgroundImage.second
-				if (null != image) g.drawImage(imageCache ?: image
-						.getScaledInstance(mainPanel.width, mainPanel.height, Image.SCALE_SMOOTH)
-						.also { imageCache = it }, 0, 0, null)
-				g.color = backgroundColorCache ?: Color.decode(GlobalSettings.colorBackground)
-						.run { Color(red, green, blue, GlobalSettings.backgroundAlpha) }
-						.also { backgroundColorCache = it }
-				g.fillRect(0, 0, mainPanel.width, mainPanel.height)
-				refreshMemoryIndicator()
-			}
-		}
-	}
 
 	override var memoryIndicatorText
 		get() = memoryIndicator.text
@@ -119,144 +158,5 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 
 	fun viewPsi() {
 		psiFile()?.let { PsiViewerImpl(it, frame).show }
-	}
-}
-
-class GoToLineDialog(uiImpl: AbstractUI, private val document: DevKtDocument<*>) : GoToLine() {
-	init {
-		setLocationRelativeTo(uiImpl.mainPanel)
-		getRootPane().defaultButton = okButton
-		contentPane = mainPanel
-		title = "Go to Line/Column"
-		isModal = true
-		pack()
-		okButton.addActionListener { ok() }
-		cancelButton.addActionListener { dispose() }
-		lineColumn.text = document.posToLineColumn(document.caretPosition).let { (line, column) ->
-			"$line:$column"
-		}
-	}
-
-	private fun ok() {
-		val input = lineColumn.text.split(':')
-		val line = input.firstOrNull()?.toIntOrNull() ?: return
-		val column = input.getOrNull(1)?.toIntOrNull() ?: 1
-		document.caretPosition = document.lineColumnToPos(line, column)
-		dispose()
-	}
-}
-
-data class SearchResult(val start: Int, val end: Int)
-
-open class FindDialog(
-		uiImpl: AbstractUI,
-		val document: DevKtDocumentHandler<*>) : Find() {
-	companion object {
-		val NO_REGEXP_CHARS = arrayOf(
-				'\\', '{', '[', '(', '+', '*', '^', '$', '.', '?', '|'
-		)
-	}
-
-	protected open var searchResult = ArrayList<SearchResult>()
-	protected open var currentIndex = 0
-
-	init {
-		setLocationRelativeTo(uiImpl.mainPanel)
-
-		contentPane = mainPanel
-		title = "Find"
-		isModal = true
-
-		pack()
-
-		moveUp.addActionListener { moveUp() }
-		moveDown.addActionListener { moveDown() }
-		isMatchCase.addActionListener { search() }
-		isRegex.addActionListener { search() }
-		input.document.addDocumentListener(object : DocumentListener {
-			override fun changedUpdate(e: DocumentEvent?) = Unit                //不懂调用条件。。。
-			override fun insertUpdate(e: DocumentEvent?) = removeUpdate(e)
-			override fun removeUpdate(e: DocumentEvent?) = search()
-		})
-	}
-
-	final override fun setLocationRelativeTo(c: Component?) = super.setLocationRelativeTo(c)
-	final override fun pack() = super.pack()
-
-	protected open fun search() {
-		searchResult.clear()
-		document.selectionEnd = document.selectionStart
-
-		val input = input.text
-		val text = document.text
-		val regex = if (isRegex.isSelected.not()) {                //FIXME stupid code 我太菜了
-			var tempInput = input
-			NO_REGEXP_CHARS.forEach {
-				tempInput = tempInput.replace(it.toString(), "\\$it")
-			}
-
-			tempInput
-		} else input
-
-		try {
-			Pattern.compile(
-					regex,
-					if (isMatchCase.isSelected.not()) Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE else 0
-			).matcher(text).run {
-				while (find()) {
-					searchResult.add(SearchResult(start(), end()))
-				}
-			}
-
-			select(0)
-		} catch (e: PatternSyntaxException) {
-			//TODO 做出提示
-		}
-	}
-
-	protected open fun select(index: Int) {
-		searchResult.getOrNull(index)?.let { (start, end) ->
-			currentIndex = index
-			document.selectionStart = start
-			document.selectionEnd = end
-		}
-	}
-
-	protected open fun moveUp() {
-		select(currentIndex - 1)
-	}
-
-	protected open fun moveDown() {
-		select(currentIndex + 1)
-	}
-}
-
-class ReplaceDialog(
-		uiImpl: AbstractUI, document: DevKtDocumentHandler<*>) :
-		FindDialog(uiImpl, document) {
-	init {
-		title = "Replace"
-		listOf<JComponent>(separator, replaceInput, replace, replaceAll).forEach {
-			it.isVisible = true
-		}
-
-		pack()
-
-		replace.addActionListener { replaceCurrent() }
-		replaceAll.addActionListener { replaceAll() }
-	}
-
-	private fun replaceCurrent() {
-		searchResult.getOrNull(currentIndex)?.run {
-			document.resetTextTo(document.text.replaceRange(start until end, replaceInput.text))
-		}
-	}
-
-	private fun replaceAll() {
-		val findInput = input.text
-		val replaceInput = replaceInput.text
-		document.resetTextTo(if (isRegex.isSelected) {
-			document.replaceText(Regex(findInput), replaceInput)
-		} else document.text.replace(findInput, replaceInput))
 	}
 }

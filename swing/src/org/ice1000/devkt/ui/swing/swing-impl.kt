@@ -7,6 +7,9 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
+import org.ice1000.devkt.ui.swing.dialogs.FindDialog
+import org.ice1000.devkt.ui.swing.dialogs.GoToLineDialog
+import org.ice1000.devkt.ui.swing.dialogs.ReplaceDialog
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
@@ -173,18 +176,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		editor.paste()
 	}
 
-	fun gotoLine() {
-		GoToLineDialog(this@UIImpl, document.document).show
-	}
-
-	fun find() {
-		FindDialog(this@UIImpl, document).show
-	}
-
-	fun replace() {
-		ReplaceDialog(this@UIImpl, document).show
-	}
-
+	fun gotoLine() = GoToLineDialog(this@UIImpl, document.document).show
+	fun find() = FindDialog(this@UIImpl, document).show
+	fun replace() = ReplaceDialog(this@UIImpl, document).show
 	override fun editorText() = editor.text.orEmpty()
 
 	override fun updateShowInFilesMenuItem() {
