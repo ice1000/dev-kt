@@ -1,16 +1,12 @@
 package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
+import org.ice1000.devkt.LaunchInfo
 import org.ice1000.devkt.config.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.PsiViewerImpl
-import org.ice1000.devkt.ui.ChooseFileType
-import org.ice1000.devkt.ui.DevKtDocument
-import org.ice1000.devkt.ui.DevKtDocumentHandler
-import org.ice1000.devkt.ui.MessageType
-import org.ice1000.devkt.ui.swing.forms.Find
-import org.ice1000.devkt.ui.swing.forms.GoToLine
-import org.ice1000.devkt.ui.swing.forms.UI
+import org.ice1000.devkt.ui.*
+import org.ice1000.devkt.ui.swing.forms.*
 import java.awt.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -45,6 +41,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UI() {
 		mainPanel = object : JPanel() {
 			public override fun paintComponent(g: Graphics) {
 				super.paintComponent(g)
+				if (LaunchInfo.noBg) return
 				val image = GlobalSettings.backgroundImage.second
 				if (null != image) g.drawImage(imageCache ?: image
 						.getScaledInstance(mainPanel.width, mainPanel.height, Image.SCALE_SMOOTH)

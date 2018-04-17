@@ -84,3 +84,19 @@ fun useDarculaLaf() {
 	UIManager.getFont("Label.font")
 	UIManager.setLookAndFeel(DarculaLaf())
 }
+
+object LaunchInfo {
+	fun load(vararg args: String) = args.forEach { arg ->
+		when (arg) {
+			"--ugly" -> ugly = true
+			"--no-font" -> noFont = true
+			"--no-bg" -> noBg = true
+			"--redirect-stdout" -> redirectStdout = true
+		}
+	}
+
+	var ugly = false
+	var noFont = false
+	var noBg = false
+	var redirectStdout = false
+}

@@ -2,7 +2,6 @@ package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.*
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.openapi.util.keyMap
 import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtIcons
 import java.awt.event.KeyEvent
@@ -230,15 +229,3 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 	}
 }
 
-val kotlinFileFilter = object : FileFilter() {
-	override fun accept(input: File?) = when {
-		input == null -> false
-		input.isDirectory -> true
-		else -> {
-			val fileName = input.path.toLowerCase()
-			fileName.endsWith(".kt") or fileName.endsWith(".kts")
-		}
-	}
-
-	override fun getDescription() = ".kt, .kts"
-}
