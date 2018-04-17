@@ -27,7 +27,18 @@ kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {
 	base
+	idea
 	kotlin("jvm") version "1.2.31" apply false
+}
+
+idea {
+	module {
+		// https://github.com/gradle/kotlin-dsl/issues/537/
+		excludeDirs = excludeDirs +
+				file("pinpoint_piggy") +
+				file("build-cache") +
+				file(".build-cache")
+	}
 }
 
 allprojects {

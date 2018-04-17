@@ -10,7 +10,6 @@ val commitHash: String by rootProject.extra
 val isCI: Boolean by rootProject.extra
 
 plugins {
-	idea
 	java
 	application
 	id("org.jetbrains.intellij") version "0.3.1"
@@ -75,16 +74,6 @@ task<Jar>("fatJar") {
 		}
 	})
 	with(tasks["jar"] as Jar)
-}
-
-idea {
-	module {
-		// https://github.com/gradle/kotlin-dsl/issues/537/
-		excludeDirs = excludeDirs +
-				file("pinpoint_piggy") +
-				file("build-cache") +
-				file(".build-cache")
-	}
 }
 
 tasks.withType<Jar> {
