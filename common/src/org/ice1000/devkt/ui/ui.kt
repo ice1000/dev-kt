@@ -313,10 +313,6 @@ abstract class UIBase<TextAttributes> {
 	}
 
 	fun runScript() {
-		val currentFile = currentFile ?: return
-		val `class` = currentFile.let(Analyzer::compileScript) ?: return
-		handleException {
-			tryConstructClassFromStringArgs(`class`, listOf(currentFile.absolutePath))
-		}
+		Analyzer.runScript(document.text)
 	}
 }

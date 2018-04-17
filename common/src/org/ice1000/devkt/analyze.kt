@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.LanguageExtension
@@ -26,15 +25,13 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import java.io.File
+import javax.script.ScriptEngineManager
 
 data class ASTToken(
 		val start: Int,
@@ -50,6 +47,9 @@ data class ASTToken(
 object Analyzer : Disposable {
 	val targetDir = File("./.build-cache")
 	val targetJar get() = targetDir.resolve(GlobalSettings.jarName)
+	private val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")
+	// private val originalStdout = System.out
+	// private val originalStderr = System.err
 	private val jvmEnvironment: KotlinCoreEnvironment
 	private val jsEnvironment: KotlinCoreEnvironment
 	private val psiFileFactory: PsiFileFactory
@@ -112,19 +112,8 @@ object Analyzer : Disposable {
 		compileFileTo(ktFile, jvmEnvironment, targetDir)
 	}
 
-	fun compileScript(scriptFile: File): Class<*>? {
-		val configuration = jvmEnvironment.configuration.copy()
-		configuration.addKotlinSourceRoot(scriptFile.absolutePath)
-		configuration.put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
-		configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, KotlinScriptDefinition(Any::class))
-		val scriptEnvironment = KotlinCoreEnvironment.createForProduction(Disposable { },
-				configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
-		val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(scriptEnvironment.project)
-		val error = scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)
-		if (error) return null
-		val state = KotlinToJVMBytecodeCompiler.compileScript(scriptEnvironment, javaClass.classLoader)
-		println(state?.javaClass)
-		return state
+	fun runScript(text: String) {
+		scriptEngine.eval(text)
 	}
 
 	fun compileJar(ktFile: KtFile) {

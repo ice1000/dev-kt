@@ -196,11 +196,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = DevKtIcons.EXECUTE
 			item("Kotlin Script") {
 				icon = DevKtIcons.KOTLIN_FILE
-				onAction {
-					// TODO
-					JOptionPane.showMessageDialog(frame, "This feature is TODO.",
-							"Unfinished", 1, DevKtIcons.KOTLIN)
-				}
+				onAction { runScript() }
 			}
 		}
 	}

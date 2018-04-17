@@ -24,7 +24,7 @@ task<Jar>("fatJar") {
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
 	group = "build"
 	from(Callable {
-		configurations.compile.map {
+		configurations.compile.filter { it.parentFile.name != "plugins" }.map {
 			@Suppress("IMPLICIT_CAST_TO_ANY")
 			if (it.isDirectory) it else zipTree(it)
 		}
