@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import java.io.File
+import javax.script.ScriptException
 import kotlin.concurrent.thread
 
 /**
@@ -62,6 +63,8 @@ abstract class UIBase<TextAttributes> {
 	fun clion() = browse("https://www.jetbrains.com/clion/download/")
 	fun eclipse() = browse("http://marketplace.eclipse.org/content/kotlin-plugin-eclipse")
 	fun emacs() = browse("https://melpa.org/#/kotlin-mode")
+	fun viewSource() = browse("https://github.com/ice1000/dev-kt")
+	fun createIssue() = browse("https://github.com/ice1000/dev-kt/issues/new")
 	fun psiFile(): PsiFile? = document.psiFile
 	fun nextLine() = document.nextLine()
 	fun splitLine() = document.splitLine()
@@ -82,12 +85,12 @@ abstract class UIBase<TextAttributes> {
 	abstract fun chooseDir(from: File?, chooseFileType: ChooseFileType): File?
 	abstract fun dialogYesNo(
 			text: String,
-			messageType: MessageType,
+			messageType: MessageType = MessageType.Information,
 			title: String = messageType.name): Boolean
 
 	abstract fun dialog(
 			text: String,
-			messageType: MessageType,
+			messageType: MessageType = MessageType.Information,
 			title: String = messageType.name)
 
 	fun makeSureLeaveCurrentFile() = edited && !dialogYesNo(
@@ -312,7 +315,12 @@ abstract class UIBase<TextAttributes> {
 		buildAsJar { if (it) runCommand(Analyzer.targetJar) }
 	}
 
-	fun runScript() {
+	fun runScript() = try {
 		Analyzer.runScript(document.text)
+	} catch (e: ScriptException) {
+		message("Failed to run script.")
+		dialog("Failed to run: ${e.message}",
+				MessageType.Error,
+				"Run as script")
 	}
 }

@@ -59,6 +59,19 @@ val Key.awt
 		Key.`6` -> KeyEvent.VK_6
 		Key.`7` -> KeyEvent.VK_7
 		Key.`8` -> KeyEvent.VK_8
+		Key.`9` -> KeyEvent.VK_9
+		Key.F1 -> KeyEvent.VK_F1
+		Key.F2 -> KeyEvent.VK_F2
+		Key.F3 -> KeyEvent.VK_F3
+		Key.F4 -> KeyEvent.VK_F4
+		Key.F5 -> KeyEvent.VK_F5
+		Key.F6 -> KeyEvent.VK_F6
+		Key.F7 -> KeyEvent.VK_F7
+		Key.F8 -> KeyEvent.VK_F8
+		Key.F9 -> KeyEvent.VK_F9
+		Key.F10 -> KeyEvent.VK_F10
+		Key.F11 -> KeyEvent.VK_F11
+		Key.F12 -> KeyEvent.VK_F12
 		Key.SLASH -> KeyEvent.VK_SLASH
 		Key.ENTER -> KeyEvent.VK_ENTER
 		Key.UP -> KeyEvent.VK_UP

@@ -34,13 +34,13 @@ idea {
 		// https://github.com/gradle/kotlin-dsl/issues/537/
 		excludeDirs = excludeDirs +
 				file("pinpoint_piggy") +
-				file("build-cache") +
+				file("common/res/template") +
 				file(".build-cache")
 	}
 }
 
 allprojects {
-	val shortVersion = "v1.3-SNAPSHOT"
+	val shortVersion = "v1.3"
 	val packageName = "org.ice1000.devkt"
 
 	group = packageName
