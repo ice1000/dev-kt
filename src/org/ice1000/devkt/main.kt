@@ -16,7 +16,7 @@ import org.ice1000.devkt.ui.jfx.DevKtApplication
 fun devKt(vararg args: String) {
 	with(LaunchInfo) {
 		load(*args)
-		if (redirectStdout) redirectStdout()
+		// if (redirectStdout) redirectStdout()
 		GlobalSettings.load()
 		if (!ugly) {
 			if (mac) MacSpecific.init()

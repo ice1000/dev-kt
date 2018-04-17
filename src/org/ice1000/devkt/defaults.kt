@@ -4,21 +4,10 @@
 
 package org.ice1000.devkt
 
-import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.ui.swing.DevKtFrame
 import java.awt.Font
 import java.awt.GraphicsEnvironment
-import java.io.OutputStream
-import java.io.PrintStream
 import javax.swing.UIManager
-
-fun redirectStdout() = System.setOut(PrintStream(object : OutputStream() {
-	override fun write(b: Int) {
-		if (b.toChar() == '\n') DevKtFrame.instance.ui.messageLabel.text = ""
-		else DevKtFrame.instance.ui.messageLabel.run { text = "$text${b.toChar()}" }
-	}
-}))
 
 object DevKtFontManager {
 	var monoFont: Font
@@ -78,11 +67,6 @@ object DevKtFontManager {
 			gothicFont = Font(gothic, Font.TRUETYPE_FONT, 16).deriveFont(GlobalSettings.fontSize)
 		}
 	}
-}
-
-fun useDarculaLaf() {
-	UIManager.getFont("Label.font")
-	UIManager.setLookAndFeel(DarculaLaf())
 }
 
 object LaunchInfo {
