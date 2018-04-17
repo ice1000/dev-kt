@@ -12,8 +12,6 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-data class SearchResult(val start: Int, val end: Int)
-
 abstract class FindUI : JDialog() {
 	protected val mainPanel = JPanel()
 	protected val isMatchCase = JCheckBox()
@@ -35,7 +33,7 @@ abstract class FindUI : JDialog() {
 		isMatchCase.setMnemonic('C')
 		isMatchCase.displayedMnemonicIndex = 6
 		panel0.add(isMatchCase, GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false))
-		isRegex.text = "panel0"
+		isRegex.text = "Regex"
 		isRegex.setMnemonic('G')
 		isRegex.displayedMnemonicIndex = 2
 		panel0.add(isRegex, GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false))
@@ -71,9 +69,9 @@ abstract class FindUI : JDialog() {
 	}
 }
 
-open class FindDialog(
+open class FindDialogImpl(
 		uiImpl: AbstractUI,
-		private val document: DevKtDocumentHandler<*>) : FindUI(), IFind by FindDialogImpl(document) {
+		private val document: DevKtDocumentHandler<*>) : FindUI(), IFind by AbstractFindDialog(document) {
 
 	protected open val bundle get() = FindDataBundle(findInput.text, isMatchCase.isSelected, isRegex.isSelected)
 
@@ -103,13 +101,13 @@ open class FindDialog(
 
 }
 
-class ReplaceDialog(
+class ReplaceDialogImpl(
 		uiImpl: AbstractUI, document: DevKtDocumentHandler<*>) :
-		FindDialog(uiImpl, document), IReplace by ReplaceImpl(document) {
+		FindDialogImpl(uiImpl, document), IReplace by AbstractReplaceDialog(document) {
 
 	override val bundle
 		get() = super.bundle.apply {
-			replaceInput = this@ReplaceDialog.replaceInput.text
+			replaceInput = this@ReplaceDialogImpl.replaceInput.text
 		}
 
 	init {

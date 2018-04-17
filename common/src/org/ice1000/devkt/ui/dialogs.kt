@@ -27,7 +27,7 @@ interface IReplace {
 	fun replaceAll(bundle: FindDataBundle)
 }
 
-open class FindDialogImpl(val document: DevKtDocumentHandler<*>) : IFind {
+open class AbstractFindDialog(val document: DevKtDocumentHandler<*>) : IFind {
 	companion object {
 		val NO_REGEXP_CHARS = "\\{[(+*^\$.?|".toCharArray()
 	}
@@ -41,13 +41,8 @@ open class FindDialogImpl(val document: DevKtDocumentHandler<*>) : IFind {
 
 		val input = bundle.findInput
 		val text = document.text
-		val regex = if (bundle.isRegex.not()) {                //FIXME stupid code 我太菜了
-			var tempInput = input
-			NO_REGEXP_CHARS.forEach {
-				tempInput = tempInput.replace(it.toString(), "\\$it")
-			}
-
-			tempInput
+		val regex = if (bundle.isRegex.not()) NO_REGEXP_CHARS.fold(input) { last, current ->
+			last.replace(current.toString(), "\\$current")
 		} else input
 
 		try {
@@ -78,7 +73,7 @@ open class FindDialogImpl(val document: DevKtDocumentHandler<*>) : IFind {
 	override fun moveDown() = select(currentIndex + 1)
 }
 
-class ReplaceImpl(document: DevKtDocumentHandler<*>) : FindDialogImpl(document), IReplace {
+class AbstractReplaceDialog(document: DevKtDocumentHandler<*>) : AbstractFindDialog(document), IReplace {
 	override fun replaceCurrent(bundle: FindDataBundle) {
 		searchResult.getOrNull(currentIndex)?.run {
 			document.resetTextTo(document.text.replaceRange(start until end, bundle.replaceInput ?: return))
