@@ -11,3 +11,4 @@ build-cache
 gradle.properties
 *.ttf
 common/plugins
+swing/src/org/ice1000/devkt/ui/swing/forms/*.java
