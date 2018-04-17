@@ -3,6 +3,7 @@ package org.ice1000.devkt
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
+import org.ice1000.devkt.openapi.util.selfLocation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil

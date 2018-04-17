@@ -12,6 +12,8 @@ fun <T> Stack<T>.popOrNull() = if (empty()) null else pop()
 fun <T> Stack<T>.peekOrNull() = if (empty()) null else peek()
 
 /**
+ * Replacement of [javax.swing.undo.UndoManager]
+ *
  * @author ice1000
  * @since v1.3
  * @property undoStack Stack<Edit?> Use null as mark

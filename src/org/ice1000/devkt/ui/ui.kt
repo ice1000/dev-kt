@@ -2,8 +2,8 @@ package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.handleException
-import org.ice1000.devkt.selfLocation
+import org.ice1000.devkt.openapi.util.handleException
+import org.ice1000.devkt.openapi.util.selfLocation
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile

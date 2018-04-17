@@ -1,8 +1,8 @@
 package org.ice1000.devkt.lang
 
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.openapi.cutText
 import org.ice1000.devkt.openapi.nodeType
+import org.ice1000.devkt.openapi.util.cutText
 import org.ice1000.devkt.ui.swing.forms.PsiViewer
 import org.jetbrains.kotlin.com.intellij.psi.*
 import java.awt.Window

@@ -7,6 +7,8 @@ import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.ui.IDevKtDocument
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
+import org.ice1000.devkt.openapi.util.handleException
+import org.ice1000.devkt.openapi.util.paired
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import java.util.*

@@ -2,7 +2,7 @@ package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.*
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.keyMap
+import org.ice1000.devkt.openapi.util.keyMap
 import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtIcons
 import java.awt.event.KeyEvent
