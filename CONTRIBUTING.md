@@ -12,12 +12,13 @@ Then:
   + As reference you can see [this shell script](./download-font.sh)
 + (Optional) Create `gradle.properties`, set your IntelliJ IDEA installation path to `ideaC_path`
   + If you don't do this, gradle will download an IntelliJ IDEA 2018.1
-+ (Optional) Run `gradlew downloadFiraCode`
++ (Optional) Run `gradlew :swing:downloadFiraCode`
   + If you don't do this, the editor font will be extremely ugly
-+ Use `gradlew fatJar` to build this application
-+ Run this application with `java -jar build/libs/devkt-[some unimportant text]-all.jar`
++ Use `gradlew :swing:fatJar` to build this application
++ Run this application with `java -jar swing/build/libs/devkt-[some unimportant text]-all.jar`
 
-BTW if you don't need the "run" function, you can simply run this application by `gradlew run` after setting up the IntelliJ IDEA path.
+BTW if you don't need the "run" function of DevKt,
+you can simply run this application by `gradlew :swing:run` after setting up the IntelliJ IDEA path.
 
 # Contributing guidelines
 

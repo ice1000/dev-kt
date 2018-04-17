@@ -3,11 +3,11 @@ environment:
 #
 
 build_script:
-  - gradlew downloadFiraCode --info
-  - gradlew fatJar
+  - gradlew :swing:downloadFiraCode --info
+  - gradlew :swing:fatJar --info
 #
 
 artifacts:
-  - path: 'build\libs\*.jar'
+  - path: 'swing\build\libs\*.jar'
     name: snapshot
 #
