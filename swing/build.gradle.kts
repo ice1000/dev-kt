@@ -1,9 +1,6 @@
 import de.undercouch.gradle.tasks.download.Download
-import org.gradle.internal.deployment.RunApplication
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import java.awt.HeadlessException
-import java.nio.file.*
 import java.util.concurrent.*
 
 val commitHash: String by rootProject.extra
@@ -44,7 +41,7 @@ tasks.withType<Jar> {
 
 val downloadFiraCode = task<Download>("downloadFiraCode") {
 	src("https://raw.githubusercontent.com/tonsky/FiraCode/master/distr/ttf/FiraCode-Regular.ttf")
-	dest(Paths.get("res", "font").toFile())
+	dest(file("res/font").apply { if (!exists()) mkdirs() })
 	overwrite(false)
 }
 
@@ -58,8 +55,8 @@ java.sourceSets {
 	}
 
 	"test" {
-		resources.setSrcDirs(listOf("testRes"))
-		java.setSrcDirs(listOf("test"))
+		resources.setSrcDirs(emptyList<Any>())
+		java.setSrcDirs(emptyList<Any>())
 		withConvention(KotlinSourceSet::class) {
 			kotlin.setSrcDirs(listOf("test"))
 		}
@@ -71,8 +68,8 @@ dependencies {
 	compile(project(":common"))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
 	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
-	compile(files(Paths.get("lib", "filedrop.jar")))
-	compileOnly(files(Paths.get("lib", "AppleJavaExtensions-1.6.jar")))
+	compile(files("lib/filedrop.jar"))
+	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
 	configurations.runtime.extendsFrom(configurations.testCompileOnly)
 	testCompile(project(":common"))
 	testCompile("junit", "junit", "4.12")
