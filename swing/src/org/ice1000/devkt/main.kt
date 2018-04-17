@@ -5,8 +5,8 @@ package org.ice1000.devkt
 
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lie.MacSpecific
-import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.swing.DevKtFrame
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 
 /**
  * @author ice1000
@@ -18,7 +18,7 @@ fun devKt(vararg args: String) {
 		if (redirectStdout) redirectStdout()
 		GlobalSettings.load()
 		if (!ugly) {
-			if (mac) MacSpecific.init()
+			if (SystemInfo.isMac) MacSpecific.init()
 			useDarculaLaf()
 		}
 		if (!noFont) DevKtFontManager.loadFont()

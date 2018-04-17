@@ -2,12 +2,15 @@ package org.ice1000.devkt.config
 
 import charlie.gensokyo.doNothingOnClose
 import org.ice1000.devkt.DevKtFontManager.allFonts
-import org.ice1000.devkt.DevKtFontManager.defaultFontName
+import org.ice1000.devkt.defaultFontName
 import org.ice1000.devkt.ui.swing.AbstractUI
 import org.ice1000.devkt.ui.swing.DevKtFrame
 import org.ice1000.devkt.ui.swing.forms.Configuration
 import java.awt.Font
-import java.awt.event.*
+import java.awt.event.ActionListener
+import java.awt.event.KeyEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.io.File
 import javax.imageio.ImageIO
 import javax.swing.*

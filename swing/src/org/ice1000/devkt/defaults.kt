@@ -48,8 +48,7 @@ object DevKtFontManager {
 			UIManager.put("ToolTip.font", value)
 		}
 
-	const val defaultFontName = "DevKt Default"
-	val allFonts by lazy {
+	val allFonts: Array<String> by lazy {
 		GraphicsEnvironment.getLocalGraphicsEnvironment().availableFontFamilyNames
 	}
 
@@ -83,20 +82,4 @@ object DevKtFontManager {
 fun useDarculaLaf() {
 	UIManager.getFont("Label.font")
 	UIManager.setLookAndFeel(DarculaLaf())
-}
-
-object LaunchInfo {
-	fun load(vararg args: String) = args.forEach { arg ->
-		when (arg) {
-			"--ugly" -> ugly = true
-			"--no-font" -> noFont = true
-			"--no-bg" -> noBg = true
-			"--redirect-stdout" -> redirectStdout = true
-		}
-	}
-
-	var ugly = false
-	var noFont = false
-	var noBg = false
-	var redirectStdout = false
 }

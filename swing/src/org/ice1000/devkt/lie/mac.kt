@@ -7,8 +7,7 @@ import org.ice1000.devkt.ui.swing.DevKtFrame.Companion.instance
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
 
-val mac = SystemInfo.isMac
-val ctrlOrMeta = if (mac) KeyEvent.META_DOWN_MASK else KeyEvent.CTRL_DOWN_MASK
+val ctrlOrMeta = if (SystemInfo.isMac) KeyEvent.META_DOWN_MASK else KeyEvent.CTRL_DOWN_MASK
 
 object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	init {

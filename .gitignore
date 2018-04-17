@@ -10,4 +10,4 @@ build-cache
 .build-cache
 gradle.properties
 *.ttf
-plugins
+common/plugins

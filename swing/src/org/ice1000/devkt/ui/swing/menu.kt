@@ -5,8 +5,8 @@ import charlie.gensokyo.onAction
 import charlie.gensokyo.separator
 import charlie.gensokyo.subMenu
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.lie.mac
 import org.ice1000.devkt.ui.DevKtIcons
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
 import javax.swing.JFrame
 import javax.swing.JMenuBar
@@ -70,7 +70,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			}
 		}
 		separator
-		if (!mac) item("Settings...") {
+		if (!SystemInfo.isMac) item("Settings...") {
 			icon = DevKtIcons.SETTINGS
 			onAction { settings() }
 		}
@@ -93,7 +93,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			keyMap(GlobalSettings.shortcutSync)
 		}
 		separator
-		if (!mac) item("Exit") {
+		if (!SystemInfo.isMac) item("Exit") {
 			icon = DevKtIcons.EXIT
 			onAction { exit() }
 		}

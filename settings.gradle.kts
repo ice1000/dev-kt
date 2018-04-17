@@ -1,1 +1,1 @@
-rootProject.name = "dev-kt"
+include("common", "swing", "jfx")

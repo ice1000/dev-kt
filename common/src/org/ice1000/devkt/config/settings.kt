@@ -1,10 +1,9 @@
 package org.ice1000.devkt.config
 
-import org.ice1000.devkt.DevKtFontManager.defaultFontName
+import org.ice1000.devkt.defaultFontName
 import org.ice1000.devkt.openapi.util.handleException
 import org.ice1000.devkt.openapi.util.ignoreException
-import org.ice1000.devkt.lie.ctrlOrMeta
-import org.ice1000.devkt.lie.mac
+import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
 import java.awt.image.BufferedImage
@@ -14,11 +13,30 @@ import javax.imageio.ImageIO
 import kotlin.reflect.KMutableProperty
 
 class ShortCut {
+	companion object Keys {
+		const val SHIFT_MASK = 1
+		const val CTRL_MASK = 2
+		const val META_MASK = 4
+		const val ALT_MASK = 8
+		const val ALT_GRAPH_MASK = 32
+		const val SHIFT_DOWN_MASK = 64
+		const val CTRL_DOWN_MASK = 128
+		const val META_DOWN_MASK = 256
+		const val ALT_DOWN_MASK = 512
+
+		fun parse(str: String): ShortCut? {
+			str.split("|").run {
+				val keyCode = firstOrNull()?.toIntOrNull() ?: return null
+				val modifier = getOrNull(1)?.toIntOrNull() ?: return null
+				return ShortCut(modifier, keyCode)
+			}
+		}
+	}
+
 	val isControl: Boolean
 	val isAlt: Boolean
 	val isShift: Boolean
 	val keyCode: Int
-
 	val modifier: Int
 
 	constructor(isControl: Boolean, isAlt: Boolean, isShift: Boolean, keyCode: Int) {
@@ -26,9 +44,9 @@ class ShortCut {
 		this.isAlt = isAlt
 		this.isShift = isShift
 		this.keyCode = keyCode
-		this.modifier = (if (isControl) ctrlOrMeta else 0) or
-				(if (isAlt) KeyEvent.ALT_DOWN_MASK else 0) or
-				(if (isShift) KeyEvent.SHIFT_DOWN_MASK else 0)
+		this.modifier = (if (isControl) CTRL_DOWN_MASK else 0) or
+				(if (isAlt) ALT_DOWN_MASK else 0) or
+				(if (isShift) SHIFT_DOWN_MASK else 0)
 	}
 
 	/**
@@ -39,19 +57,9 @@ class ShortCut {
 	constructor(modifier: Int, keyCode: Int) {
 		this.modifier = modifier
 		this.keyCode = keyCode
-		this.isControl = modifier and KeyEvent.CTRL_DOWN_MASK != 0
-		this.isShift = modifier and KeyEvent.SHIFT_DOWN_MASK != 0
-		this.isAlt = modifier and KeyEvent.ALT_DOWN_MASK != 0
-	}
-
-	companion object {
-		fun parse(str: String): ShortCut? {
-			str.split("|").run {
-				val keyCode = firstOrNull()?.toIntOrNull() ?: return null
-				val modifier = getOrNull(1)?.toIntOrNull() ?: return null
-				return ShortCut(modifier, keyCode)
-			}
-		}
+		this.isControl = modifier and CTRL_DOWN_MASK != 0
+		this.isShift = modifier and SHIFT_DOWN_MASK != 0
+		this.isAlt = modifier and ALT_DOWN_MASK != 0
 	}
 
 	fun check(e: KeyEvent) = e.modifiers == modifier
@@ -125,7 +133,7 @@ object GlobalSettings {
 	var shortcutGoto = ShortCut(true, false, false, KeyEvent.VK_G)
 	var shortcutOpen = ShortCut(true, false, false, KeyEvent.VK_O)
 	// Build | Run As | Class, force to use ctrl + R even though it is in Mac.
-	var shortcutBuildRunAsClass = ShortCut(if (mac) KeyEvent.CTRL_DOWN_MASK else 0, KeyEvent.VK_R)
+	var shortcutBuildRunAsClass = ShortCut(if (SystemInfo.isMac) KeyEvent.CTRL_DOWN_MASK else 0, KeyEvent.VK_R)
 	var shortcutNextLine = ShortCut(false, false, true, KeyEvent.VK_ENTER)
 	var shortcutSplitLine = ShortCut(true, false, false, KeyEvent.VK_ENTER)
 	var shortcutNewLineBefore = ShortCut(true, true, false, KeyEvent.VK_ENTER)
