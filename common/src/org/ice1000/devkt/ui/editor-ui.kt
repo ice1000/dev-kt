@@ -127,7 +127,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		val add = lines.any {
 			val lineStart = startOffsetOf(it)
 			val lineEnd = endOffsetOf(it)
-			val lineText = textWithin(lineStart, lineEnd)
+			val lineText = textWithin(lineStart, lineEnd - 1)
 			!lineText.startsWith(lineCommentStart)
 		}
 		lines.forEach {
