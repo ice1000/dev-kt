@@ -51,6 +51,7 @@ See:
 + [Clojure plugin based on la-clojuer](https://github.com/devkt-plugins/la-clojure-devkt)
 + [Julia plugin](https://github.com/devkt-plugins/julia-devkt)
 + [JSON plugin](https://github.com/devkt-plugins/json-devkt)
++ [Lua plugin based on EmmyLua](https://github.com/devkt-plugins/emmylua-devkt)
 
 To install a plugin, just add the jar in the classpath, and you don't need to do anything else.
 
