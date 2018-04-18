@@ -15,7 +15,7 @@
  */
 @file:Suppress("MemberVisibilityCanBePrivate")
 
-package org.jetbrains.kotlin.com.intellij.lexer
+package org.jetbrains.kotlin.com.intellij.lexer;
 
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.com.intellij.util.containers.IdeaQueue
@@ -28,34 +28,28 @@ abstract class LookAheadLexer @JvmOverloads constructor(private val myBaseLexer:
 	private var myLastOffset: Int = 0
 	private var myLastState: Int = 0
 	private var myTokenStart: Int = 0
-	private val myTypeCache: IdeaQueue<IElementType> = IdeaQueue(capacity)
-	private val myEndOffsetCache: IdeaQueue<Int>
+	private val myTypeCache: IdeaQueue<IElementType?> = IdeaQueue(capacity)
+	private val myEndOffsetCache: IdeaQueue<Int> = IdeaQueue(capacity)
 
-	protected val cacheSize: Int
+	protected open val cacheSize: Int
 		get() = myTypeCache.size()
 
-	init {
-		myEndOffsetCache = IdeaQueue(capacity)
-	}
-
-
-	protected fun addToken(type: IElementType) {
+	protected open fun addToken(type: IElementType?) {
 		addToken(myBaseLexer.tokenEnd, type)
 	}
 
-	protected fun addToken(endOffset: Int, type: IElementType) {
+	protected open fun addToken(endOffset: Int, type: IElementType?) {
 		myTypeCache.addLast(type)
 		myEndOffsetCache.addLast(endOffset)
 	}
 
-	protected fun lookAhead(baseLexer: Lexer) {
+	protected open fun lookAhead(baseLexer: Lexer) {
 		advanceLexer(baseLexer)
 	}
 
 	override fun advance() {
 		if (!myTypeCache.isEmpty) {
 			myTypeCache.pullFirst()
-
 			myTokenStart = myEndOffsetCache.pullFirst()
 		}
 		if (myTypeCache.isEmpty) doLookAhead()
@@ -77,22 +71,22 @@ abstract class LookAheadLexer @JvmOverloads constructor(private val myBaseLexer:
 		return myBaseLexer.bufferEnd
 	}
 
-	protected fun resetCacheSize(size: Int) {
+	protected open fun resetCacheSize(size: Int) {
 		while (myTypeCache.size() > size) {
 			myTypeCache.removeLast()
 			myEndOffsetCache.removeLast()
 		}
 	}
 
-	fun replaceCachedType(index: Int, token: IElementType): IElementType {
+	open fun replaceCachedType(index: Int, token: IElementType): IElementType? {
 		return myTypeCache.set(index, token)
 	}
 
-	protected fun getCachedType(index: Int): IElementType {
+	protected open fun getCachedType(index: Int): IElementType? {
 		return myTypeCache[index]
 	}
 
-	protected fun getCachedOffset(index: Int): Int {
+	protected open fun getCachedOffset(index: Int): Int {
 		return myEndOffsetCache[index]
 	}
 
@@ -117,7 +111,7 @@ abstract class LookAheadLexer @JvmOverloads constructor(private val myBaseLexer:
 		restore(position as LookAheadLexerPosition)
 	}
 
-	protected fun restore(position: LookAheadLexerPosition) {
+	protected open fun restore(position: LookAheadLexerPosition) {
 		start(myBaseLexer.bufferSequence, position.lastOffset, myBaseLexer.bufferEnd, position.lastState)
 		for (i in 0 until position.advanceCount) {
 			advance()
@@ -144,12 +138,12 @@ abstract class LookAheadLexer @JvmOverloads constructor(private val myBaseLexer:
 		override fun getState() = lastState
 	}
 
-	protected fun advanceLexer(lexer: Lexer) {
+	protected open fun advanceLexer(lexer: Lexer) {
 		advanceAs(lexer, lexer.tokenType)
 	}
 
-	protected fun advanceAs(lexer: Lexer, type: IElementType?) {
-		addToken(type!!)
+	protected open fun advanceAs(lexer: Lexer, type: IElementType?) {
+		addToken(type)
 		lexer.advance()
 	}
 
