@@ -64,7 +64,7 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	 * @param string String see [insert]
 	 * @param move Int how long the caret should move
 	 */
-	fun insertDirectly(offset: Int, string: String, move: Int = string.length, reparse: Boolean = true)
+	fun insertDirectly(offset: Int, string: String, move: Int = 0, reparse: Boolean = true)
 
 	/**
 	 * Handles user input, insert with checks and undo recording

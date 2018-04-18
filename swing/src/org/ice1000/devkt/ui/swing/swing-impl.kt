@@ -7,20 +7,18 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
-import org.ice1000.devkt.ui.swing.dialogs.FindDialog
+import org.ice1000.devkt.ui.swing.dialogs.FindDialogImpl
 import org.ice1000.devkt.ui.swing.dialogs.GoToLineDialog
-import org.ice1000.devkt.ui.swing.dialogs.ReplaceDialog
+import org.ice1000.devkt.ui.swing.dialogs.ReplaceDialogImpl
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
-import javax.swing.event.UndoableEditEvent
 import javax.swing.text.AttributeSet
 import javax.swing.text.DefaultStyledDocument
 import javax.swing.text.MutableAttributeSet
-import javax.swing.undo.UndoManager
 
 /**
  * @author ice1000
@@ -177,8 +175,8 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	fun gotoLine() = GoToLineDialog(this@UIImpl, document.document).show
-	fun find() = FindDialog(this@UIImpl, document).show
-	fun replace() = ReplaceDialog(this@UIImpl, document).show
+	fun find() = FindDialogImpl(this@UIImpl, document).show
+	fun replace() = ReplaceDialogImpl(this@UIImpl, document).show
 	override fun editorText() = editor.text.orEmpty()
 
 	override fun updateShowInFilesMenuItem() {
