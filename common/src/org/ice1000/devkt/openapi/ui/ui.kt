@@ -4,6 +4,9 @@ import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.openapi.AnnotationHolder
 import org.ice1000.devkt.openapi.LengthOwner
 import org.ice1000.devkt.ui.Edit
+import java.net.URL
+import javax.swing.Icon
+import com.bulenkov.iconloader.IconLoader as JetBrainsIconLoader
 
 /**
  * @author ice1000
@@ -93,4 +96,34 @@ interface IDevKtDocument<TextAttributes> : LengthOwner {
 	fun lockWrite()
 	fun unlockWrite()
 	fun message(text: String)
+}
+
+/**
+ * @author ice1000
+ * @since v1.4
+ */
+object IconLoader {
+	@JvmStatic
+	fun getIcon(path: String) = JetBrainsIconLoader.getIcon(path)
+
+	@JvmStatic
+	fun getIcon(path: String, `class`: Class<*>) = JetBrainsIconLoader.getIcon(path, `class`)
+
+	@JvmStatic
+	fun getTransparentIcon(icon: Icon) = JetBrainsIconLoader.getTransparentIcon(icon)
+
+	@JvmStatic
+	fun getTransparentIcon(icon: Icon, alpha: Float) = JetBrainsIconLoader.getTransparentIcon(icon, alpha)
+
+	@JvmStatic
+	fun findIcon(path: String) = JetBrainsIconLoader.findIcon(path)
+
+	@JvmStatic
+	fun findIcon(path: String, `class`: Class<*>) = JetBrainsIconLoader.findIcon(path, `class`)
+
+	@JvmStatic
+	fun findIcon(path: URL) = JetBrainsIconLoader.findIcon(path)
+
+	@JvmStatic
+	fun findIcon(path: URL, useCache: Boolean) = JetBrainsIconLoader.findIcon(path, useCache)
 }

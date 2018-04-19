@@ -108,6 +108,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun switchLanguage(language: DevKtLanguage<TextAttributes>) {
 		currentLanguage = language
 		document.onChangeLanguage(language)
+		reparse()
 	}
 
 	val psiFile: PsiFile?

@@ -1,8 +1,10 @@
 package org.ice1000.devkt.ui;
-import com.bulenkov.iconloader.IconLoader;
+
+import org.ice1000.devkt.openapi.ui.IconLoader;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+
 /**
  * Provides icon related utils
  *
@@ -16,6 +18,7 @@ public interface DevKtIcons {
 	@NotNull Icon KOTLIN_MP = IconLoader.getIcon("/icon/kotlin_multiplatform_project_dark.png");
 	@NotNull Icon KOTLIN_FILE = IconLoader.getIcon("/icon/kotlin_file.png");
 	@NotNull Icon KOTLIN_ANDROID = IconLoader.getIcon("/icon/kotlin_activity.png");
+
 	// Project related
 	@NotNull Icon OPEN = IconLoader.getIcon("/icon/menu-open.png");
 	@NotNull Icon CUT = IconLoader.getIcon("/icon/menu-cut_dark.png");

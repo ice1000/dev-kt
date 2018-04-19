@@ -100,6 +100,7 @@ class Java<TextAttributes>(
 	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_8)
 	// TODO multiple language level support
 	override fun createLexer(project: Project) = java8Lexer
+
 	override val icon: Icon get() = DevKtIcons.JAVA
 }
 
@@ -118,6 +119,7 @@ class Kotlin<TextAttributes>(
 	override fun satisfies(fileName: String) = fileName.endsWith(".kt") or fileName.endsWith(".kts")
 	private val lexer = KotlinLexer()
 	override fun createLexer(project: Project) = lexer
+	override val icon: Icon get() = DevKtIcons.KOTLIN
 }
 
 /**
