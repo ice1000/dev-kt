@@ -30,7 +30,6 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	fun clearUndo()
 	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean)
 	fun addEdit(edit: Edit)
-	fun useDefaultLanguage()
 	fun switchLanguage(fileName: String)
 	fun switchLanguage(language: DevKtLanguage<TextAttributes>?)
 	fun adjustFormat(offs: Int = 0, len: Int = length - offs)
