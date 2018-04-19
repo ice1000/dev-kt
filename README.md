@@ -46,12 +46,33 @@ $ sudo apt-get install oracle-java8-installer
 
 See:
 
-+ [CovScript plugin](https://github.com/covscript/covscript-devkt)
-+ [Clojure plugin based on Clojure-Kit](https://github.com/devkt-plugins/clojure-devkt) (deprecated)
-+ [Clojure plugin based on la-clojuer](https://github.com/devkt-plugins/la-clojure-devkt)
-+ [Julia plugin](https://github.com/devkt-plugins/julia-devkt)
-+ [JSON plugin](https://github.com/devkt-plugins/json-devkt)
-+ [Lua plugin based on EmmyLua](https://github.com/devkt-plugins/emmylua-devkt)
+Language            |         Built from             |       Latest version
+:-------------------|:------------------------------:|:--------------------------:
+CovScript           |[covscript-intellij][cov-o]    |[![Release][cov-i]][cov-d]
+Clojure             |[la-clojure][clj0-o]           |[![Release][clj0-i]][clj0-d]
+Clojure (deprecated)|[Clojure-Kit][clj1-o]          |[![Release][clj1-i]][clj1-d]
+Julia               |[julia-intellij][jl-o]         |[![Release][jl-i]][jl-d]
+JSON                |[intellij-community][json-o]   |[![Release][json-i]][json-d]
+Lua                 |[EmmyLua][emmy-o]              |[![Release][emmy-i]][emmy-d]
+
+  [cov-o]: https://github.com/covscript/covscript-intellij
+  [cov-i]: https://img.shields.io/github/release/covscript/covscript-devkt/all.svg
+  [cov-d]: https://github.com/covscript/covscript-devkt
+  [clj0-o]: https://github.com/JetBrains/la-clojure
+  [clj0-i]: https://img.shields.io/github/release/devkt-plugins/la-clojure-devkt/all.svg
+  [clj0-d]: https://github.com/devkt-plugins/la-clojure-devkt
+  [clj1-o]: https://github.com/gregsh/Clojure-Kit
+  [clj1-i]: https://img.shields.io/github/release/devkt-plugins/clojure-devkt/all.svg
+  [clj1-d]: https://github.com/devkt-plugins/clojure-devkt
+  [jl-o]: https://github.com/ice1000/julia-intellij
+  [jl-i]: https://img.shields.io/github/release/devkt-plugins/julia-devkt/all.svg
+  [jl-d]: https://github.com/devkt-plugins/julia-devkt
+  [json-o]: https://github.com/JetBrains/intellij-community
+  [json-i]: https://img.shields.io/github/release/devkt-plugins/json-devkt/all.svg
+  [json-d]: https://github.com/devkt-plugins/json-devkt
+  [emmy-o]: https://github.com/EmmyLua/IntelliJ-EmmyLua
+  [emmy-i]: https://img.shields.io/github/release/devkt-plugins/emmylua-devkt/all.svg
+  [emmy-d]: https://github.com/devkt-plugins/emmylua-devkt
 
 To install a plugin, just add the jar in the classpath, and you don't need to do anything else.
 
