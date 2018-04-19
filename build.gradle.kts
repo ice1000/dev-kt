@@ -3,21 +3,23 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.*
 
 var commitHash: String by extra
-commitHash = run {
-	val process: Process = Runtime.getRuntime().exec("git rev-parse --short HEAD")
-	process.waitFor()
-	val output = process.inputStream.use {
-		it.bufferedReader().use(BufferedReader::readText)
-	}
-	process.destroy()
-	output.trim()
-}
+commitHash = Runtime
+		.getRuntime()
+		.exec("git rev-parse --short HEAD")
+		.let<Process, String> { process ->
+			process.waitFor()
+			val output = process.inputStream.use {
+				it.bufferedReader().use(BufferedReader::readText)
+			}
+			process.destroy()
+			output.trim()
+		}
 
 var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
-val kotlinEAP = "1.2.40-eap-62"
 var kotlinVersion: String by extra
+val kotlinEAP = "1.2.40-eap-62"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
 kotlinStable = "1.2.31"

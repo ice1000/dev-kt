@@ -4,6 +4,8 @@ import java.util.concurrent.*
 
 val commitHash: String by rootProject.extra
 val isCI: Boolean by rootProject.extra
+val isMac: Boolean by rootProject.extra
+val kotlinStable: String by rootProject.extra
 
 plugins {
 	java
@@ -13,7 +15,6 @@ plugins {
 }
 
 application {
-	val isMac: Boolean by rootProject.extra
 	if (isMac) applicationDefaultJvmArgs = listOf("-Xdock:name=Dev-Kt")
 	mainClassName = "org.ice1000.devkt.Main"
 }
@@ -63,7 +64,6 @@ java.sourceSets {
 }
 
 dependencies {
-	val kotlinStable: String by rootProject.extra
 	compile(project(":common"))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
 	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
