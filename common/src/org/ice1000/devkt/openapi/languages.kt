@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
+import javax.swing.Icon
 
 
 /**
@@ -33,6 +34,9 @@ abstract class ExtendedDevKtLanguage<TextAttributes>(
 	override fun annotate(element: PsiElement, document: AnnotationHolder<TextAttributes>, colorScheme: ColorScheme<TextAttributes>) {
 		if (element is PsiErrorElement) document.highlight(element, colorScheme.error)
 	}
+
+	override val icon: Icon
+		get() = language.associatedFileType?.icon ?: super.icon
 
 	/**
 	 * @see SyntaxHighlighter.attributesOf

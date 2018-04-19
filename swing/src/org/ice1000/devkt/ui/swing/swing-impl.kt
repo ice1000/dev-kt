@@ -5,6 +5,7 @@ import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.config.swingColorScheme
+import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.ice1000.devkt.ui.swing.dialogs.FindDialogImpl
@@ -30,6 +31,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	internal lateinit var saveMenuItem: JMenuItem
 	internal lateinit var showInFilesMenuItem: JMenuItem
 	internal lateinit var buildMenuBar: JMenu
+	internal lateinit var pluginMenuBar: JMenu
 	override val document: DevKtDocumentHandler<AttributeSet>
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
@@ -76,6 +78,11 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 		override fun resetLineNumberLabel(str: String) {
 			lineNumberLabel.text = str
+		}
+
+		override fun onChangeLanguage(newLanguage: DevKtLanguage<AttributeSet>) {
+			pluginMenuBar.text = newLanguage.language.displayName
+			pluginMenuBar.icon = newLanguage.icon
 		}
 
 		override fun message(text: String) {
@@ -131,10 +138,10 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 	}
 
 	init {
-		mainMenu(menuBar, frame)
 		val ktDocument = KtDocument()
 		editor.document = ktDocument
 		document = ktDocument.createHandler()
+		mainMenu(menuBar)
 		FileDrop(mainPanel) {
 			it.firstOrNull { it.canRead() }?.let(::loadFile)
 		}

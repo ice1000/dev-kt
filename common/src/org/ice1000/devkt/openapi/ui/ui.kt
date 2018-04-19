@@ -31,7 +31,7 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean)
 	fun addEdit(edit: Edit)
 	fun switchLanguage(fileName: String)
-	fun switchLanguage(language: DevKtLanguage<TextAttributes>?)
+	fun switchLanguage(language: DevKtLanguage<TextAttributes>)
 	fun adjustFormat(offs: Int = 0, len: Int = length - offs)
 	/**
 	 * Delete without checking
@@ -76,7 +76,7 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	fun reparse()
 }
 
-interface IDevKtDocument<in TextAttributes> : LengthOwner {
+interface IDevKtDocument<TextAttributes> : LengthOwner {
 	var caretPosition: Int
 	var selectionStart: Int
 	var selectionEnd: Int
@@ -86,6 +86,7 @@ interface IDevKtDocument<in TextAttributes> : LengthOwner {
 	fun changeCharacterAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
 	fun changeParagraphAttributes(offset: Int, length: Int, s: TextAttributes, replace: Boolean)
 	fun resetLineNumberLabel(str: String)
+	fun onChangeLanguage(newLanguage: DevKtLanguage<TextAttributes>)
 	fun startOffsetOf(line: Int): Int
 	fun endOffsetOf(line: Int): Int
 	fun lineOf(offset: Int): Int

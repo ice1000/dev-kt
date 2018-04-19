@@ -56,7 +56,7 @@ abstract class UIBase<TextAttributes> {
 				updateUndoRedoMenuItem()
 			}
 		}
-	protected abstract val document: DevKtDocumentHandler<TextAttributes>
+	abstract val document: DevKtDocumentHandler<TextAttributes>
 	abstract var memoryIndicatorText: String?
 
 	fun idea() = browse("https://www.jetbrains.com/idea/download/")

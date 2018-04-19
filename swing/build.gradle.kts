@@ -66,7 +66,6 @@ java.sourceSets {
 dependencies {
 	compile(project(":common"))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
-	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
 	compile(files("lib/filedrop.jar"))
 	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
 	configurations.runtime.extendsFrom(configurations.testCompileOnly)

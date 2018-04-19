@@ -9,11 +9,13 @@ import org.ice1000.devkt.openapi.ui.IDevKtDocument
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
 import org.ice1000.devkt.openapi.util.handleException
 import org.ice1000.devkt.openapi.util.paired
-import org.jetbrains.kotlin.com.intellij.psi.*
+import org.jetbrains.kotlin.com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import java.util.*
 
-interface DevKtDocument<in TextAttributes> : IDevKtDocument<TextAttributes> {
+interface DevKtDocument<TextAttributes> : IDevKtDocument<TextAttributes> {
 	override fun clear() = delete(0, length)
 	var edited: Boolean
 
@@ -100,11 +102,12 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	override fun switchLanguage(fileName: String) {
-		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
+		switchLanguage(languages.firstOrNull { it.satisfies(fileName) } ?: return)
 	}
 
-	override fun switchLanguage(language: DevKtLanguage<TextAttributes>?) {
+	override fun switchLanguage(language: DevKtLanguage<TextAttributes>) {
 		currentLanguage = language
+		document.onChangeLanguage(language)
 	}
 
 	val psiFile: PsiFile?

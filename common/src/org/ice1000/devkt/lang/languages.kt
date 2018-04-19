@@ -3,6 +3,7 @@ package org.ice1000.devkt.lang
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
+import org.ice1000.devkt.ui.DevKtIcons
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
 import org.jetbrains.kotlin.com.intellij.lang.java.lexer.JavaLexer
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import javax.swing.Icon
 
 /**
  * @author ice1000
@@ -41,6 +43,8 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 	 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
 	 */
 	open val blockComment: Pair<String, String>? get() = null
+
+	open val icon: Icon get() = DevKtIcons.ANY
 
 	abstract fun createLexer(project: Project): Lexer
 
@@ -96,6 +100,7 @@ class Java<TextAttributes>(
 	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_8)
 	// TODO multiple language level support
 	override fun createLexer(project: Project) = java8Lexer
+	override val icon: Icon get() = DevKtIcons.JAVA
 }
 
 /**

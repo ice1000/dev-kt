@@ -30,6 +30,9 @@ dependencies {
 	compile(kotlin("reflect", kotlinVersion))
 	compile(kotlin("compiler-embeddable", kotlinVersion))
 	compile(kotlin("script-util", kotlinVersion))
+
+	// for the icon loader
+	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
 	compileOnly(files(*file("lib").listFiles().orEmpty()))
 	val plugins = file("plugins").listFiles().orEmpty().filterNot { it.isDirectory }
 	runtime(files(*plugins.toTypedArray()))

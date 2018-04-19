@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.com.intellij.lexer
 
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
 
-open class DelegateLexer(private val delegate: Lexer) : LexerBase() {
+open class DelegateLexer(val delegate: Lexer) : LexerBase() {
 	override fun start(buffer: CharSequence, startOffset: Int, endOffset: Int, initialState: Int) =
 			this.delegate.start(buffer, startOffset, endOffset, initialState)
 

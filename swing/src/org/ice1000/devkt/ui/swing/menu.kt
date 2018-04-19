@@ -5,7 +5,6 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.ui.DevKtIcons
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
-import javax.swing.JFrame
 import javax.swing.JMenuBar
 
 /**
@@ -14,7 +13,7 @@ import javax.swing.JMenuBar
  * @author ice1000
  * @since v0.0.1
  */
-fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
+fun UIImpl.mainMenu(menuBar: JMenuBar) {
 	menuBar.subMenu("File") {
 		mnemonic = KeyEvent.VK_F
 		subMenu("New") {
@@ -192,6 +191,16 @@ fun UIImpl.mainMenu(menuBar: JMenuBar, frame: JFrame) {
 			icon = DevKtIcons.KOTLIN_FILE
 			keyMap(GlobalSettings.shortcutRunAsScript)
 			onAction { runScript() }
+		}
+	}
+	pluginMenuBar = menuBar.subMenu("Plugins") {
+		subMenu("Switch Language") {
+			document.languages.forEach {
+				item(it.language.displayName) {
+					icon = it.icon
+					onAction { _ -> document.switchLanguage(it) }
+				}
+			}
 		}
 	}
 	menuBar.subMenu("Help") {
