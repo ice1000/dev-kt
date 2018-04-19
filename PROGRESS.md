@@ -47,8 +47,8 @@
 	+ [X] [Official Clojure plugin based on la-clojuer](https://github.com/devkt-plugins/la-clojure-devkt)
 	+ [X] [Official Julia plugin](https://github.com/devkt-plugins/julia-devkt)
 	+ [X] [Official JSON plugin](https://github.com/devkt-plugins/json-devkt)
+	+ [X] [Official Lua plugin based on EmmyLua](https://github.com/devkt-plugins/emmylua-devkt)
 	+ [ ] Official Zig plugin
-	+ [ ] Official Lua plugin based on EmmyLua
 	+ [ ] Official Python plugin (too hard since PyCharm has used countless black magics)
 	+ [ ] Official Groovy plugin
 	+ [ ] Official Ruby plugin

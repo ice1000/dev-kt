@@ -1,6 +1,6 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.*
+import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.openapi.ColorScheme
@@ -33,12 +33,6 @@ class DevKtDocumentHandler<TextAttributes>(
 		IDevKtDocumentHandler<TextAttributes> {
 	private val undoManager = DevKtUndoManager()
 	private var selfMaintainedString = StringBuilder()
-	private val languages: MutableList<DevKtLanguage<TextAttributes>> = arrayListOf(
-			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
-			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter()),
-			PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
-	)
-	private val defaultLanguage = languages[1]
 	override fun startOffsetOf(line: Int) = document.startOffsetOf(line)
 	override fun endOffsetOf(line: Int) = document.endOffsetOf(line)
 	override fun lineOf(offset: Int) = document.lineOf(offset)
@@ -53,16 +47,23 @@ class DevKtDocumentHandler<TextAttributes>(
 			document.selectionEnd = value
 		}
 
+	val languages: List<DevKtLanguage<TextAttributes>>
+
 	init {
 		adjustFormat()
-		ServiceLoader
+		languages = listOf<DevKtLanguage<TextAttributes>>(
+				Java(JavaAnnotator(), JavaSyntaxHighlighter()),
+				Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter()),
+				PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
+		) + ServiceLoader
 				.load(ExtendedDevKtLanguage::class.java)
-				.forEach {
+				.mapNotNull {
 					Analyzer.registerLanguage(it)
 					handleException {
 						@Suppress("UNCHECKED_CAST")
-						languages += it as DevKtLanguage<TextAttributes>
+						return@mapNotNull it as DevKtLanguage<TextAttributes>
 					}
+					null
 				}
 	}
 
@@ -98,7 +99,6 @@ class DevKtDocumentHandler<TextAttributes>(
 		undoManager.addEdit(edit)
 	}
 
-	override fun useDefaultLanguage() = switchLanguage(defaultLanguage)
 	override fun switchLanguage(fileName: String) {
 		switchLanguage(languages.firstOrNull { it.satisfies(fileName) })
 	}
@@ -127,7 +127,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		val add = lines.any {
 			val lineStart = startOffsetOf(it)
 			val lineEnd = endOffsetOf(it)
-			val lineText = textWithin(lineStart, lineEnd)
+			val lineText = textWithin(lineStart, lineEnd - 1)
 			!lineText.startsWith(lineCommentStart)
 		}
 		lines.forEach {

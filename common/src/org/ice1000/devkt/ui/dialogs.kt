@@ -41,7 +41,7 @@ open class AbstractFindDialog(val document: DevKtDocumentHandler<*>) : IFind {
 
 		val input = bundle.findInput
 		val text = document.text
-		val regex = if (bundle.isRegex.not()) NO_REGEXP_CHARS.fold(input) { last, current ->
+		val regex = if (!bundle.isRegex) NO_REGEXP_CHARS.fold(input) { last, current ->
 			last.replace(current.toString(), "\\$current")
 		} else input
 
@@ -50,11 +50,8 @@ open class AbstractFindDialog(val document: DevKtDocumentHandler<*>) : IFind {
 					regex,
 					if (bundle.isMatchCase.not()) Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE else 0
 			).matcher(text).run {
-				while (find()) {
-					searchResult.add(SearchResult(start(), end()))
-				}
+				while (find()) searchResult += SearchResult(start(), end())
 			}
-
 			select(0)
 		} catch (e: PatternSyntaxException) {
 			//TODO 做出提示
