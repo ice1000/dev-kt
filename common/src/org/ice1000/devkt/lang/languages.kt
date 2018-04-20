@@ -74,8 +74,8 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
  * @see DevKtLanguage
  */
 sealed class BuiltinDevKtLanguage<TextAttributes>(
-		private val annotator: Annotator<TextAttributes>,
-		private val syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
+		annotator: Annotator<TextAttributes>,
+		syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
 		language: Language
 ) : DevKtLanguage<TextAttributes>(language),
 		Annotator<TextAttributes> by annotator,
@@ -83,13 +83,15 @@ sealed class BuiltinDevKtLanguage<TextAttributes>(
 	override fun satisfies(fileName: String) = false
 	override val lineCommentStart = "//"
 	override val blockComment: Pair<String, String>? = "/*" to "*/"
-	override fun handleTyping(offset: Int, text: String?, element: PsiElement?, document: IDevKtDocumentHandler<TextAttributes>) {
-		element.takeIf { text == "\n" }?.run {
-			val whitespace = containingFile.findElementAt(document.startOffsetOf(document.lineOf(offset)))
-					as? PsiWhiteSpace ?: return@run null
-			super.handleTyping(offset, whitespace.text, element, document)
-		} ?: super.handleTyping(offset, text, element, document)
-	}
+	override fun handleTyping(
+			offset: Int,
+			text: String?,
+			element: PsiElement?,
+			document: IDevKtDocumentHandler<TextAttributes>) = element.takeIf { text == "\n" }?.run {
+		val whitespace = containingFile.findElementAt(document.startOffsetOf(document.lineOf(offset)))
+				as? PsiWhiteSpace ?: return@run null
+		super.handleTyping(offset, whitespace.text, element, document)
+	} ?: super.handleTyping(offset, text, element, document)
 }
 
 /**
@@ -138,12 +140,11 @@ class Kotlin<TextAttributes>(
 class PlainText<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : BuiltinDevKtLanguage<TextAttributes>(
-		annotator,
-		syntaxHighlighter,
-		PlainTextLanguage.INSTANCE) {
-	override fun satisfies(fileName: String) = fileName.endsWith(".txt") || '.' !in fileName
+) : DevKtLanguage<TextAttributes>(PlainTextLanguage.INSTANCE),
+		Annotator<TextAttributes> by annotator,
+		SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
+	override fun satisfies(fileName: String) =
+			fileName.endsWith(".txt") && !fileName.endsWith(".lua.txt") || '.' !in fileName
 	private val lexer = EmptyLexer()
 	override fun createLexer(project: Project) = lexer
-	override val blockComment: Pair<String, String>? get() = null
 }
