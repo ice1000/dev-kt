@@ -1,6 +1,5 @@
 package org.ice1000.devkt.ui
 
-import org.ice1000.devkt.ui.IFind.Companion.NO_REGEXP_CHARS
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -54,7 +53,6 @@ interface IFind {
 			document.selectionEnd = end
 		}
 	}
-
 
 	@JvmDefault
 	fun moveUp() = select(currentIndex - 1)
