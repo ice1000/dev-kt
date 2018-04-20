@@ -1,5 +1,6 @@
 package org.ice1000.devkt.ui
 
+import org.ice1000.devkt.ui.IFind.Companion.NO_REGEXP_CHARS
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
@@ -13,29 +14,16 @@ data class FindDataBundle(
 )
 
 interface IFind {
-	val searchResult: MutableList<SearchResult>
-	var currentIndex: Int
-
-	fun search(bundle: FindDataBundle)
-	fun select(index: Int)
-	fun moveUp()
-	fun moveDown()
-}
-
-interface IReplace {
-	fun replaceCurrent(bundle: FindDataBundle)
-	fun replaceAll(bundle: FindDataBundle)
-}
-
-open class AbstractFindDialog(val document: DevKtDocumentHandler<*>) : IFind {
 	companion object {
 		val NO_REGEXP_CHARS = "\\{[(+*^\$.?|".toCharArray()
 	}
 
-	override val searchResult = arrayListOf<SearchResult>()
-	override var currentIndex = 0
+	val searchResult: MutableList<SearchResult>
+	var currentIndex: Int
+	val document: DevKtDocumentHandler<*>
 
-	override fun search(bundle: FindDataBundle) {
+	@JvmDefault
+	fun search(bundle: FindDataBundle) {
 		searchResult.clear()
 		document.selectionEnd = document.selectionStart
 
@@ -58,7 +46,8 @@ open class AbstractFindDialog(val document: DevKtDocumentHandler<*>) : IFind {
 		}
 	}
 
-	override fun select(index: Int) {
+	@JvmDefault
+	fun select(index: Int) {
 		searchResult.getOrNull(index)?.let { (start, end) ->
 			currentIndex = index
 			document.selectionStart = start
@@ -66,18 +55,24 @@ open class AbstractFindDialog(val document: DevKtDocumentHandler<*>) : IFind {
 		}
 	}
 
-	override fun moveUp() = select(currentIndex - 1)
-	override fun moveDown() = select(currentIndex + 1)
+
+	@JvmDefault
+	fun moveUp() = select(currentIndex - 1)
+
+	@JvmDefault
+	fun moveDown() = select(currentIndex + 1)
 }
 
-class AbstractReplaceDialog(document: DevKtDocumentHandler<*>) : AbstractFindDialog(document), IReplace {
-	override fun replaceCurrent(bundle: FindDataBundle) {
+interface IReplace : IFind {
+	@JvmDefault
+	fun replaceCurrent(bundle: FindDataBundle) {
 		searchResult.getOrNull(currentIndex)?.run {
 			document.resetTextTo(document.text.replaceRange(start until end, bundle.replaceInput ?: return))
 		}
 	}
 
-	override fun replaceAll(bundle: FindDataBundle) {
+	@JvmDefault
+	fun replaceAll(bundle: FindDataBundle) {
 		val findInput = bundle.findInput
 		val replaceInput = bundle.replaceInput ?: return
 		document.resetTextTo(if (bundle.isRegex) {
