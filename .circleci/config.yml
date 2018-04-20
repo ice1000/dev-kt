@@ -24,15 +24,13 @@ jobs:
     steps:
       - checkout
 
-      - run: gradle dependencies
+      - run: gradle dependencies --warning-mode=all
 
-      - run: gradle :swing:downloadFiraCode
+      - run: gradle :swing:downloadFiraCode --warning-mode=all
 
-      - run: gradle build --info
-
-      - run: gradle :swing:fatJar --info
+      - run: gradle :swing:fatJar --info --warning-mode=all
 
       - store_artifacts:
           path: swing/build/libs
 
-      - run: gradle test --info
+      - run: gradle test --info --warning-mode=all
