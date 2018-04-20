@@ -17,9 +17,9 @@ import javax.swing.Icon
  * @since v1.2
  */
 abstract class ExtendedDevKtLanguage<TextAttributes>(
-		language: Language,
+		override val language: Language,
 		val parserDefinition: ParserDefinition
-) : DevKtLanguage<TextAttributes>(language) {
+) : DevKtLanguage<TextAttributes> {
 	/**
 	 * Creates a lexer for syntax highlight
 	 *
