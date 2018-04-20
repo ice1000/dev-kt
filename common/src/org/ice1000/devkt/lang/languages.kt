@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import javax.swing.Icon
@@ -82,6 +83,13 @@ sealed class BuiltinDevKtLanguage<TextAttributes>(
 	override fun satisfies(fileName: String) = false
 	override val lineCommentStart = "//"
 	override val blockComment: Pair<String, String>? = "/*" to "*/"
+	override fun handleTyping(offset: Int, text: String?, element: PsiElement?, document: IDevKtDocumentHandler<TextAttributes>) {
+		element.takeIf { text == "\n" }?.run {
+			val whitespace = containingFile.findElementAt(document.startOffsetOf(document.lineOf(offset)))
+					as? PsiWhiteSpace ?: return@run null
+			super.handleTyping(offset, whitespace.text, element, document)
+		} ?: super.handleTyping(offset, text, element, document)
+	}
 }
 
 /**
