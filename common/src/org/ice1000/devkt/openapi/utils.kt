@@ -29,12 +29,12 @@ inline fun <reified Psi : PsiElement> PsiElement.prevSiblingIgnoring(vararg type
 
 fun <Psi : PsiElement> PsiElement.prevSiblingIgnoring(clazz: Class<Psi>, vararg types: IElementType): Psi? {
 	var next: PsiElement? = prevSibling
-	@Suppress("UNCHECKED_CAST")
 	while (true) {
 		val localNext = next ?: return null
 		next = localNext.prevSibling
+		@Suppress("UNCHECKED_CAST")
 		return if (types.any { localNext.node.elementType == it }) continue
-		else localNext as? Psi
+		else if (clazz.isAssignableFrom(localNext.javaClass)) localNext as Psi else null
 	}
 }
 
@@ -45,7 +45,7 @@ fun <Psi : PsiElement> PsiElement.nextSiblingIgnoring(clazz: Class<Psi>, vararg 
 		val localNext = next ?: return null
 		next = localNext.nextSibling
 		return if (types.any { localNext.node.elementType == it }) continue
-		else localNext as? Psi
+		else if (clazz.isAssignableFrom(localNext.javaClass)) localNext as Psi else null
 	}
 }
 
