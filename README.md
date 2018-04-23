@@ -54,7 +54,11 @@ Clojure (deprecated)|[Clojure-Kit][clj1-o]          |[![Release][clj1-i]][clj1-d
 Julia               |[julia-intellij][jl-o]         |[![Release][jl-i]][jl-d]
 JSON                |[intellij-community][json-o]   |[![Release][json-i]][json-d]
 Lua                 |[EmmyLua][emmy-o]              |[![Release][emmy-i]][emmy-d]
+Solidity            |[IntelliJ Solidity][sol-o]     |[![Release][sol-i]][sol-d]
 
+  [sol-o]: https://github.com/intellij-solidity/intellij-solidity
+  [sol-i]: https://img.shields.io/github/release/devkt-plugins/solidity-devkt/all.svg
+  [sol-d]: https://github.com/devkt-plugins/solidity-devkt
   [cov-o]: https://github.com/covscript/covscript-intellij
   [cov-i]: https://img.shields.io/github/release/covscript/covscript-devkt/all.svg
   [cov-d]: https://github.com/covscript/covscript-devkt
