@@ -33,10 +33,11 @@ dependencies {
 
 	// for the icon loader
 	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
+	compile(group = "com.bennyhuo.kotlin", name = "opd", version = "1.0-rc-2")
 	compileOnly(files(*file("lib").listFiles().orEmpty()))
 	val plugins = file("plugins").listFiles().orEmpty().filterNot { it.isDirectory }
 	runtime(files(*plugins.toTypedArray()))
-	testCompile("junit", "junit", "4.12")
+	testCompile(group = "junit", name = "junit", version = "4.12")
 	testCompile(kotlin("test-junit", kotlinStable))
 	testCompile(kotlin("stdlib-jdk8", kotlinStable))
 	testCompile(kotlin("reflect", kotlinStable))

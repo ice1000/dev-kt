@@ -1,5 +1,6 @@
 package org.ice1000.devkt.ui
 
+import com.bennyhuo.kotlin.opd.delegator
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
@@ -42,16 +43,8 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun startOffsetOf(line: Int) = document.startOffsetOf(line)
 	override fun endOffsetOf(line: Int) = document.endOffsetOf(line)
 	override fun lineOf(offset: Int) = document.lineOf(offset)
-	override var selectionStart
-		get() = document.selectionStart
-		set(value) {
-			document.selectionStart = value
-		}
-	override var selectionEnd
-		get() = document.selectionEnd
-		set(value) {
-			document.selectionEnd = value
-		}
+	override var selectionStart by document::selectionStart.delegator()
+	override var selectionEnd by document::selectionEnd.delegator()
 
 	val languages: List<DevKtLanguage<TextAttributes>>
 

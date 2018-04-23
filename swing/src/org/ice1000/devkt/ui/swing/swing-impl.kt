@@ -1,6 +1,8 @@
 package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
+import com.bennyhuo.kotlin.opd.delegateOf
+import com.bennyhuo.kotlin.opd.delegator
 import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
@@ -8,18 +10,14 @@ import org.ice1000.devkt.config.swingColorScheme
 import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
-import org.ice1000.devkt.ui.swing.dialogs.FindDialogImpl
-import org.ice1000.devkt.ui.swing.dialogs.GoToLineDialog
-import org.ice1000.devkt.ui.swing.dialogs.ReplaceDialogImpl
+import org.ice1000.devkt.ui.swing.dialogs.*
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
-import javax.swing.text.AttributeSet
-import javax.swing.text.DefaultStyledDocument
-import javax.swing.text.MutableAttributeSet
+import javax.swing.text.*
 
 /**
  * @author ice1000
@@ -41,21 +39,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 			set(value) {
 				editor.caretPosition = value
 			}
-		override var selectionEnd: Int
-			get() = editor.selectionEnd
-			set(value) {
-				editor.selectionEnd = value
-			}
-		override var selectionStart: Int
-			get() = editor.selectionStart
-			set(value) {
-				editor.selectionStart = value
-			}
-		override var edited: Boolean
-			get() = this@UIImpl.edited
-			set(value) {
-				this@UIImpl.edited = value
-			}
+		override var selectionEnd by delegateOf(editor::getSelectionEnd, editor::setSelectionEnd)
+		override var selectionStart by delegateOf(editor::getSelectionStart, editor::setSelectionStart)
+		override var edited by this@UIImpl::edited.delegator()
 
 		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
 		override fun startOffsetOf(line: Int) = root.getElement(line).startOffset

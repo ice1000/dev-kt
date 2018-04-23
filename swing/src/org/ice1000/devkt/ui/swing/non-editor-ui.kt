@@ -1,14 +1,13 @@
 package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
+import com.bennyhuo.kotlin.opd.delegateOf
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import org.ice1000.devkt.LaunchInfo
-import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.ui.ChooseFileType
-import org.ice1000.devkt.ui.MessageType
-import org.ice1000.devkt.ui.UIBase
+import org.ice1000.devkt.ui.*
+import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
 import java.awt.*
 import java.awt.event.MouseAdapter
@@ -94,12 +93,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 	var imageCache: Image? = null
 	var backgroundColorCache: Color? = null
 
-	override var memoryIndicatorText
-		get() = memoryIndicator.text
-		set(value) {
-			memoryIndicator.text = value
-		}
-
+	override var memoryIndicatorText by delegateOf(memoryIndicator::getText, memoryIndicator::setText)
 
 	override fun message(text: String) {
 		messageLabel.text = text
