@@ -9,6 +9,7 @@ import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.ui.IDevKtDocument
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
 import org.ice1000.devkt.openapi.util.handleException
+import org.ice1000.devkt.openapi.util.insteadPaired
 import org.ice1000.devkt.openapi.util.paired
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
@@ -246,13 +247,17 @@ class DevKtDocumentHandler<TextAttributes>(
 			insertDirectly(offs, normalized, 0)
 		else {
 			val char = normalized[0]
-			if (char in paired.values) {
-				if (offs != 0
+			when (char) {
+				in paired.values -> if (offs != 0
 						&& selfMaintainedString.getOrNull(offs) == char) {
 					insertDirectly(offs, "", 1)
 				} else insertDirectly(offs, normalized, 0)
-			} else if (char in paired) insertDirectly(offs, "$normalized${paired[char]}", -1)
-			else insertDirectly(offs, normalized, 0)
+				in paired -> insertDirectly(offs, "$normalized${paired[char]}", -1)
+				in insteadPaired -> if (GlobalSettings.useTab.not()) {
+					insertDirectly(offs, insteadPaired[char].toString(), 0)
+				} else insertDirectly(offs, normalized, 0)
+				else -> insertDirectly(offs, normalized, 0)
+			}
 		}
 	}
 
