@@ -16,12 +16,16 @@ import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import java.util.*
 
 interface DevKtDocument<TextAttributes> : IDevKtDocument<TextAttributes> {
+	@JvmDefault
 	override fun clear() = delete(0, length)
+
 	var edited: Boolean
 
 	//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
+	@JvmDefault
 	fun lineColumnToPos(line: Int, column: Int = 1) = startOffsetOf(line - 1) + column - 1
 
+	@JvmDefault
 	fun posToLineColumn(pos: Int): Pair<Int, Int> {
 		val line = lineOf(pos)
 		val column = pos - startOffsetOf(line)

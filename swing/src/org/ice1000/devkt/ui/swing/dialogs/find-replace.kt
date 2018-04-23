@@ -71,9 +71,10 @@ abstract class FindUI : JDialog() {
 
 open class FindDialogImpl(
 		uiImpl: AbstractUI,
-		private val document: DevKtDocumentHandler<*>) : FindUI(), IFind by AbstractFindDialog(document) {
-
+		override val document: DevKtDocumentHandler<*>) : FindUI(), IFind {
 	protected open val bundle get() = FindDataBundle(findInput.text, isMatchCase.isSelected, isRegex.isSelected)
+	override val searchResult = arrayListOf<SearchResult>()
+	override var currentIndex = 0
 
 	init {
 		setLocationRelativeTo(uiImpl.mainPanel)
@@ -97,13 +98,11 @@ open class FindDialogImpl(
 
 	final override fun setLocationRelativeTo(c: Component?) = super.setLocationRelativeTo(c)
 	final override fun pack() = super.pack()
-
-
 }
 
 class ReplaceDialogImpl(
 		uiImpl: AbstractUI, document: DevKtDocumentHandler<*>) :
-		FindDialogImpl(uiImpl, document), IReplace by AbstractReplaceDialog(document) {
+		FindDialogImpl(uiImpl, document), IReplace {
 
 	override val bundle
 		get() = super.bundle.apply {

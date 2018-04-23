@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.pom.java.LanguageLevel
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import javax.swing.Icon
@@ -22,31 +23,34 @@ import javax.swing.Icon
  * @since v1.2
  * @see Language
  */
-abstract class DevKtLanguage<TextAttributes> internal constructor(
-		val language: Language
-) : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
+interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
+	val language: Language
 
 	/**
 	 * Check if a file is of this language
 	 * @param fileName String the file name
 	 * @return Boolean is of this language or not
 	 */
-	open fun satisfies(fileName: String) = false
+	@JvmDefault
+	fun satisfies(fileName: String) = false
 
 	/**
 	 * Line comment start, used when pressing <kbd>Ctrl</kbd> + <kbd>/</kbd>
 	 */
-	open val lineCommentStart: String? get() = null
+	@JvmDefault
+	val lineCommentStart: String? get() = null
 
 	/**
 	 * Block comment surrounding, used when pressing
 	 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
 	 */
-	open val blockComment: Pair<String, String>? get() = null
+	@JvmDefault
+	val blockComment: Pair<String, String>? get() = null
 
-	open val icon: Icon get() = DevKtIcons.ANY
+	@JvmDefault
+	val icon: Icon get() = DevKtIcons.ANY
 
-	abstract fun createLexer(project: Project): Lexer
+	fun createLexer(project: Project): Lexer
 
 	/**
 	 * Called when typing, before the typed character is inserted.
@@ -58,7 +62,8 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
 	 * @see org.ice1000.devkt.ui.DevKtDocumentHandler.insertDirectly
 	 * @see org.ice1000.devkt.ui.DevKtDocumentHandler.insert
 	 */
-	open fun handleTyping(
+	@JvmDefault
+	fun handleTyping(
 			offset: Int,
 			text: String?,
 			element: PsiElement?,
@@ -73,15 +78,24 @@ abstract class DevKtLanguage<TextAttributes> internal constructor(
  * @see DevKtLanguage
  */
 sealed class BuiltinDevKtLanguage<TextAttributes>(
-		private val annotator: Annotator<TextAttributes>,
-		private val syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
-		language: Language
-) : DevKtLanguage<TextAttributes>(language),
+		annotator: Annotator<TextAttributes>,
+		syntaxHighlighter: SyntaxHighlighter<TextAttributes>,
+		override val language: Language
+) : DevKtLanguage<TextAttributes>,
 		Annotator<TextAttributes> by annotator,
 		SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
 	override fun satisfies(fileName: String) = false
 	override val lineCommentStart = "//"
 	override val blockComment: Pair<String, String>? = "/*" to "*/"
+	override fun handleTyping(
+			offset: Int,
+			text: String?,
+			element: PsiElement?,
+			document: IDevKtDocumentHandler<TextAttributes>) = element.takeIf { text == "\n" }?.run {
+		val whitespace = containingFile.findElementAt(document.startOffsetOf(document.lineOf(offset)))
+				as? PsiWhiteSpace ?: return@run null
+		super.handleTyping(offset, whitespace.text, element, document)
+	} ?: super.handleTyping(offset, text, element, document)
 }
 
 /**
@@ -130,12 +144,13 @@ class Kotlin<TextAttributes>(
 class PlainText<TextAttributes>(
 		annotator: Annotator<TextAttributes>,
 		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : BuiltinDevKtLanguage<TextAttributes>(
-		annotator,
-		syntaxHighlighter,
-		PlainTextLanguage.INSTANCE) {
-	override fun satisfies(fileName: String) = fileName.endsWith(".txt") || '.' !in fileName
+) : DevKtLanguage<TextAttributes>,
+		Annotator<TextAttributes> by annotator,
+		SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
+	override val language: PlainTextLanguage = PlainTextLanguage.INSTANCE
+	override fun satisfies(fileName: String) =
+			fileName.endsWith(".txt") && !fileName.endsWith(".lua.txt") || '.' !in fileName
+
 	private val lexer = EmptyLexer()
 	override fun createLexer(project: Project) = lexer
-	override val blockComment: Pair<String, String>? get() = null
 }

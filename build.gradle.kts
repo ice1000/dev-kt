@@ -62,6 +62,9 @@ allprojects {
 	tasks.withType<KotlinCompile> {
 		kotlinOptions {
 			jvmTarget = "1.8"
+			freeCompilerArgs = listOf("-Xenable-jvm-default")
+			suppressWarnings = false
+			verbose = isCI
 		}
 	}
 
