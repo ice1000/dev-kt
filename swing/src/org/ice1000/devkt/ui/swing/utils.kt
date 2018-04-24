@@ -18,9 +18,12 @@ fun JMenuItem.keyMap(key: Int, modifiers: Int) {
 
 fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.key.awt, shortcut.modifier)
 
-class SwingPopup(private val popup: Popup) : CompletionPopup {
-	override fun show() = popup.show()
+class SwingPopup(private val popup: Popup, private val scrollPane: JComponent) : CompletionPopup {
 	override fun hide() = popup.hide()
+	override fun show() {
+		popup.show()
+		scrollPane.requestFocus()
+	}
 }
 
 /**

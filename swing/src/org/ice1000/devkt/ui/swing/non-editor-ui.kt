@@ -112,17 +112,19 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
 		val windowPoint = editor.locationOnScreen
 		// TODO
+		val jList = JList(completionList
+				.map { it.lookup }
+				.toTypedArray())
+		val jScrollPane = JScrollPane(jList).apply {
+			addKeyListener(object : KeyAdapter() {
+				override fun keyPressed(e: KeyEvent) {
+					if (e.keyCode == KeyEvent.VK_ENTER) lastPopup?.hide()
+				}
+			})
+		}
 		return PopupFactory.getSharedInstance()
-				.getPopup(editor, JScrollPane(JList(completionList
-						.map { it.lookup }
-						.toTypedArray())).apply {
-					addKeyListener(object : KeyAdapter() {
-						override fun keyPressed(e: KeyEvent) {
-							if (e.keyCode == KeyEvent.VK_ENTER) lastPopup?.hide()
-						}
-					})
-				}, windowPoint.x + point.x, windowPoint.y + point.y + 20)
-				.let(::SwingPopup)
+				.getPopup(editor, jScrollPane, windowPoint.x + point.x, windowPoint.y + point.y + 20)
+				.let { SwingPopup(it, jList) }
 				.also { lastPopup = it }
 	}
 
