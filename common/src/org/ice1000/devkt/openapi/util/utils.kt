@@ -1,6 +1,7 @@
 package org.ice1000.devkt.openapi.util
 
 import org.ice1000.devkt.Analyzer
+import org.ice1000.devkt.config.GlobalSettings
 import java.io.*
 import javax.swing.JOptionPane
 
@@ -34,6 +35,13 @@ inline fun handleException(lambda: () -> Unit) {
 
 val selfLocation: String = Analyzer::class.java.protectionDomain.codeSource.location.file
 val selfLocationFile: File = File(selfLocation)
+
+val insteadPaired by lazy {
+	//下面使用GlobalSettings里的属性, 可能还没load就get了emmmmm, 所以选择lazy
+	mapOf(
+			'\t' to " ".repeat(GlobalSettings.tabSize)
+	)
+}
 
 val paired = mapOf(
 		'"' to '"',

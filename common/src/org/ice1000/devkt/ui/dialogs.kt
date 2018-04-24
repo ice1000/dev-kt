@@ -24,7 +24,13 @@ interface IFind {
 	@JvmDefault
 	fun search(bundle: FindDataBundle) {
 		searchResult.clear()
+		currentIndex = 0
 		document.selectionEnd = document.selectionStart
+
+		if (bundle.findInput.isEmpty()) {
+			update()
+			return
+		}
 
 		val input = bundle.findInput
 		val text = document.text
@@ -51,7 +57,10 @@ interface IFind {
 			currentIndex = index
 			document.selectionStart = start
 			document.selectionEnd = end
+
 		}
+
+		update()
 	}
 
 	@JvmDefault
@@ -59,6 +68,8 @@ interface IFind {
 
 	@JvmDefault
 	fun moveDown() = select(currentIndex + 1)
+
+	fun update()
 }
 
 interface IReplace : IFind {
