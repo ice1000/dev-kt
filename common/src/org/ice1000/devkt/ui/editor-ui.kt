@@ -10,6 +10,7 @@ import org.ice1000.devkt.openapi.ui.*
 import org.ice1000.devkt.openapi.util.*
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
 interface DevKtDocument<TextAttributes> : IDevKtDocument<TextAttributes> {
@@ -71,7 +72,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	val blockComment get() = currentLanguage?.blockComment
 	var initialCompletionList: Set<CompletionElement> = emptySet()
 	val lexicalCompletionList: MutableSet<CompletionElement> = hashSetOf()
-	var lastPopup: CompletionPopup? = null
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
 
@@ -121,7 +121,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun commentCurrent() {
-		lastPopup?.hide()
 		val lines = lineOf(selectionStart)..lineOf(selectionEnd)
 		val lineCommentStart = lineCommentStart ?: return
 		val add = lines.any {
@@ -140,7 +139,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun blockComment() {
-		lastPopup?.hide()
 		val (start, end) = blockComment ?: return
 		val selectionStart = selectionStart
 		addEdit(selectionEnd, end, true)
@@ -192,7 +190,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param string String new content.
 	 */
 	override fun resetTextTo(string: String) {
-		lastPopup?.hide()
 		window.message("Text reset.")
 		with(undoManager) {
 			addEdit(0, selfMaintainedString, false)
@@ -260,8 +257,16 @@ class DevKtDocumentHandler<TextAttributes>(
 				else -> insertDirectly(offs, normalized, 0)
 			}
 		}
-		lastPopup = window.createCompletionPopup(initialCompletionList + lexicalCompletionList)
-				.apply { show() }
+		val psiFile = psiFile ?: return
+		val caretPosition = document.caretPosition
+		var currentNode = psiFile.findElementAt(caretPosition) ?: return
+		if (currentNode is PsiWhiteSpace && caretPosition == currentNode.startOffset) {
+			currentNode = currentNode.prevSibling
+		}
+		val currentText = currentNode.text.substring(0, caretPosition - currentNode.startOffset)
+		window.showCompletionPopup(initialCompletionList + lexicalCompletionList
+				.filter { it.lookup.startsWith(currentText) })
+				.show()
 	}
 
 	override fun reparse() {
@@ -358,7 +363,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun handleInsert(offs: Int, str: String?) {
-		lastPopup?.hide()
 		currentLanguage?.run {
 			handleTyping(offs, str, psiFile?.findElementAt(offs), this@DevKtDocumentHandler)
 		} ?: insert(offs, str)

@@ -12,8 +12,7 @@ import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
 import java.awt.*
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.event.*
 import java.io.File
 import java.net.URL
 import javax.swing.*
@@ -27,6 +26,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 	protected var lineNumberLabel = JLabel()
 	private var scrollPane = JScrollPane()
 	protected var memoryIndicator = JButton()
+	var lastPopup: CompletionPopup? = null
 
 	init {
 		mainPanel = object : JPanel() {
@@ -90,6 +90,12 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				refreshMemoryIndicator()
 			}
 		})
+
+		editor.addKeyListener(object : KeyAdapter() {
+			override fun keyTyped(e: KeyEvent?) {
+				lastPopup?.hide()
+			}
+		})
 	}
 
 	var imageCache: Image? = null
@@ -101,16 +107,23 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		messageLabel.text = text
 	}
 
-	override fun createCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup {
+	override fun showCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup {
+		lastPopup?.hide()
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
 		val windowPoint = editor.locationOnScreen
 		// TODO
 		return PopupFactory.getSharedInstance()
 				.getPopup(editor, JScrollPane(JList(completionList
 						.map { it.lookup }
-						.toTypedArray()).apply {
-				}), windowPoint.x + point.x, windowPoint.y + point.y)
+						.toTypedArray())).apply {
+					addKeyListener(object : KeyAdapter() {
+						override fun keyPressed(e: KeyEvent) {
+							if (e.keyCode == KeyEvent.VK_ENTER) lastPopup?.hide()
+						}
+					})
+				}, windowPoint.x + point.x, windowPoint.y + point.y + 20)
 				.let(::SwingPopup)
+				.also { lastPopup = it }
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {
