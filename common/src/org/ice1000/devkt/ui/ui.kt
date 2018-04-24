@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.openapi.util.selfLocation
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
@@ -57,7 +58,7 @@ abstract class UIBase<TextAttributes> {
 	abstract fun updateUndoRedoMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
 	abstract fun message(text: String)
-	abstract fun popup(completionList: List<String>)
+	abstract fun popup(completionList: List<CompletionElement>)
 	protected abstract fun reloadSettings()
 	protected abstract fun doBrowse(url: String)
 	protected abstract fun doOpen(file: File)

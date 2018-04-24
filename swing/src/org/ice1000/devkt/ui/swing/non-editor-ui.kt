@@ -6,6 +6,7 @@ import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import org.ice1000.devkt.LaunchInfo
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
@@ -97,6 +98,12 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 
 	override fun message(text: String) {
 		messageLabel.text = text
+	}
+
+	override fun popup(completionList: List<CompletionElement>) {
+		// TODO
+		PopupFactory.getSharedInstance()
+				.getPopup(mainPanel, null, 0, 0)
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {

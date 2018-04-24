@@ -1,6 +1,6 @@
 # DevKt
 
-[![GitHub (pre-)release](https://img.shields.io/github/release/ice1000/dev-kt/all.svg)](https://github.com/ice1000/dev-kt)
+[![](https://jitpack.io/v/ice1000/dev-kt.svg)](https://jitpack.io/#ice1000/dev-kt)
 
 CI|Status
 :---:|:---:
