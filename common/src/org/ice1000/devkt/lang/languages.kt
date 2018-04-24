@@ -38,17 +38,20 @@ interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighl
 	 * Line comment start, used when pressing <kbd>Ctrl</kbd> + <kbd>/</kbd>
 	 */
 	@JvmDefault
-	val lineCommentStart: String? get() = null
+	val lineCommentStart: String?
+		get() = null
 
 	/**
 	 * Block comment surrounding, used when pressing
 	 * <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>/</kbd>
 	 */
 	@JvmDefault
-	val blockComment: Pair<String, String>? get() = null
+	val blockComment: Pair<String, String>?
+		get() = null
 
 	@JvmDefault
-	val icon: Icon get() = DevKtIcons.ANY
+	val icon: Icon
+		get() = DevKtIcons.ANY
 
 	fun createLexer(project: Project): Lexer
 
@@ -70,6 +73,10 @@ interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighl
 			document: IDevKtDocumentHandler<TextAttributes>) {
 		document.insert(offset, text)
 	}
+
+	@JvmDefault
+	val initialCompletionList: Set<String>
+		get() = emptySet()
 }
 
 /**

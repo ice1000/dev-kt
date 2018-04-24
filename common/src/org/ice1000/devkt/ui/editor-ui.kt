@@ -8,12 +8,8 @@ import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.ui.IDevKtDocument
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
-import org.ice1000.devkt.openapi.util.handleException
-import org.ice1000.devkt.openapi.util.insteadPaired
-import org.ice1000.devkt.openapi.util.paired
-import org.jetbrains.kotlin.com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.com.intellij.psi.SyntaxTraverser
+import org.ice1000.devkt.openapi.util.*
+import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import java.util.*
 
@@ -47,35 +43,35 @@ class DevKtDocumentHandler<TextAttributes>(
 	override var selectionStart by document::selectionStart.delegator()
 	override var selectionEnd by document::selectionEnd.delegator()
 
-	val languages: List<DevKtLanguage<TextAttributes>>
+	val languages = listOf<DevKtLanguage<TextAttributes>>(
+			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
+			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter()),
+			PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
+	) + ServiceLoader
+			.load(ExtendedDevKtLanguage::class.java)
+			.mapNotNull {
+				Analyzer.registerLanguage(it)
+				handleException {
+					@Suppress("UNCHECKED_CAST")
+					return@mapNotNull it as DevKtLanguage<TextAttributes>
+				}
+				null
+			}
 
 	init {
 		adjustFormat()
-		languages = listOf<DevKtLanguage<TextAttributes>>(
-				Java(JavaAnnotator(), JavaSyntaxHighlighter()),
-				Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter()),
-				PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
-		) + ServiceLoader
-				.load(ExtendedDevKtLanguage::class.java)
-				.mapNotNull {
-					Analyzer.registerLanguage(it)
-					handleException {
-						@Suppress("UNCHECKED_CAST")
-						return@mapNotNull it as DevKtLanguage<TextAttributes>
-					}
-					null
-				}
 	}
 
 	private var currentLanguage: DevKtLanguage<TextAttributes>? = null
 	private var psiFileCache: PsiFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
-
 	override val text get() = selfMaintainedString.toString()
+
 	override fun getLength() = document.length
 	val lineCommentStart get() = currentLanguage?.lineCommentStart
 	val blockComment get() = currentLanguage?.blockComment
+	var completionList: Set<String> = emptySet()
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
 
@@ -106,6 +102,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun switchLanguage(language: DevKtLanguage<TextAttributes>) {
 		currentLanguage = language
 		document.onChangeLanguage(language)
+		completionList = language.initialCompletionList
 		reparse()
 	}
 
