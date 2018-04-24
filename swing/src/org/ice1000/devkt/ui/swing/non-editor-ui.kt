@@ -100,12 +100,13 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		messageLabel.text = text
 	}
 
-	override fun popup(completionList: List<CompletionElement>) {
+	override fun popup(completionList: Collection<CompletionElement>) {
 		val point = editor.caret.magicCaretPosition
 		// TODO
 		PopupFactory.getSharedInstance()
 				.getPopup(mainPanel, JScrollPane(JList(completionList.toTypedArray()).apply {
 				}), point.x, point.y)
+				.show()
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {

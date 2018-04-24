@@ -239,7 +239,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			addEdit(offs, normalized, true)
 			done()
 		}
-		return if (normalized.length > 1)
+		if (normalized.length > 1)
 			insertDirectly(offs, normalized, 0)
 		else {
 			val char = normalized[0]
@@ -255,6 +255,7 @@ class DevKtDocumentHandler<TextAttributes>(
 				else -> insertDirectly(offs, normalized, 0)
 			}
 		}
+		window.popup(initialCompletionList)
 	}
 
 	override fun reparse() {
