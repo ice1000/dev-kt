@@ -6,8 +6,7 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
-import org.ice1000.devkt.openapi.ui.IDevKtDocument
-import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
+import org.ice1000.devkt.openapi.ui.*
 import org.ice1000.devkt.openapi.util.*
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
@@ -33,6 +32,7 @@ interface DevKtDocument<TextAttributes> : IDevKtDocument<TextAttributes> {
 
 class DevKtDocumentHandler<TextAttributes>(
 		val document: DevKtDocument<TextAttributes>,
+		val window: DevKtWindow,
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		IDevKtDocumentHandler<TextAttributes> {
 	private val undoManager = DevKtUndoManager()
@@ -190,6 +190,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param string String new content.
 	 */
 	override fun resetTextTo(string: String) {
+		window.message("Text reset.")
 		with(undoManager) {
 			addEdit(0, selfMaintainedString, false)
 			addEdit(0, string, true)
@@ -318,7 +319,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun nextLine() = with(document) {
-		message("Started new line")
+		window.message("Started new line")
 		val index = caretPosition
 		val endOfLineIndex = selfMaintainedString.indexOf('\n', index)
 		val start = if (endOfLineIndex < 0) length else endOfLineIndex
@@ -329,7 +330,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun splitLine() = with(document) {
-		message("Split new line")
+		window.message("Split new line")
 		val index = caretPosition
 		addEdit(index, "\n", true)
 		insert(index, "\n")
@@ -338,7 +339,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun newLineBeforeCurrent() = with(document) {
-		message("Started new line before current line")
+		window.message("Started new line before current line")
 		val index = caretPosition
 		val startOfLineIndex = selfMaintainedString
 				.lastIndexOf('\n', (index - 1).coerceAtLeast(0))

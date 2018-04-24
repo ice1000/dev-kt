@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.openapi.ui.DevKtWindow
 import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.openapi.util.selfLocation
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
@@ -18,7 +19,7 @@ private const val MEGABYTE = 1024 * 1024
  * @author ice1000
  * @since v1.3
  */
-abstract class UIBase<TextAttributes> {
+abstract class UIBase<TextAttributes> : DevKtWindow {
 	var edited = false
 		set(value) {
 			val change = field != value
@@ -53,29 +54,14 @@ abstract class UIBase<TextAttributes> {
 	fun splitLine() = document.splitLine()
 	fun newLineBeforeCurrent() = document.newLineBeforeCurrent()
 
-	abstract fun refreshTitle()
 	abstract fun updateShowInFilesMenuItem()
 	abstract fun updateUndoRedoMenuItem()
-	abstract fun uiThread(lambda: () -> Unit)
-	abstract fun message(text: String)
-	abstract fun popup(completionList: List<CompletionElement>)
 	protected abstract fun reloadSettings()
 	protected abstract fun doBrowse(url: String)
 	protected abstract fun doOpen(file: File)
 	protected abstract fun dispose()
 	protected abstract fun createSelf()
 	protected abstract fun editorText(): String
-	abstract fun chooseFile(from: File?, chooseFileType: ChooseFileType): File?
-	abstract fun chooseDir(from: File?, chooseFileType: ChooseFileType): File?
-	abstract fun dialogYesNo(
-			text: String,
-			messageType: MessageType = MessageType.Information,
-			title: String = messageType.name): Boolean
-
-	abstract fun dialog(
-			text: String,
-			messageType: MessageType = MessageType.Information,
-			title: String = messageType.name)
 
 	fun makeSureLeaveCurrentFile() = edited && !dialogYesNo(
 			"${currentFile?.name ?: "Current file"} unsaved, leave?",
@@ -132,7 +118,7 @@ abstract class UIBase<TextAttributes> {
 		memoryIndicatorText = "$used of ${total}M"
 	}
 
-	fun loadFile(it: File) {
+	override fun loadFile(it: File) {
 		if (it.canRead() and !makeSureLeaveCurrentFile()) {
 			currentFile = it
 			message("Loaded ${it.absolutePath}")
@@ -172,7 +158,7 @@ abstract class UIBase<TextAttributes> {
 		message("Failed to browse $url")
 	}
 
-	fun sync() {
+	override fun sync() {
 		currentFile?.let(::loadFile)
 	}
 
@@ -180,7 +166,7 @@ abstract class UIBase<TextAttributes> {
 		currentFile?.run { open(parentFile) }
 	}
 
-	fun exit() {
+	override fun exit() {
 		GlobalSettings.save()
 		if (!makeSureLeaveCurrentFile()) {
 			dispose()
@@ -188,7 +174,7 @@ abstract class UIBase<TextAttributes> {
 		}
 	}
 
-	fun restart() {
+	override fun restart() {
 		reloadSettings()
 		dispose()
 		createSelf()

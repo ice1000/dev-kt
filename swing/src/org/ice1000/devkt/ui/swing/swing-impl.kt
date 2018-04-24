@@ -43,7 +43,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		override var selectionStart by delegateOf(editor::getSelectionStart, editor::setSelectionStart)
 		override var edited by this@UIImpl::edited.delegator()
 
-		fun createHandler() = DevKtDocumentHandler(this, swingColorScheme(GlobalSettings, attributeContext))
+		fun createHandler() = DevKtDocumentHandler(this, this@UIImpl, swingColorScheme(GlobalSettings, attributeContext))
 		override fun startOffsetOf(line: Int) = root.getElement(line).startOffset
 		override fun endOffsetOf(line: Int) = root.getElement(line).endOffset
 		override fun lineOf(offset: Int) = root.getElementIndex(offset)
@@ -69,10 +69,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		override fun onChangeLanguage(newLanguage: DevKtLanguage<AttributeSet>) {
 			pluginMenuBar.text = newLanguage.language.displayName
 			pluginMenuBar.icon = newLanguage.icon
-		}
-
-		override fun message(text: String) {
-			messageLabel.text = text
 		}
 
 		/**

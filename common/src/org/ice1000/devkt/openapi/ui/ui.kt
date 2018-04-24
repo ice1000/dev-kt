@@ -95,7 +95,6 @@ interface IDevKtDocument<TextAttributes> : LengthOwner {
 	fun lineOf(offset: Int): Int
 	fun lockWrite()
 	fun unlockWrite()
-	fun message(text: String)
 }
 
 /**
