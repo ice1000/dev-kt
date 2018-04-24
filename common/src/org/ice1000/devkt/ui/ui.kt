@@ -2,31 +2,13 @@ package org.ice1000.devkt.ui
 
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
-import org.ice1000.devkt.openapi.util.handleException
 import org.ice1000.devkt.openapi.util.selfLocation
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.script.tryConstructClassFromStringArgs
 import java.io.File
 import javax.script.ScriptException
 import kotlin.concurrent.thread
-
-/**
- * @author ice1000
- * @since v1.3
- */
-enum class MessageType {
-	Error, Information, Plain, Question, Warning
-}
-
-/**
- * @author ice1000
- * @since v1.3
- */
-enum class ChooseFileType {
-	Open, Save, Create
-}
 
 private const val MEGABYTE = 1024 * 1024
 
@@ -75,6 +57,7 @@ abstract class UIBase<TextAttributes> {
 	abstract fun updateUndoRedoMenuItem()
 	abstract fun uiThread(lambda: () -> Unit)
 	abstract fun message(text: String)
+	abstract fun popup(completionList: List<String>)
 	protected abstract fun reloadSettings()
 	protected abstract fun doBrowse(url: String)
 	protected abstract fun doOpen(file: File)

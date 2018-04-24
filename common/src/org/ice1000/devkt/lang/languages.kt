@@ -3,6 +3,7 @@ package org.ice1000.devkt.lang
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
+import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.ui.DevKtIcons
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
@@ -75,7 +76,7 @@ interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighl
 	}
 
 	@JvmDefault
-	val initialCompletionList: Set<String>
+	val initialCompletionElementList: Set<CompletionElement>
 		get() = emptySet()
 }
 

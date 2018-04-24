@@ -71,7 +71,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun getLength() = document.length
 	val lineCommentStart get() = currentLanguage?.lineCommentStart
 	val blockComment get() = currentLanguage?.blockComment
-	var completionList: Set<String> = emptySet()
+	var initialCompletionList: Set<CompletionElement> = emptySet()
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
 
@@ -102,7 +102,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun switchLanguage(language: DevKtLanguage<TextAttributes>) {
 		currentLanguage = language
 		document.onChangeLanguage(language)
-		completionList = language.initialCompletionList
+		initialCompletionList = language.initialCompletionElementList
 		reparse()
 	}
 
