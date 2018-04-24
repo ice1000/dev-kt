@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.*
 
@@ -28,6 +29,8 @@ kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 plugins {
 	base
 	idea
+	maven
+	java
 	kotlin("jvm") version "1.2.40" apply false
 }
 
@@ -77,6 +80,15 @@ allprojects {
 			isDebug = !isCI
 			compilerArgs.add("-Xlint:unchecked")
 		}
+	}
+
+	val sourcesJar = task<Jar>("sourcesJar") {
+		from(java.sourceSets["main"].allSource)
+		classifier = "sources"
+	}
+
+	artifacts {
+		add("archives", sourcesJar)
 	}
 }
 
