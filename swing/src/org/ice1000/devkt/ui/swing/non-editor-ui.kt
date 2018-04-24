@@ -7,6 +7,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager
 import org.ice1000.devkt.LaunchInfo
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.openapi.util.CompletionElement
+import org.ice1000.devkt.openapi.util.CompletionPopup
 import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
@@ -100,13 +101,16 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		messageLabel.text = text
 	}
 
-	override fun popup(completionList: Collection<CompletionElement>) {
-		val point = editor.caret.magicCaretPosition
+	override fun createCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup {
+		val point = editor.ui.modelToView(editor, editor.caret.dot)
+		val windowPoint = editor.locationOnScreen
 		// TODO
-		PopupFactory.getSharedInstance()
-				.getPopup(mainPanel, JScrollPane(JList(completionList.toTypedArray()).apply {
-				}), point.x, point.y)
-				.show()
+		return PopupFactory.getSharedInstance()
+				.getPopup(editor, JScrollPane(JList(completionList
+						.map { it.lookup }
+						.toTypedArray()).apply {
+				}), windowPoint.x + point.x, windowPoint.y + point.y)
+				.let(::SwingPopup)
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {

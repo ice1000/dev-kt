@@ -70,6 +70,8 @@ class DevKtDocumentHandler<TextAttributes>(
 	val lineCommentStart get() = currentLanguage?.lineCommentStart
 	val blockComment get() = currentLanguage?.blockComment
 	var initialCompletionList: Set<CompletionElement> = emptySet()
+	val lexicalCompletionList: MutableSet<CompletionElement> = hashSetOf()
+	var lastPopup: CompletionPopup? = null
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
 
@@ -119,6 +121,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun commentCurrent() {
+		lastPopup?.hide()
 		val lines = lineOf(selectionStart)..lineOf(selectionEnd)
 		val lineCommentStart = lineCommentStart ?: return
 		val add = lines.any {
@@ -137,6 +140,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun blockComment() {
+		lastPopup?.hide()
 		val (start, end) = blockComment ?: return
 		val selectionStart = selectionStart
 		addEdit(selectionEnd, end, true)
@@ -188,6 +192,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param string String new content.
 	 */
 	override fun resetTextTo(string: String) {
+		lastPopup?.hide()
 		window.message("Text reset.")
 		with(undoManager) {
 			addEdit(0, selfMaintainedString, false)
@@ -255,7 +260,8 @@ class DevKtDocumentHandler<TextAttributes>(
 				else -> insertDirectly(offs, normalized, 0)
 			}
 		}
-		window.popup(initialCompletionList)
+		lastPopup = window.createCompletionPopup(initialCompletionList + lexicalCompletionList)
+				.apply { show() }
 	}
 
 	override fun reparse() {
@@ -272,11 +278,13 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	private fun lex(language: DevKtLanguage<TextAttributes>) {
+		lexicalCompletionList.clear()
 		Analyzer
 				.lex(text, language.createLexer(Analyzer.project))
 				.filter { it.type !in TokenSet.WHITE_SPACE }
-				.forEach { (start, end, _, type) ->
+				.forEach { (start, end, text, type) ->
 					// println("$text in ($start, $end)")
+					lexicalCompletionList.add(CompletionElement(text))
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}
 	}
@@ -350,6 +358,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	fun handleInsert(offs: Int, str: String?) {
+		lastPopup?.hide()
 		currentLanguage?.run {
 			handleTyping(offs, str, psiFile?.findElementAt(offs), this@DevKtDocumentHandler)
 		} ?: insert(offs, str)

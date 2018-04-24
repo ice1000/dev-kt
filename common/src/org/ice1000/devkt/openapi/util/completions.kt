@@ -17,8 +17,17 @@ data class CompletionElement
 @JvmOverloads
 constructor(
 		val text: String = "",
-		val lookup: String = "",
+		val lookup: String = text,
 		val tail: String = "",
 		val type: String = "",
 		val icon: Icon? = null
 )
+
+/**
+ * @author ice1000
+ * @since v1.4
+ */
+interface CompletionPopup {
+	fun show()
+	fun hide()
+}

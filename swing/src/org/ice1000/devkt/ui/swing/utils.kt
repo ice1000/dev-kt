@@ -2,9 +2,9 @@ package org.ice1000.devkt.ui.swing
 
 import org.ice1000.devkt.config.Key
 import org.ice1000.devkt.config.ShortCut
+import org.ice1000.devkt.openapi.util.CompletionPopup
 import java.awt.event.KeyEvent
-import javax.swing.JMenuItem
-import javax.swing.KeyStroke
+import javax.swing.*
 
 /**
  * <kbd>Ctrl</kbd> for Windows/Linux, <kbd>Meta</kbd> for MacOS
@@ -17,6 +17,11 @@ fun JMenuItem.keyMap(key: Int, modifiers: Int) {
 }
 
 fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.key.awt, shortcut.modifier)
+
+class SwingPopup(private val popup: Popup) : CompletionPopup {
+	override fun show() = popup.show()
+	override fun hide() = popup.hide()
+}
 
 /**
  * @author ice1000
