@@ -6,6 +6,7 @@ import org.ice1000.devkt.ui.MessageType
 import java.io.File
 
 interface DevKtWindow {
+	var edited: Boolean
 	fun refreshTitle()
 	fun uiThread(lambda: () -> Unit)
 	fun message(text: String)

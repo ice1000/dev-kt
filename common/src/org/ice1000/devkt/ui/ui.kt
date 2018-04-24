@@ -20,7 +20,7 @@ private const val MEGABYTE = 1024 * 1024
  * @since v1.3
  */
 abstract class UIBase<TextAttributes> : DevKtWindow {
-	var edited = false
+	override var edited = false
 		set(value) {
 			val change = field != value
 			field = value

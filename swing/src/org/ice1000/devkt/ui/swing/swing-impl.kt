@@ -34,14 +34,9 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 
 	private inner class KtDocument : DefaultStyledDocument(), DevKtDocument<AttributeSet> {
 		private val root = defaultRootElement
-		override var caretPosition
-			get() = editor.caretPosition
-			set(value) {
-				editor.caretPosition = value
-			}
+		override var caretPosition by delegateOf(editor::getCaretPosition, editor::setCaretPosition)
 		override var selectionEnd by delegateOf(editor::getSelectionEnd, editor::setSelectionEnd)
 		override var selectionStart by delegateOf(editor::getSelectionStart, editor::setSelectionStart)
-		override var edited by this@UIImpl::edited.delegator()
 
 		fun createHandler() = DevKtDocumentHandler(this, this@UIImpl, swingColorScheme(GlobalSettings, attributeContext))
 		override fun startOffsetOf(line: Int) = root.getElement(line).startOffset

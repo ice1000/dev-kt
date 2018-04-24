@@ -16,8 +16,6 @@ interface DevKtDocument<TextAttributes> : IDevKtDocument<TextAttributes> {
 	@JvmDefault
 	override fun clear() = delete(0, length)
 
-	var edited: Boolean
-
 	//FIXME: tab会被当做1个字符, 不知道有没有什么解决办法
 	@JvmDefault
 	fun lineColumnToPos(line: Int, column: Int = 1) = startOffsetOf(line - 1) + column - 1
@@ -78,12 +76,12 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 	override fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
 	override fun undo() {
-		document.edited = true
+		window.edited = true
 		undoManager.undo(this)
 	}
 
 	override fun redo() {
-		document.edited = true
+		window.edited = true
 		undoManager.redo(this)
 	}
 
@@ -91,7 +89,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun clearUndo() = undoManager.clear()
 	override fun addEdit(offset: Int, text: CharSequence, isInsert: Boolean) = addEdit(Edit(offset, text, isInsert))
 	override fun addEdit(edit: Edit) {
-		document.edited = true
+		window.edited = true
 		undoManager.addEdit(edit)
 	}
 
