@@ -101,9 +101,11 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 	}
 
 	override fun popup(completionList: List<CompletionElement>) {
+		val point = editor.caret.magicCaretPosition
 		// TODO
 		PopupFactory.getSharedInstance()
-				.getPopup(mainPanel, null, 0, 0)
+				.getPopup(mainPanel, JScrollPane(JList(completionList.toTypedArray()).apply {
+				}), point.x, point.y)
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {
