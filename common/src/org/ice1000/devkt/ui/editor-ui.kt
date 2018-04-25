@@ -65,12 +65,27 @@ class DevKtDocumentHandler<TextAttributes>(
 	private var lineNumber = 1
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
-	val lineCommentStart get() = currentLanguage?.lineCommentStart
-	val blockComment get() = currentLanguage?.blockComment
+	private val lineCommentStart get() = currentLanguage?.lineCommentStart
+	private val blockComment get() = currentLanguage?.blockComment
 	var initialCompletionList: Set<CompletionElement> = emptySet()
 	val lexicalCompletionList: MutableSet<CompletionElement> = hashSetOf()
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
+
+	private var currentTypingNodeCache: PsiElement? = null
+	override val currentTypingNode: PsiElement?
+		get() {
+			val caretPosition = document.caretPosition
+			if (caretPosition == currentTypingNodeCache?.startOffset)
+				return currentTypingNodeCache
+			var currentNode =
+					psiFile?.findElementAt(caretPosition) ?: return null
+			while (caretPosition == currentNode.startOffset &&
+					currentNode.prevSibling != null) {
+				currentNode = currentNode.prevSibling
+			}
+			return currentNode.also { currentTypingNodeCache = it }
+		}
 
 	override fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
 	override fun replaceText(regex: Regex, replacement: String) = selfMaintainedString.replace(regex, replacement)
@@ -254,14 +269,8 @@ class DevKtDocumentHandler<TextAttributes>(
 				else -> insertDirectly(offs, normalized, 0)
 			}
 		}
-		val psiFile = psiFile ?: return
 		val caretPosition = document.caretPosition
-		var currentNode = psiFile.findElementAt(caretPosition) ?: return
-		while (currentNode is PsiWhiteSpace &&
-				caretPosition == currentNode.startOffset &&
-				currentNode.prevSibling != null) {
-			currentNode = currentNode.prevSibling
-		}
+		val currentNode = currentTypingNode ?: return
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.startOffset)
 		window.showCompletionPopup(initialCompletionList + lexicalCompletionList
 				.filter { it.lookup.startsWith(currentText) })

@@ -11,6 +11,7 @@ import org.ice1000.devkt.openapi.util.CompletionPopup
 import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.awt.*
 import java.awt.event.*
 import java.io.File
@@ -127,13 +128,23 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 					KeyEvent.VK_LEFT,
 					KeyEvent.VK_RIGHT -> return // skip
 					KeyEvent.VK_ENTER -> lastPopup?.apply {
-						// TODO remove current text
-						document.insert(jList.selectedValue)
+						with(document) {
+							currentTypingNode?.let {
+								delete(it.startOffset, it.textLength)
+							}
+							insert(jList.selectedValue)
+						}
 						hide()
 					}
 					KeyEvent.VK_TAB -> TODO("select current and replace")
-					KeyEvent.VK_BACK_SPACE -> document.backSpace(1)
-					KeyEvent.VK_DELETE -> document.delete(1)
+					KeyEvent.VK_BACK_SPACE -> {
+						document.backSpace(1)
+						lastPopup?.hide()
+					}
+					KeyEvent.VK_DELETE -> {
+						document.delete(1)
+						lastPopup?.hide()
+					}
 					else -> document.handleInsert(e.keyChar.toString())
 				}
 			}
