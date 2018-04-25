@@ -114,6 +114,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		val jList = JList(completionList
 				.map { it.lookup }
 				.toTypedArray())
+		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
@@ -124,11 +125,16 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 					KeyEvent.VK_UP,
 					KeyEvent.VK_DOWN,
 					KeyEvent.VK_LEFT,
-					KeyEvent.VK_RIGHT -> return
-					KeyEvent.VK_ENTER -> TODO("select current")
+					KeyEvent.VK_RIGHT -> return // skip
+					KeyEvent.VK_ENTER -> lastPopup?.apply {
+						// TODO remove current text
+						document.insert(jList.selectedValue)
+						hide()
+					}
 					KeyEvent.VK_TAB -> TODO("select current and replace")
-					KeyEvent.VK_BACK_SPACE -> document.delete(document.document.caretPosition - 1, 1)
-					else -> document.handleInsert(document.document.caretPosition, e.keyChar.toString())
+					KeyEvent.VK_BACK_SPACE -> document.backSpace(1)
+					KeyEvent.VK_DELETE -> document.delete(1)
+					else -> document.handleInsert(e.keyChar.toString())
 				}
 			}
 		})

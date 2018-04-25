@@ -22,6 +22,7 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	var selectionEnd: Int
 	val canUndo: Boolean
 	val canRedo: Boolean
+	val document: IDevKtDocument<TextAttributes>
 	fun startOffsetOf(line: Int): Int
 	fun endOffsetOf(line: Int): Int
 	fun lineOf(offset: Int): Int
@@ -53,6 +54,22 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	fun delete(offs: Int, len: Int)
 
 	/**
+	 * Delete before current caret with checks and undo recording
+	 *
+	 * @param len Int length of deletion
+	 */
+	@JvmDefault
+	fun delete(len: Int) = delete(document.caretPosition, len)
+
+	/**
+	 * Delete at current caret with checks and undo recording
+	 *
+	 * @param len Int length of deletion
+	 */
+	@JvmDefault
+	fun backSpace(len: Int) = delete(document.caretPosition - 1, len)
+
+	/**
 	 * Clear the editor and set the content with undo recording
 	 *
 	 * @param string String new content.
@@ -75,6 +92,14 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	 * @param str String? text to insert
 	 */
 	fun insert(offs: Int, str: String?)
+
+	/**
+	 * Insert at current caret position with checks and undo recording
+	 *
+	 * @param str String? text to insert
+	 */
+	@JvmDefault
+	fun insert(str: String?) = insert(document.caretPosition, str)
 
 	fun reparse()
 }

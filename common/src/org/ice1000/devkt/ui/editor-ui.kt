@@ -30,7 +30,7 @@ interface DevKtDocument<TextAttributes> : IDevKtDocument<TextAttributes> {
 }
 
 class DevKtDocumentHandler<TextAttributes>(
-		val document: DevKtDocument<TextAttributes>,
+		override val document: DevKtDocument<TextAttributes>,
 		val window: DevKtWindow,
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		IDevKtDocumentHandler<TextAttributes> {
@@ -362,6 +362,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		caretPosition = startOfLineIndex + 1
 	}
 
+	fun handleInsert(str: String?) = handleInsert(document.caretPosition, str)
 	fun handleInsert(offs: Int, str: String?) {
 		currentLanguage?.run {
 			handleTyping(offs, str, psiFile?.findElementAt(offs), this@DevKtDocumentHandler)
