@@ -25,6 +25,7 @@ object GlobalSettings {
 	var windowBounds = Rectangle(200, 100, 800, 600)
 	var windowIcon = "" to ImageIO.read(javaClass.getResourceAsStream("/icon/kotlin@288x288.png"))
 	var backgroundImage: Pair<String, BufferedImage?> = "" to null
+	var useCompletion: Boolean = true
 	var useTab: Boolean = true
 	var highlightTokenBased: Boolean = true
 	var highlightSemanticBased: Boolean = true
@@ -171,6 +172,7 @@ object GlobalSettings {
 		initIntProperty(::psiViewerMaxCodeLength)
 		initIntProperty(::backgroundAlpha)
 		properties[::fontSize.name]?.toString()?.toFloatOrNull()?.let { fontSize = it }
+		properties[::useCompletion.name]?.let { useCompletion = it.toString() == "true" }
 		properties[::useTab.name]?.let { useTab = it.toString() == "true" }
 		properties[::highlightTokenBased.name]?.let { highlightTokenBased = it.toString() == "true" }
 		properties[::highlightSemanticBased.name]?.let { highlightSemanticBased = it.toString() == "true" }
@@ -194,6 +196,7 @@ object GlobalSettings {
 
 	fun save() {
 		properties[::recentFiles.name] = recentFiles.joinToString(File.pathSeparator)
+		properties[::useCompletion.name] = useCompletion.toString()
 		properties[::useTab.name] = useTab.toString()
 		properties[::fontSize.name] = fontSize.toString()
 		properties[::tabSize.name] = tabSize.toString()
