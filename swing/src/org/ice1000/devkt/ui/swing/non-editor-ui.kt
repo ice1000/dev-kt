@@ -122,6 +122,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				.toTypedArray())
 		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
 		jList.focusTraversalKeysEnabled = false
+		if (completionList.isNotEmpty())
+			jList.selectedIndex = 0
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
