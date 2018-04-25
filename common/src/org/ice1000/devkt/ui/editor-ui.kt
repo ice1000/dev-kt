@@ -260,7 +260,9 @@ class DevKtDocumentHandler<TextAttributes>(
 		val psiFile = psiFile ?: return
 		val caretPosition = document.caretPosition
 		var currentNode = psiFile.findElementAt(caretPosition) ?: return
-		if (currentNode is PsiWhiteSpace && caretPosition == currentNode.startOffset) {
+		while (currentNode is PsiWhiteSpace &&
+				caretPosition == currentNode.startOffset &&
+				currentNode.prevSibling != null) {
 			currentNode = currentNode.prevSibling
 		}
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.startOffset)
