@@ -27,9 +27,22 @@ import javax.swing.Icon
 interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighlighter<TextAttributes> {
 	val language: Language
 
+	/**
+	 * Language name displayed on menu bar.
+	 */
 	@JvmDefault
 	val displayName: String
 		get() = language.displayName
+
+	/**
+	 * @param currentElement PsiElement the current psi element user's typing on
+	 * @param inputString String the string user typed, in most cases it's just one char
+	 * @return Boolean whether to show the completion popup or not
+	 * @see com.intellij.codeInsight.completion.CompletionContributor.invokeAutoPopup
+	 */
+	@JvmDefault
+	fun invokeAutoPopup(currentElement: PsiElement, inputString: String) =
+			inputString.length == 1 && inputString[0].let { it.isLetter() || it in "@." }
 
 	/**
 	 * Check if a file is of this language

@@ -196,7 +196,7 @@ fun UIImpl.mainMenu(menuBar: JMenuBar) {
 	pluginMenuBar = menuBar.subMenu("Plugins") {
 		subMenu("Switch Language") {
 			document.languages.forEach {
-				item(it.language.displayName) {
+				item(it.displayName) {
 					icon = it.icon
 					onAction { _ -> document.switchLanguage(it) }
 				}

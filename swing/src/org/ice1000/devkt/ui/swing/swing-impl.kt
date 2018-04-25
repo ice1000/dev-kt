@@ -65,7 +65,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		}
 
 		override fun onChangeLanguage(newLanguage: DevKtLanguage<AttributeSet>) {
-			pluginMenuBar.text = newLanguage.language.displayName
+			pluginMenuBar.text = newLanguage.displayName
 			pluginMenuBar.icon = newLanguage.icon
 		}
 

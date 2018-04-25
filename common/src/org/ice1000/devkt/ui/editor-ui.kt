@@ -42,8 +42,10 @@ class DevKtDocumentHandler<TextAttributes>(
 	override var selectionStart by document::selectionStart.delegator()
 	override var selectionEnd by document::selectionEnd.delegator()
 
+	private val plainTextLanguage = PlainText<TextAttributes>()
+
 	val languages = listOf<DevKtLanguage<TextAttributes>>(
-			Java(), Kotlin(), PlainText()
+			Java(), Kotlin(), plainTextLanguage
 	) + ServiceLoader
 			.load(ExtendedDevKtLanguage::class.java)
 			.mapNotNull {
@@ -59,14 +61,14 @@ class DevKtDocumentHandler<TextAttributes>(
 		adjustFormat()
 	}
 
-	private var currentLanguage: DevKtLanguage<TextAttributes>? = null
+	private var currentLanguage: DevKtLanguage<TextAttributes> = plainTextLanguage
 	private var psiFileCache: PsiFile? = null
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
 	override val text get() = selfMaintainedString.toString()
 	override fun getLength() = document.length
-	private val lineCommentStart get() = currentLanguage?.lineCommentStart
-	private val blockComment get() = currentLanguage?.blockComment
+	private val lineCommentStart get() = currentLanguage.lineCommentStart
+	private val blockComment get() = currentLanguage.blockComment
 	var initialCompletionList: Set<CompletionElement> = emptySet()
 	val lexicalCompletionList: MutableSet<CompletionElement> = hashSetOf()
 	override val canUndo get() = undoManager.canUndo
@@ -84,6 +86,7 @@ class DevKtDocumentHandler<TextAttributes>(
 					currentNode.prevSibling != null) {
 				currentNode = currentNode.prevSibling
 			}
+			while (currentNode.lastChild != null) currentNode = currentNode.lastChild
 			return currentNode.also { currentTypingNodeCache = it }
 		}
 
@@ -119,7 +122,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	val psiFile: PsiFile?
-		get() = psiFileCache ?: currentLanguage?.run { Analyzer.parse(text, language) }
+		get() = psiFileCache ?: currentLanguage.run { Analyzer.parse(text, language) }
 
 	override fun adjustFormat(offs: Int, len: Int) {
 		if (len <= 0) return
@@ -269,21 +272,26 @@ class DevKtDocumentHandler<TextAttributes>(
 				else -> insertDirectly(offs, normalized, 0)
 			}
 		}
-		val caretPosition = document.caretPosition
 		val currentNode = currentTypingNode ?: return
+		if (currentLanguage.invokeAutoPopup(currentNode, normalized))
+			showCompletion(currentNode)
+	}
+
+	private fun showCompletion(currentNode: PsiElement) {
+		val caretPosition = document.caretPosition
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.startOffset)
 		window.showCompletionPopup(initialCompletionList + lexicalCompletionList
-				.filter { it.lookup.startsWith(currentText) })
-				.show()
+				.filter { it.lookup.let { it.startsWith(currentText) && it != currentText } }
+				.also { window.message("Current: $currentText, ${it.size} candidates") }
+		).show()
 	}
 
 	override fun reparse() {
-		val lang = currentLanguage ?: return
 		while (highlightCache.size <= document.length) highlightCache.add(null)
 		// val time = System.currentTimeMillis()
-		if (GlobalSettings.highlightTokenBased) lex(lang)
+		if (GlobalSettings.highlightTokenBased) lex(currentLanguage)
 		// val time2 = System.currentTimeMillis()
-		if (GlobalSettings.highlightSemanticBased) parse(lang)
+		if (GlobalSettings.highlightSemanticBased) parse(currentLanguage)
 		// val time3 = System.currentTimeMillis()
 		rehighlight()
 		// benchmark
@@ -373,8 +381,8 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	fun handleInsert(str: String?) = handleInsert(document.caretPosition, str)
 	fun handleInsert(offs: Int, str: String?) {
-		currentLanguage?.run {
+		currentLanguage.run {
 			handleTyping(offs, str, psiFile?.findElementAt(offs), this@DevKtDocumentHandler)
-		} ?: insert(offs, str)
+		}
 	}
 }
