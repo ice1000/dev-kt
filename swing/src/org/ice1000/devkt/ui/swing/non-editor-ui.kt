@@ -11,6 +11,7 @@ import org.ice1000.devkt.openapi.util.CompletionPopup
 import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.awt.*
 import java.awt.event.*
@@ -116,6 +117,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				.map { it.lookup }
 				.toTypedArray())
 		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
+		jList.focusTraversalKeysEnabled = false
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
@@ -129,14 +131,18 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 					KeyEvent.VK_RIGHT -> return // skip
 					KeyEvent.VK_ENTER -> lastPopup?.apply {
 						with(document) {
-							currentTypingNode?.let {
-								delete(it.startOffset, it.textLength)
-							}
+							currentTypingNode?.let { delete(it.startOffset, document.caretPosition - it.startOffset) }
 							insert(jList.selectedValue)
 						}
 						hide()
 					}
-					KeyEvent.VK_TAB -> TODO("select current and replace")
+					KeyEvent.VK_TAB -> lastPopup?.apply {
+						with(document) {
+							currentTypingNode?.let { delete(it.startOffset, it.textLength) }
+							insert(jList.selectedValue)
+						}
+						hide()
+					}
 					KeyEvent.VK_BACK_SPACE -> {
 						document.backSpace(1)
 						lastPopup?.hide()
@@ -151,6 +157,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		})
 
 		val jScrollPane = JScrollPane(jList)
+		jScrollPane.focusTraversalKeysEnabled = false
 		return PopupFactory.getSharedInstance()
 				.getPopup(editor, jScrollPane, windowPoint.x + point.x, windowPoint.y + point.y + 20)
 				.let { SwingPopup(it, jList) }
