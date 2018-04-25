@@ -111,21 +111,20 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		lastPopup?.hide()
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
 		val windowPoint = editor.locationOnScreen
-		// TODO
 		val jList = JList(completionList
 				.map { it.lookup }
-				.toTypedArray()).apply {
-			addKeyListener(object : KeyAdapter() {
-				private val banned = listOf(KeyEvent.VK_ENTER, KeyEvent.VK_ESCAPE)
-				override fun keyPressed(e: KeyEvent) {
-					when {
-						e.keyCode in banned -> lastPopup?.hide()
-						e.keyCode == KeyEvent.VK_BACK_SPACE -> document.delete(document.document.caretPosition, 1)
-						else -> document.handleInsert(document.document.caretPosition, e.keyChar.toString())
-					}
+				.toTypedArray())
+		jList.addKeyListener(object : KeyAdapter() {
+			override fun keyPressed(e: KeyEvent) {
+				when (e.keyCode) {
+					KeyEvent.VK_ESCAPE -> lastPopup?.hide()
+					KeyEvent.VK_ENTER -> TODO("select current")
+					KeyEvent.VK_TAB -> TODO("select current and replace")
+					KeyEvent.VK_BACK_SPACE -> document.delete(document.document.caretPosition, 1)
+					else -> document.handleInsert(document.document.caretPosition, e.keyChar.toString())
 				}
-			})
-		}
+			}
+		})
 
 		val jScrollPane = JScrollPane(jList)
 		return PopupFactory.getSharedInstance()
