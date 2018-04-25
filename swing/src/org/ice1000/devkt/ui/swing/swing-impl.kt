@@ -2,7 +2,6 @@ package org.ice1000.devkt.ui.swing
 
 import charlie.gensokyo.show
 import com.bennyhuo.kotlin.opd.delegateOf
-import com.bennyhuo.kotlin.opd.delegator
 import net.iharder.dnd.FileDrop
 import org.ice1000.devkt.DevKtFontManager.loadFont
 import org.ice1000.devkt.config.GlobalSettings
@@ -10,14 +9,18 @@ import org.ice1000.devkt.config.swingColorScheme
 import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.ui.DevKtDocument
 import org.ice1000.devkt.ui.DevKtDocumentHandler
-import org.ice1000.devkt.ui.swing.dialogs.*
+import org.ice1000.devkt.ui.swing.dialogs.FindDialogImpl
+import org.ice1000.devkt.ui.swing.dialogs.GoToLineDialog
+import org.ice1000.devkt.ui.swing.dialogs.ReplaceDialogImpl
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
 import java.io.File
 import javax.swing.JMenu
 import javax.swing.JMenuItem
 import javax.swing.event.DocumentEvent
-import javax.swing.text.*
+import javax.swing.text.AttributeSet
+import javax.swing.text.DefaultStyledDocument
+import javax.swing.text.MutableAttributeSet
 
 /**
  * @author ice1000

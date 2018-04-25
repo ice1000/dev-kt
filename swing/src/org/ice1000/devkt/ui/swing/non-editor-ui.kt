@@ -117,10 +117,17 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
-					KeyEvent.VK_ESCAPE -> lastPopup?.hide()
+					KeyEvent.VK_ESCAPE,
+					KeyEvent.VK_CONTROL,
+					KeyEvent.VK_SHIFT,
+					KeyEvent.VK_ALT -> lastPopup?.hide()
+					KeyEvent.VK_UP,
+					KeyEvent.VK_DOWN,
+					KeyEvent.VK_LEFT,
+					KeyEvent.VK_RIGHT -> return
 					KeyEvent.VK_ENTER -> TODO("select current")
 					KeyEvent.VK_TAB -> TODO("select current and replace")
-					KeyEvent.VK_BACK_SPACE -> document.delete(document.document.caretPosition, 1)
+					KeyEvent.VK_BACK_SPACE -> document.delete(document.document.caretPosition - 1, 1)
 					else -> document.handleInsert(document.document.caretPosition, e.keyChar.toString())
 				}
 			}

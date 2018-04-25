@@ -288,7 +288,8 @@ class DevKtDocumentHandler<TextAttributes>(
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { (start, end, text, type) ->
 					// println("$text in ($start, $end)")
-					lexicalCompletionList.add(CompletionElement(text))
+					if (type != TokenType.WHITE_SPACE && text.length > 1)
+						lexicalCompletionList.add(CompletionElement(text))
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}
 	}
