@@ -28,6 +28,23 @@ interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighl
 	val language: Language
 
 	/**
+	 * Language name displayed on menu bar.
+	 */
+	@JvmDefault
+	val displayName: String
+		get() = language.displayName
+
+	/**
+	 * @param currentElement PsiElement the current psi element user's typing on
+	 * @param inputString String the string user typed, in most cases it's just one char
+	 * @return Boolean whether to show the completion popup or not
+	 * @see com.intellij.codeInsight.completion.CompletionContributor.invokeAutoPopup
+	 */
+	@JvmDefault
+	fun invokeAutoPopup(currentElement: PsiElement, inputString: String) =
+			inputString.length == 1 && inputString[0].let { it.isLetter() || it in "@." }
+
+	/**
 	 * Check if a file is of this language
 	 * @param fileName String the file name
 	 * @return Boolean is of this language or not
@@ -111,18 +128,16 @@ sealed class BuiltinDevKtLanguage<TextAttributes>(
  * @since v1.2
  * @see JavaLanguage
  */
-class Java<TextAttributes>(
-		annotator: Annotator<TextAttributes>,
-		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : BuiltinDevKtLanguage<TextAttributes>(
-		annotator,
-		syntaxHighlighter,
+class Java<TextAttributes> : BuiltinDevKtLanguage<TextAttributes>(
+		JavaAnnotator(),
+		JavaSyntaxHighlighter(),
 		JavaLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".java")
-	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_8)
+	private val java8Lexer = JavaLexer(LanguageLevel.JDK_1_9)
 	// TODO multiple language level support
 	override fun createLexer(project: Project) = java8Lexer
 
+	override val displayName: String get() = "Java9"
 	override val icon: Icon get() = DevKtIcons.JAVA
 }
 
@@ -131,12 +146,9 @@ class Java<TextAttributes>(
  * @since v1.2
  * @see KotlinLanguage
  */
-class Kotlin<TextAttributes>(
-		annotator: Annotator<TextAttributes>,
-		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : BuiltinDevKtLanguage<TextAttributes>(
-		annotator,
-		syntaxHighlighter,
+class Kotlin<TextAttributes> : BuiltinDevKtLanguage<TextAttributes>(
+		KotlinAnnotator(),
+		KotlinSyntaxHighlighter(),
 		KotlinLanguage.INSTANCE) {
 	override fun satisfies(fileName: String) = fileName.endsWith(".kt") or fileName.endsWith(".kts")
 	private val lexer = KotlinLexer()
@@ -149,12 +161,9 @@ class Kotlin<TextAttributes>(
  * @since v1.2
  * @see PlainTextLanguage
  */
-class PlainText<TextAttributes>(
-		annotator: Annotator<TextAttributes>,
-		syntaxHighlighter: SyntaxHighlighter<TextAttributes>
-) : DevKtLanguage<TextAttributes>,
-		Annotator<TextAttributes> by annotator,
-		SyntaxHighlighter<TextAttributes> by syntaxHighlighter {
+class PlainText<TextAttributes> : DevKtLanguage<TextAttributes>,
+		Annotator<TextAttributes> by PlainTextAnnotator(),
+		SyntaxHighlighter<TextAttributes> by PlainTextSyntaxHighlighter() {
 	override val language: PlainTextLanguage = PlainTextLanguage.INSTANCE
 	override fun satisfies(fileName: String) =
 			fileName.endsWith(".txt") && !fileName.endsWith(".lua.txt") || '.' !in fileName

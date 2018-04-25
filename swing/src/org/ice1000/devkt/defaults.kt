@@ -25,6 +25,7 @@ object DevKtFontManager {
 		get() = UIManager.getFont("TextPane.font")
 		set(value) {
 			UIManager.put("TextPane.font", value)
+			UIManager.put("List.font", value)
 		}
 
 	var gothicFont: Font
@@ -40,7 +41,6 @@ object DevKtFontManager {
 			UIManager.put("TextField.font", value)
 			UIManager.put("FileChooser.font", value)
 			UIManager.put("Button.font", value)
-			UIManager.put("List.font", value)
 			UIManager.put("Table.font", value)
 			UIManager.put("Panel.font", value)
 			UIManager.put("CheckBox.font", value)

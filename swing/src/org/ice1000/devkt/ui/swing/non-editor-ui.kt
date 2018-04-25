@@ -11,6 +11,8 @@ import org.ice1000.devkt.openapi.util.CompletionPopup
 import org.ice1000.devkt.ui.*
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.awt.*
 import java.awt.event.*
 import java.io.File
@@ -111,17 +113,51 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		lastPopup?.hide()
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
 		val windowPoint = editor.locationOnScreen
-		// TODO
 		val jList = JList(completionList
 				.map { it.lookup }
 				.toTypedArray())
-		val jScrollPane = JScrollPane(jList).apply {
-			addKeyListener(object : KeyAdapter() {
-				override fun keyPressed(e: KeyEvent) {
-					if (e.keyCode == KeyEvent.VK_ENTER) lastPopup?.hide()
+		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
+		jList.focusTraversalKeysEnabled = false
+		jList.addKeyListener(object : KeyAdapter() {
+			override fun keyPressed(e: KeyEvent) {
+				when (e.keyCode) {
+					KeyEvent.VK_ESCAPE,
+					KeyEvent.VK_CONTROL,
+					KeyEvent.VK_SHIFT,
+					KeyEvent.VK_ALT -> lastPopup?.hide()
+					KeyEvent.VK_UP,
+					KeyEvent.VK_DOWN,
+					KeyEvent.VK_LEFT,
+					KeyEvent.VK_RIGHT -> return // skip
+					KeyEvent.VK_ENTER -> lastPopup?.apply {
+						with(document) {
+							currentTypingNode?.let { delete(it.startOffset, document.caretPosition - it.startOffset) }
+							insert(jList.selectedValue)
+						}
+						hide()
+					}
+					KeyEvent.VK_TAB -> lastPopup?.apply {
+						with(document) {
+							currentTypingNode?.let { delete(it.startOffset, it.textLength) }
+							insert(jList.selectedValue)
+						}
+						hide()
+					}
+					KeyEvent.VK_BACK_SPACE -> {
+						document.backSpace(1)
+						lastPopup?.hide()
+					}
+					KeyEvent.VK_DELETE -> {
+						document.delete(1)
+						lastPopup?.hide()
+					}
+					else -> document.handleInsert(e.keyChar.toString())
 				}
-			})
-		}
+			}
+		})
+
+		val jScrollPane = JScrollPane(jList)
+		jScrollPane.focusTraversalKeysEnabled = false
 		return PopupFactory.getSharedInstance()
 				.getPopup(editor, jScrollPane, windowPoint.x + point.x, windowPoint.y + point.y + 20)
 				.let { SwingPopup(it, jList) }

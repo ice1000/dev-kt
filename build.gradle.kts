@@ -21,7 +21,7 @@ var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
 var kotlinVersion: String by extra
-val kotlinEAP = "1.2.50-dev-711"
+val kotlinEAP = "1.2.50-dev-880"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
 kotlinStable = "1.2.40"
