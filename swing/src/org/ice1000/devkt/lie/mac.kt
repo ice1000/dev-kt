@@ -3,6 +3,7 @@ package org.ice1000.devkt.lie
 import com.apple.eawt.*
 import com.apple.eawt.Application.getApplication
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.ui.swing.DevKtFrame
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
 import java.awt.event.KeyEvent
 
@@ -15,15 +16,20 @@ object MacSpecific : AboutHandler, PreferencesHandler, QuitHandler {
 	}
 
 	fun init() {
-		val app: Application = getApplication()
-		app.setPreferencesHandler(this)
-		app.setQuitHandler(this)
-		app.setAboutHandler(this)
-		app.dockIconImage = GlobalSettings.windowIcon.second
-		// TODO replace with my own icon
+		getApplication().let { app ->
+			app.setPreferencesHandler(this)
+			app.setQuitHandler(this)
+			app.setAboutHandler(this)
+			app.dockIconImage = GlobalSettings.windowIcon.second
+		}
 	}
 
-	override fun handlePreferences(event: AppEvent.PreferencesEvent) = TODO()
+	private val ui
+		get() = DevKtFrame.instance.ui
+
+	override fun handlePreferences(event: AppEvent.PreferencesEvent) = ui.settings()
+	// TODO About
 	override fun handleAbout(event: AppEvent.AboutEvent) = Unit
-	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) = TODO()
+
+	override fun handleQuitRequestWith(event: AppEvent.QuitEvent, quitResponse: QuitResponse) = ui.exit()
 }
