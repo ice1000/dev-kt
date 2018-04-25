@@ -1,15 +1,19 @@
 package org.ice1000.devkt.ui
 
 import com.bennyhuo.kotlin.opd.delegator
+import org.ice1000.devkt.ASTToken
 import org.ice1000.devkt.Analyzer
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
+import org.ice1000.devkt.openapi.nodeType
 import org.ice1000.devkt.openapi.ui.*
 import org.ice1000.devkt.openapi.util.*
+import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
@@ -74,11 +78,11 @@ class DevKtDocumentHandler<TextAttributes>(
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
 
-	private var currentTypingNodeCache: PsiElement? = null
-	override val currentTypingNode: PsiElement?
+	private var currentTypingNodeCache: ASTToken? = null
+	override val currentTypingNode: ASTToken?
 		get() {
 			val caretPosition = document.caretPosition
-			if (caretPosition == currentTypingNodeCache?.startOffset)
+			if (caretPosition == currentTypingNodeCache?.start)
 				return currentTypingNodeCache
 			var currentNode =
 					psiFile?.findElementAt(caretPosition) ?: return null
@@ -87,7 +91,9 @@ class DevKtDocumentHandler<TextAttributes>(
 				currentNode = currentNode.prevSibling
 			}
 			while (currentNode.lastChild != null) currentNode = currentNode.lastChild
-			return currentNode.also { currentTypingNodeCache = it }
+			return currentNode
+					.run { ASTToken(startOffset, endOffset, text, nodeType) }
+					.also { currentTypingNodeCache = it }
 		}
 
 	override fun textWithin(start: Int, end: Int): String = selfMaintainedString.substring(start, end)
@@ -277,9 +283,13 @@ class DevKtDocumentHandler<TextAttributes>(
 			showCompletion(currentNode)
 	}
 
-	private fun showCompletion(currentNode: PsiElement) {
+	fun showCompletion() {
+		showCompletion(currentTypingNode ?: return)
+	}
+
+	private fun showCompletion(currentNode: ASTToken) {
 		val caretPosition = document.caretPosition
-		val currentText = currentNode.text.substring(0, caretPosition - currentNode.startOffset)
+		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
 		window.showCompletionPopup(initialCompletionList + lexicalCompletionList
 				.filter { it.lookup.let { it.startsWith(currentText) && it != currentText } }
 				.also { window.message("Current: $currentText, ${it.size} candidates") }
@@ -300,12 +310,16 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	private fun lex(language: DevKtLanguage<TextAttributes>) {
 		lexicalCompletionList.clear()
+		val caretPosition = document.caretPosition
 		Analyzer
 				.lex(text, language.createLexer(Analyzer.project))
 				.filter { it.type !in TokenSet.WHITE_SPACE }
-				.forEach { (start, end, text, type) ->
+				.forEach { node ->
+					val (start, end, text, type) = node
 					// println("$text in ($start, $end)")
-					if (type != TokenType.WHITE_SPACE && text.length > 1)
+					if (end == caretPosition) currentTypingNodeCache = node
+					if (text.isNotBlank() &&
+							text.length > 1)
 						lexicalCompletionList.add(CompletionElement(text))
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}

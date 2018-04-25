@@ -8,13 +8,16 @@ import org.ice1000.devkt.LaunchInfo
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.openapi.util.CompletionPopup
-import org.ice1000.devkt.ui.*
+import org.ice1000.devkt.ui.ChooseFileType
+import org.ice1000.devkt.ui.MessageType
+import org.ice1000.devkt.ui.UIBase
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.awt.*
-import java.awt.event.*
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.io.File
 import java.net.URL
 import javax.swing.*
@@ -103,7 +106,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 	var imageCache: Image? = null
 	var backgroundColorCache: Color? = null
 
-	override var memoryIndicatorText by delegateOf(memoryIndicator::getText, memoryIndicator::setText)
+	override var memoryIndicatorText: String?
+			by delegateOf(memoryIndicator::getText, memoryIndicator::setText)
 
 	override fun message(text: String) {
 		messageLabel.text = text
@@ -130,15 +134,16 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 					KeyEvent.VK_LEFT,
 					KeyEvent.VK_RIGHT -> return // skip
 					KeyEvent.VK_ENTER -> lastPopup?.apply {
+						val selectedValue = jList.selectedValue ?: return@apply
 						with(document) {
-							currentTypingNode?.let { delete(it.startOffset, document.caretPosition - it.startOffset) }
-							insert(jList.selectedValue)
+							currentTypingNode?.let { delete(it.start, document.caretPosition - it.start) }
+							insert(selectedValue)
 						}
 						hide()
 					}
 					KeyEvent.VK_TAB -> lastPopup?.apply {
 						with(document) {
-							currentTypingNode?.let { delete(it.startOffset, it.textLength) }
+							currentTypingNode?.let { delete(it.start, it.textLength) }
 							insert(jList.selectedValue)
 						}
 						hide()
@@ -159,7 +164,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		val jScrollPane = JScrollPane(jList)
 		jScrollPane.focusTraversalKeysEnabled = false
 		return PopupFactory.getSharedInstance()
-				.getPopup(editor, jScrollPane, windowPoint.x + point.x, windowPoint.y + point.y + 20)
+				.getPopup(editor, jScrollPane, windowPoint.x + point.x - 20, windowPoint.y + point.y + 20)
 				.let { SwingPopup(it, jList) }
 				.also { lastPopup = it }
 	}

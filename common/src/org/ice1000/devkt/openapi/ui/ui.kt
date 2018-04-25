@@ -1,10 +1,10 @@
 package org.ice1000.devkt.openapi.ui
 
+import org.ice1000.devkt.ASTToken
 import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.openapi.AnnotationHolder
 import org.ice1000.devkt.openapi.LengthOwner
 import org.ice1000.devkt.ui.Edit
-import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import java.net.URL
 import javax.swing.Icon
 import com.bulenkov.iconloader.IconLoader as JetBrainsIconLoader
@@ -24,7 +24,7 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	val canUndo: Boolean
 	val canRedo: Boolean
 	val document: IDevKtDocument<TextAttributes>
-	val currentTypingNode: PsiElement?
+	val currentTypingNode: ASTToken?
 	fun startOffsetOf(line: Int): Int
 	fun endOffsetOf(line: Int): Int
 	fun lineOf(offset: Int): Int

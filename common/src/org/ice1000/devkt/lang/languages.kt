@@ -1,5 +1,6 @@
 package org.ice1000.devkt.lang
 
+import org.ice1000.devkt.ASTToken
 import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
@@ -41,7 +42,7 @@ interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighl
 	 * @see com.intellij.codeInsight.completion.CompletionContributor.invokeAutoPopup
 	 */
 	@JvmDefault
-	fun invokeAutoPopup(currentElement: PsiElement, inputString: String) =
+	fun invokeAutoPopup(currentElement: ASTToken, inputString: String) =
 			inputString.length == 1 && inputString[0].let { it.isLetter() || it in "@." }
 
 	/**

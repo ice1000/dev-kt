@@ -37,7 +37,9 @@ data class ASTToken(
 		val end: Int,
 		val text: String,
 		val type: IElementType
-)
+) {
+	val textLength get() = text.length
+}
 
 @Suppress("unused")
 /**
