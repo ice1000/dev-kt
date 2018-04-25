@@ -236,11 +236,16 @@ class DevKtDocumentHandler<TextAttributes>(
 	 */
 	override fun insert(offs: Int, str: String?) {
 		if (offs < 0) return
+
 		val normalized = str?.filterNot { it == '\r' } ?: return
+
+		//UndoManager
 		with(undoManager) {
 			addEdit(offs, normalized, true)
 			done()
 		}
+
+		//Pairs or character completion
 		if (normalized.length > 1)
 			insertDirectly(offs, normalized, 0)
 		else {
@@ -251,12 +256,12 @@ class DevKtDocumentHandler<TextAttributes>(
 					insertDirectly(offs, "", 1)
 				} else insertDirectly(offs, normalized, 0)
 				in paired -> insertDirectly(offs, "$normalized${paired[char]}", -1)
-				in insteadPaired -> if (GlobalSettings.useTab.not()) {
-					insertDirectly(offs, insteadPaired[char].toString(), 0)
-				} else insertDirectly(offs, normalized, 0)
+				in insteadPaired -> insertDirectly(offs, insteadPaired[char]?.value ?: return, 0)
 				else -> insertDirectly(offs, normalized, 0)
 			}
 		}
+
+		//Insert string
 		val psiFile = psiFile ?: return
 		val caretPosition = document.caretPosition
 		var currentNode = psiFile.findElementAt(caretPosition) ?: return
@@ -264,9 +269,13 @@ class DevKtDocumentHandler<TextAttributes>(
 			currentNode = currentNode.prevSibling
 		}
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.startOffset)
-		window.showCompletionPopup(initialCompletionList + lexicalCompletionList
-				.filter { it.lookup.startsWith(currentText) })
-				.show()
+
+		//Completion
+		if (GlobalSettings.useCompletion) {
+			window.showCompletionPopup(initialCompletionList + lexicalCompletionList
+					.filter { it.lookup.startsWith(currentText) })
+					.show()
+		}
 	}
 
 	override fun reparse() {

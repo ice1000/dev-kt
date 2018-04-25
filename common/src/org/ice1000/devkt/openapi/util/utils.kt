@@ -36,12 +36,9 @@ inline fun handleException(lambda: () -> Unit) {
 val selfLocation: String = Analyzer::class.java.protectionDomain.codeSource.location.file
 val selfLocationFile: File = File(selfLocation)
 
-val insteadPaired by lazy {
-	//下面使用GlobalSettings里的属性, 可能还没load就get了emmmmm, 所以选择lazy
-	mapOf(
-			'\t' to " ".repeat(GlobalSettings.tabSize)
-	)
-}
+val insteadPaired: Map<Char, Lazy<String>> = mapOf(
+		'\t' to lazy { if (GlobalSettings.useTab) "\t" else " ".repeat(GlobalSettings.tabSize) }
+)
 
 val paired = mapOf(
 		'"' to '"',
