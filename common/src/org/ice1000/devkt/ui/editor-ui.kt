@@ -43,9 +43,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override var selectionEnd by document::selectionEnd.delegator()
 
 	val languages = listOf<DevKtLanguage<TextAttributes>>(
-			Java(JavaAnnotator(), JavaSyntaxHighlighter()),
-			Kotlin(KotlinAnnotator(), KotlinSyntaxHighlighter()),
-			PlainText(PlainTextAnnotator(), PlainTextSyntaxHighlighter())
+			Java(), Kotlin(), PlainText()
 	) + ServiceLoader
 			.load(ExtendedDevKtLanguage::class.java)
 			.mapNotNull {
@@ -66,7 +64,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	private val highlightCache = ArrayList<TextAttributes?>(5000)
 	private var lineNumber = 1
 	override val text get() = selfMaintainedString.toString()
-
 	override fun getLength() = document.length
 	val lineCommentStart get() = currentLanguage?.lineCommentStart
 	val blockComment get() = currentLanguage?.blockComment
