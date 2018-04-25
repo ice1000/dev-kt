@@ -16,13 +16,22 @@ import javax.swing.Icon
 class CompletionElement
 @JvmOverloads
 constructor(
-		val text: String = "",
-		val lookup: String = text,
+		val text: Any = "",
+		val lookup: String = text.toString(),
 		val tail: String = "",
 		val type: String = "",
 		val icon: Icon? = null
 ) {
 	override fun toString() = lookup
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (other !is CompletionElement) return false
+		if (text != other.text) return false
+		return true
+	}
+
+	override fun hashCode() = text.hashCode()
+
 }
 
 /**
