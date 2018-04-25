@@ -40,6 +40,8 @@ public interface DevKtIcons {
 	@NotNull Icon GRADLE = IconLoader.getIcon("/icon/gradle.png");
 	@NotNull Icon MOVE_UP = IconLoader.getIcon("/icon/moveUp.png");
 	@NotNull Icon MOVE_DOWN = IconLoader.getIcon("/icon/moveDown.png");
+	@NotNull Icon REPLACE = IconLoader.getIcon("/icon/replace_dark.png");
+	@NotNull Icon FIND = IconLoader.getIcon("/icon/search_dark.png");
 
 	// Languages
 	@NotNull Icon JAVA = IconLoader.getIcon("/icon/fileTypes/java.png");

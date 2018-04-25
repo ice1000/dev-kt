@@ -46,6 +46,13 @@ interface DevKtLanguage<TextAttributes> : Annotator<TextAttributes>, SyntaxHighl
 			inputString.length == 1 && inputString[0].let { it.isLetter() || it in "@." }
 
 	/**
+	 * @param element PsiElement An element in the current AST
+	 * @return Boolean whether this element should be added into the completion list
+	 */
+	@JvmDefault
+	fun shouldAddAsCompletion(element: PsiElement) = false
+
+	/**
 	 * Check if a file is of this language
 	 * @param fileName String the file name
 	 * @return Boolean is of this language or not

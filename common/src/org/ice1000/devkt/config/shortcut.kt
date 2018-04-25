@@ -110,6 +110,7 @@ enum class Key {
 	F11,
 	F12,
 	SLASH,
+	SPACE,
 	UP,
 	DOWN,
 	LEFT,

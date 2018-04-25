@@ -86,6 +86,7 @@ object GlobalSettings {
 	var shortcutBlockComment = ShortCut(true, false, true, Key.SLASH)
 	var shortcutFind = ShortCut(true, false, false, Key.F)
 	var shortcutReplace = ShortCut(true, false, false, Key.R)
+	var shortcutCompletion = ShortCut(true, false, false, Key.SPACE)
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value
@@ -192,6 +193,11 @@ object GlobalSettings {
 		initShortCutProperty(::shortcutNextLine)
 		initShortCutProperty(::shortcutSplitLine)
 		initShortCutProperty(::shortcutNewLineBefore)
+		initShortCutProperty(::shortcutComment)
+		initShortCutProperty(::shortcutBlockComment)
+		initShortCutProperty(::shortcutFind)
+		initShortCutProperty(::shortcutReplace)
+		initShortCutProperty(::shortcutCompletion)
 	}
 
 	fun save() {
@@ -216,6 +222,11 @@ object GlobalSettings {
 		properties[::shortcutNextLine.name] = shortcutNextLine.toString()
 		properties[::shortcutSplitLine.name] = shortcutSplitLine.toString()
 		properties[::shortcutNewLineBefore.name] = shortcutNewLineBefore.toString()
+		properties[::shortcutComment.name] = shortcutComment.toString()
+		properties[::shortcutBlockComment.name] = shortcutBlockComment.toString()
+		properties[::shortcutFind.name] = shortcutFind.toString()
+		properties[::shortcutReplace.name] = shortcutReplace.toString()
+		properties[::shortcutCompletion.name] = shortcutCompletion.toString()
 		properties.store(configFile.outputStream(), null)
 	}
 }

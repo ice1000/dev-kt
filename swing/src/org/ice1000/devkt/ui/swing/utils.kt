@@ -81,6 +81,7 @@ val Key.awt
 		Key.F11 -> KeyEvent.VK_F11
 		Key.F12 -> KeyEvent.VK_F12
 		Key.SLASH -> KeyEvent.VK_SLASH
+		Key.SPACE -> KeyEvent.VK_SPACE
 		Key.ENTER -> KeyEvent.VK_ENTER
 		Key.UP -> KeyEvent.VK_UP
 		Key.DOWN -> KeyEvent.VK_DOWN

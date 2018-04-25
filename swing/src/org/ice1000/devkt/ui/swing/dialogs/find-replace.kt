@@ -42,10 +42,10 @@ abstract class FindUI : JDialog() {
 		val panel2 = JPanel()
 		panel2.layout = GridLayoutManager(1, 5, Insets(0, 0, 0, 0), -1, -1)
 		mainPanel.add(panel2, GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false))
-		moveUp.icon = ImageIcon(javaClass.getResource("/icon/moveUp.png"))
+		moveUp.icon = DevKtIcons.MOVE_UP
 		moveUp.text = ""
 		panel2.add(moveUp, GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false))
-		moveDown.icon = ImageIcon(javaClass.getResource("/icon/moveDown.png"))
+		moveDown.icon = DevKtIcons.MOVE_DOWN
 		moveDown.text = ""
 		panel2.add(moveDown, GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK or GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false))
 		val spacer1 = Spacer()

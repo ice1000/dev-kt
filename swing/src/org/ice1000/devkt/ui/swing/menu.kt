@@ -123,39 +123,49 @@ fun UIImpl.mainMenu(menuBar: JMenuBar) {
 			onAction { selectAll() }
 		}
 		separator
-		item("New Line") {
-			keyMap(GlobalSettings.shortcutNextLine)
-			onAction { nextLine() }
+		subMenu("Lines") {
+			item("New Line") {
+				keyMap(GlobalSettings.shortcutNextLine)
+				onAction { nextLine() }
+			}
+			item("New Line Before") {
+				keyMap(GlobalSettings.shortcutNewLineBefore)
+				onAction { newLineBeforeCurrent() }
+			}
+			item("Split Line") {
+				keyMap(GlobalSettings.shortcutSplitLine)
+				onAction { splitLine() }
+			}
 		}
-		item("New Line Before") {
-			keyMap(GlobalSettings.shortcutNewLineBefore)
-			onAction { newLineBeforeCurrent() }
-		}
-		item("Split Line") {
-			keyMap(GlobalSettings.shortcutSplitLine)
-			onAction { splitLine() }
-		}
-		item("Go to Line") {
+		item("Line/Column") {
 			keyMap(GlobalSettings.shortcutGoto)
 			onAction { gotoLine() }
 		}
 		separator
-		item("Toggle Line Comment") {
+		item("Line Comment") {
 			keyMap(GlobalSettings.shortcutComment)
 			onAction { commentCurrent() }
 		}
-		item("Insert Block Comment") {
+		item("Block Comment") {
 			keyMap(GlobalSettings.shortcutBlockComment)
 			onAction { blockComment() }
 		}
-		separator
-		item("Find") {
-			keyMap(GlobalSettings.shortcutFind)
-			onAction { find() }
+		item("Completion") {
+			keyMap(GlobalSettings.shortcutCompletion)
+			onAction { document.showCompletion() }
 		}
-		item("Replace") {
-			keyMap(GlobalSettings.shortcutReplace)
-			onAction { replace() }
+		separator
+		subMenu("Find") {
+			item("Find") {
+				icon = DevKtIcons.FIND
+				keyMap(GlobalSettings.shortcutFind)
+				onAction { find() }
+			}
+			item("Replace") {
+				icon = DevKtIcons.REPLACE
+				keyMap(GlobalSettings.shortcutReplace)
+				onAction { replace() }
+			}
 		}
 	}
 	buildMenuBar = menuBar.subMenu("Build") {

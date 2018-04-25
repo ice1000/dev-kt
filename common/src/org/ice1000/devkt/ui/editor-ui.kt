@@ -341,8 +341,11 @@ class DevKtDocumentHandler<TextAttributes>(
 	private fun parse(language: DevKtLanguage<TextAttributes>) {
 		SyntaxTraverser
 				.psiTraverser(Analyzer.parse(text, language.language).also { psiFileCache = it })
+				.filter { it !is PsiWhiteSpace }
 				.forEach { psi ->
-					if (psi !is PsiWhiteSpace) language.annotate(psi, this, colorScheme)
+					if (currentLanguage.shouldAddAsCompletion(psi))
+						lexicalCompletionList.add(CompletionElement(psi.text))
+					language.annotate(psi, this, colorScheme)
 				}
 	}
 
