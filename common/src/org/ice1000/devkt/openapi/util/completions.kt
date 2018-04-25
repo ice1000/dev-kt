@@ -13,7 +13,7 @@ import javax.swing.Icon
  * @property icon Icon see [com.intellij.codeInsight.lookup.LookupElementBuilder.withIcon]
  * @since v1.4
  */
-data class CompletionElement
+class CompletionElement
 @JvmOverloads
 constructor(
 		val text: String = "",
@@ -21,7 +21,9 @@ constructor(
 		val tail: String = "",
 		val type: String = "",
 		val icon: Icon? = null
-)
+) {
+	override fun toString() = lookup
+}
 
 /**
  * @author ice1000
