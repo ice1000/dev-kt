@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.psi.KtParameter
 import javax.swing.Icon
 
 /**
@@ -163,6 +164,9 @@ class Kotlin<TextAttributes> : BuiltinDevKtLanguage<TextAttributes>(
 	private val lexer = KotlinLexer()
 	override fun createLexer(project: Project) = lexer
 	override val icon: Icon get() = DevKtIcons.KOTLIN
+	override fun shouldAddAsCompletion(element: PsiElement): Boolean {
+		return element is KtParameter || super.shouldAddAsCompletion(element)
+	}
 }
 
 /**
