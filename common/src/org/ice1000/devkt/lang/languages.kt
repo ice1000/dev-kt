@@ -120,7 +120,8 @@ sealed class BuiltinDevKtLanguage<TextAttributes>(
 			document: IDevKtDocumentHandler<TextAttributes>) = element.takeIf { text == "\n" }?.run {
 		val whitespace = containingFile.findElementAt(document.startOffsetOf(document.lineOf(offset)))
 				as? PsiWhiteSpace ?: return@run null
-		super.handleTyping(offset, whitespace.text, element, document)
+		val text = whitespace.text.split('\n').last().let { "\n$it" }
+		super.handleTyping(offset, text, element, document)
 	} ?: super.handleTyping(offset, text, element, document)
 }
 

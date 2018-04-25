@@ -297,7 +297,6 @@ class DevKtDocumentHandler<TextAttributes>(
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
 		val completions = initialCompletionList + lexicalCompletionList
 				.filter { it.lookup.let { it.startsWith(currentText) && it != currentText } }
-				.also { window.message("Current: $currentText, ${it.size} candidates") }
 		if (completions.isNotEmpty())
 			window.showCompletionPopup(completions).show()
 	}
