@@ -86,7 +86,7 @@ object GlobalSettings {
 	var shortcutBlockComment = ShortCut(true, false, true, Key.SLASH)
 	var shortcutFind = ShortCut(true, false, false, Key.F)
 	var shortcutReplace = ShortCut(true, false, false, Key.R)
-	var shortcutCompletion = ShortCut(true, false, false, Key.SPACE)
+	var shortcutCompletion = ShortCut(true, false, true, Key.SPACE)
 
 	private fun defaultOf(name: String, value: String) {
 		if (!properties.containsKey(name)) properties[name] = value

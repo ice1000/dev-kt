@@ -7,13 +7,10 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.*
 import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
-import org.ice1000.devkt.openapi.nodeType
 import org.ice1000.devkt.openapi.ui.*
 import org.ice1000.devkt.openapi.util.*
-import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.*
 
@@ -73,8 +70,8 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun getLength() = document.length
 	private val lineCommentStart get() = currentLanguage.lineCommentStart
 	private val blockComment get() = currentLanguage.blockComment
-	var initialCompletionList: Set<CompletionElement> = emptySet()
-	val lexicalCompletionList: MutableSet<CompletionElement> = hashSetOf()
+	private var initialCompletionList: Set<CompletionElement> = emptySet()
+	private val lexicalCompletionList: MutableSet<CompletionElement> = hashSetOf()
 	override val canUndo get() = undoManager.canUndo
 	override val canRedo get() = undoManager.canRedo
 
@@ -296,11 +293,12 @@ class DevKtDocumentHandler<TextAttributes>(
 		val caretPosition = document.caretPosition
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
 		val completions = initialCompletionList + lexicalCompletionList
-				.filter { it.lookup.let { it.startsWith(currentText) && it != currentText } }
+				.filter { it.lookup.let { it.startsWith(currentText, true) && it != currentText } }
 		if (completions.isNotEmpty())
 			window.showCompletionPopup(completions).show()
 	}
 
+	// TODO: make async
 	override fun reparse() {
 		while (highlightCache.size <= document.length) highlightCache.add(null)
 		// val time = System.currentTimeMillis()
@@ -325,7 +323,7 @@ class DevKtDocumentHandler<TextAttributes>(
 					if (end == caretPosition) currentTypingNodeCache = node
 					if (text.isNotBlank() &&
 							text.length > 1)
-						lexicalCompletionList.add(CompletionElement(text))
+						lexicalCompletionList += CompletionElement(text)
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}
 	}
@@ -344,7 +342,7 @@ class DevKtDocumentHandler<TextAttributes>(
 				.filter { it !is PsiWhiteSpace }
 				.forEach { psi ->
 					if (currentLanguage.shouldAddAsCompletion(psi))
-						lexicalCompletionList.add(CompletionElement(psi.text))
+						lexicalCompletionList += CompletionElement(psi.text)
 					language.annotate(psi, this, colorScheme)
 				}
 	}

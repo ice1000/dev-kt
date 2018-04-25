@@ -47,7 +47,7 @@ interface IFind {
 			}
 			select(0)
 		} catch (e: PatternSyntaxException) {
-			//TODO 做出提示
+			document.window.dialog("Invalid regex: $regex", MessageType.Error)
 		}
 	}
 
