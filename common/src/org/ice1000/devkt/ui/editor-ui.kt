@@ -82,7 +82,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	override val currentTypingNode: ASTToken?
 		get() {
 			val caretPosition = document.caretPosition
-			if (caretPosition == currentTypingNodeCache?.start)
+			if (caretPosition == currentTypingNodeCache?.end)
 				return currentTypingNodeCache
 			var currentNode =
 					psiFile?.findElementAt(caretPosition) ?: return null
@@ -92,7 +92,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			}
 			while (currentNode.lastChild != null) currentNode = currentNode.lastChild
 			return currentNode
-					.run { ASTToken(startOffset, endOffset, text, nodeType) }
+					.let(::ASTToken)
 					.also { currentTypingNodeCache = it }
 		}
 

@@ -3,6 +3,7 @@ package org.ice1000.devkt
 import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
+import org.ice1000.devkt.openapi.nodeType
 import org.ice1000.devkt.openapi.util.selfLocation
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.com.intellij.lexer.Lexer
 import org.jetbrains.kotlin.com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.com.intellij.psi.PsiFileFactory
 import org.jetbrains.kotlin.com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.com.intellij.psi.tree.IElementType
@@ -30,6 +32,8 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.io.File
 
 data class ASTToken(
@@ -38,6 +42,8 @@ data class ASTToken(
 		val text: String,
 		val type: IElementType
 ) {
+	constructor(node: PsiElement) : this(node.startOffset, node.endOffset, node.text, node.nodeType)
+
 	val textLength get() = text.length
 }
 
