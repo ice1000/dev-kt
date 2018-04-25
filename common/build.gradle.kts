@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
 	java
+	maven
 	kotlin("jvm")
 }
 

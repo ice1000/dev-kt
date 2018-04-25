@@ -30,7 +30,6 @@ kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 plugins {
 	base
 	idea
-	maven
 	java
 	kotlin("jvm") version "1.2.40" apply false
 }
@@ -85,11 +84,6 @@ allprojects {
 }
 
 subprojects {
-	apply {
-		plugin("java")
-		plugin("maven")
-	}
-
 	val sourcesJar = task<Jar>("sourcesJar") {
 		group = tasks["jar"].group
 		from(java.sourceSets["main"].allSource)
