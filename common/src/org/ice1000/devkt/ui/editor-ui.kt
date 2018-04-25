@@ -292,7 +292,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	private fun showCompletion(currentNode: ASTToken) {
 		val caretPosition = document.caretPosition
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
-		val completions = initialCompletionList + lexicalCompletionList
+		val completions = (initialCompletionList + lexicalCompletionList)
 				.filter { it.lookup.let { it.startsWith(currentText, true) && it != currentText } }
 		if (completions.isNotEmpty())
 			window.showCompletionPopup(completions).show()

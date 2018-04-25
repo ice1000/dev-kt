@@ -60,6 +60,7 @@ allprojects {
 
 	apply {
 		plugin("java")
+		plugin("maven")
 	}
 
 	tasks.withType<KotlinCompile> {
@@ -81,9 +82,7 @@ allprojects {
 			compilerArgs.add("-Xlint:unchecked")
 		}
 	}
-}
 
-subprojects {
 	val sourcesJar = task<Jar>("sourcesJar") {
 		group = tasks["jar"].group
 		from(java.sourceSets["main"].allSource)
@@ -94,4 +93,5 @@ subprojects {
 		add("archives", sourcesJar)
 	}
 }
+
 
