@@ -82,8 +82,16 @@ allprojects {
 			compilerArgs.add("-Xlint:unchecked")
 		}
 	}
+}
+
+subprojects {
+	apply {
+		plugin("java")
+		plugin("maven")
+	}
 
 	val sourcesJar = task<Jar>("sourcesJar") {
+		group = tasks["jar"].group
 		from(java.sourceSets["main"].allSource)
 		classifier = "sources"
 	}
