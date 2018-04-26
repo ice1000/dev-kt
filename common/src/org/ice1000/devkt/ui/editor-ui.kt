@@ -402,8 +402,6 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	fun handleInsert(str: String?) = handleInsert(document.caretPosition, str)
 	fun handleInsert(offs: Int, str: String?) {
-		currentLanguage.run {
-			handleTyping(offs, str, psiFile?.findElementAt(offs), this@DevKtDocumentHandler)
-		}
+		currentLanguage.handleTyping(offs, str, psiFile?.findElementAt(offs), this)
 	}
 }

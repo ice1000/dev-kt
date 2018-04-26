@@ -95,12 +95,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				refreshMemoryIndicator()
 			}
 		})
-
-		editor.addKeyListener(object : KeyAdapter() {
-			override fun keyTyped(e: KeyEvent?) {
-				lastPopup?.hide()
-			}
-		})
 	}
 
 	var imageCache: Image? = null
@@ -120,8 +114,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		val jList = JList(ListListModel(completionList))
 		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
 		jList.focusTraversalKeysEnabled = false
-		if (completionList.isNotEmpty())
-			jList.selectedIndex = 0
+		jList.selectedIndex = 0
 		jList.addMouseListener(object : MouseAdapter() {
 			override fun mouseClicked(e: MouseEvent) {
 				if (e.clickCount >= 2) enterCompletion(jList)

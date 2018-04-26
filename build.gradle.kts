@@ -40,6 +40,7 @@ idea {
 		excludeDirs = excludeDirs +
 				file("pinpoint_piggy") +
 				file("common/res/template") +
+				file("swing/src/org/ice1000/devkt/ui/swing/forms") +
 				file(".build-cache")
 	}
 }
