@@ -293,7 +293,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		val caretPosition = document.caretPosition
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
 		val completions = (initialCompletionList + lexicalCompletionList)
-				.filter { it.lookup.let { it.startsWith(currentText, true) } }
+				.filter { it.lookup.startsWith(currentText, true) && it.text != currentText }
 		if (completions.isNotEmpty())
 			window.showCompletionPopup(completions).show()
 	}
@@ -312,7 +312,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	}
 
 	private fun lex(language: DevKtLanguage<TextAttributes>) {
-		lexicalCompletionList.clear()
+		val collected = mutableListOf<CompletionElement>()
 		val caretPosition = document.caretPosition
 		Analyzer
 				.lex(text, language.createLexer(Analyzer.project))
@@ -321,11 +321,12 @@ class DevKtDocumentHandler<TextAttributes>(
 					val (start, end, text, type) = node
 					// println("$text in ($start, $end)")
 					if (end == caretPosition) currentTypingNodeCache = node
-					if (text.isNotBlank() &&
-							text.length > 1)
-						lexicalCompletionList += CompletionElement(text)
+					if (text.isNotBlank() && text.length > 1)
+						collected += CompletionElement(text.trim(), type = "Token")
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}
+		lexicalCompletionList.clear()
+		lexicalCompletionList.addAll(collected)
 	}
 
 	/**
