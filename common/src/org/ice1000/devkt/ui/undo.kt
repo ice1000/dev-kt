@@ -71,7 +71,7 @@ class DevKtUndoManager(initialCapacity: Int) {
 	fun addEdit(edit: Edit) {
 		undoStack.add(edit)
 		redoStack.clear()
-		// println("Added $edit, (${undoStack.size}, ${redoStack.size})")
+		// println("Added $actions, (${undoStack.size}, ${redoStack.size})")
 	}
 
 	fun done() {
