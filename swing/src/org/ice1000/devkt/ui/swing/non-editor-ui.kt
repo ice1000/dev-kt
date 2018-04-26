@@ -117,7 +117,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		lastPopup?.hide()
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
 		val windowPoint = editor.locationOnScreen
-		val jList = JList(completionList.toTypedArray())
+		val jList = JList(ListListModel(completionList))
 		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
 		jList.focusTraversalKeysEnabled = false
 		if (completionList.isNotEmpty())

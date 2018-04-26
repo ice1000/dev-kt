@@ -1,5 +1,8 @@
 package org.ice1000.devkt.openapi.util
 
+import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
+import org.ice1000.devkt.ui.DevKtDocumentHandler
+import java.util.function.Consumer
 import javax.swing.Icon
 
 /**
@@ -13,7 +16,7 @@ import javax.swing.Icon
  * @property icon Icon see [com.intellij.codeInsight.lookup.LookupElementBuilder.withIcon]
  * @since v1.4
  */
-class CompletionElement
+open class CompletionElement
 @JvmOverloads
 constructor(
 		val text: Any = "",
@@ -23,6 +26,7 @@ constructor(
 		val icon: Icon? = null
 ) {
 	override fun toString() = lookup
+	override fun hashCode() = text.hashCode()
 	override fun equals(other: Any?): Boolean {
 		if (this === other) return true
 		if (other !is CompletionElement) return false
@@ -30,8 +34,7 @@ constructor(
 		return true
 	}
 
-	override fun hashCode() = text.hashCode()
-
+	open fun afterInsert(documentHandler: DevKtDocumentHandler<*>) = Unit
 }
 
 /**
@@ -41,4 +44,5 @@ constructor(
 interface CompletionPopup {
 	fun show()
 	fun hide()
+	fun updateItems(completionElement: Collection<CompletionElement>)
 }

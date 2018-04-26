@@ -35,7 +35,7 @@ task<Jar>("fatJar") {
 tasks.withType<Jar> {
 	manifest {
 		attributes(mapOf("Main-Class" to application.mainClassName,
-				"SplashScreen-Image" to "icon/kotlin@288x288.png"))
+				"SplashScreen-Image" to "icon/Icon.png"))
 	}
 }
 

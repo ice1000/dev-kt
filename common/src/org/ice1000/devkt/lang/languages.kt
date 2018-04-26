@@ -5,6 +5,7 @@ import org.ice1000.devkt.openapi.Annotator
 import org.ice1000.devkt.openapi.SyntaxHighlighter
 import org.ice1000.devkt.openapi.ui.IDevKtDocumentHandler
 import org.ice1000.devkt.openapi.util.CompletionElement
+import org.ice1000.devkt.ui.DevKtDocumentHandler
 import org.ice1000.devkt.ui.DevKtIcons
 import org.jetbrains.kotlin.com.intellij.lang.Language
 import org.jetbrains.kotlin.com.intellij.lang.java.JavaLanguage
@@ -206,7 +207,16 @@ class Java<TextAttributes> : BuiltinDevKtLanguage<TextAttributes>(
 			"throws"
 	).mapTo(HashSet()) {
 		CompletionElement(it, type = "Keyword")
-	}
+	} + listOf(
+			object : CompletionElement("System.out.println", lookup = "sout") {
+				override fun afterInsert(documentHandler: DevKtDocumentHandler<*>) =
+						documentHandler.insert("(")
+			},
+			object : CompletionElement("public static void main(String... args) ", lookup = "psvm") {
+				override fun afterInsert(documentHandler: DevKtDocumentHandler<*>) =
+						documentHandler.insert("{")
+			}
+	)
 }
 
 /**
@@ -221,7 +231,7 @@ class Kotlin<TextAttributes> : BuiltinDevKtLanguage<TextAttributes>(
 	override fun satisfies(fileName: String) = fileName.endsWith(".kt") or fileName.endsWith(".kts")
 	private val lexer = KotlinLexer()
 	override fun createLexer(project: Project) = lexer
-	override val icon: Icon get() = DevKtIcons.KOTLIN
+	override val icon: Icon get() = DevKtIcons.KOTLIN_FILE
 	override fun shouldAddAsCompletion(element: PsiElement): Boolean {
 		return element is KtParameter || super.shouldAddAsCompletion(element)
 	}

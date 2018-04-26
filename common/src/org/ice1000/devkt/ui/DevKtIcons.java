@@ -13,7 +13,6 @@ import javax.swing.*;
  */
 public interface DevKtIcons {
 	// Kotlin related
-	@NotNull Icon KOTLIN = IconLoader.getIcon("/icon/kotlin/kotlin.png");
 	@NotNull Icon KOTLIN_JS = IconLoader.getIcon("/icon/kotlin/kotlin_js.png");
 	@NotNull Icon KOTLIN_MP = IconLoader.getIcon("/icon/kotlin/kotlin_multiplatform_project_dark.png");
 	@NotNull Icon KOTLIN_FILE = IconLoader.getIcon("/icon/kotlin/kotlin_file.png");

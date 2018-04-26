@@ -2,6 +2,7 @@ package org.ice1000.devkt.ui.swing
 
 import org.ice1000.devkt.config.Key
 import org.ice1000.devkt.config.ShortCut
+import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.openapi.util.CompletionPopup
 import java.awt.event.KeyEvent
 import javax.swing.*
@@ -18,12 +19,40 @@ fun JMenuItem.keyMap(key: Int, modifiers: Int) {
 
 fun JMenuItem.keyMap(shortcut: ShortCut) = keyMap(shortcut.key.awt, shortcut.modifier)
 
-class SwingPopup(private val popup: Popup, private val scrollPane: JComponent) : CompletionPopup {
+/**
+ * @author ice1000
+ * @property popup Popup swing popup
+ * @property component JList<CompletionElement> the jList inside
+ * @since v1.4
+ */
+class SwingPopup(
+		private val popup: Popup,
+		private val component: JList<CompletionElement>) : CompletionPopup {
 	override fun hide() = popup.hide()
 	override fun show() {
 		popup.show()
-		scrollPane.requestFocus()
+		component.requestFocus()
 	}
+
+	override fun updateItems(completionElement: Collection<CompletionElement>) {
+		component.model = ListListModel(completionElement)
+	}
+}
+
+/**
+ * Fuck Swing
+ *
+ * @author ice1000
+ * @param E type of the data
+ * @property list List<E> the data list
+ * @constructor construct from a list
+ * @since v1.4
+ */
+class ListListModel<E>(private val list: List<E>) : AbstractListModel<E>() {
+	constructor(list: Collection<E>) : this(list.toList())
+
+	override fun getSize() = list.size
+	override fun getElementAt(var1x: Int) = list[var1x]
 }
 
 /**
