@@ -152,71 +152,32 @@ class Java<TextAttributes> : BuiltinDevKtLanguage<TextAttributes>(
 	override val icon: Icon get() = DevKtIcons.JAVA
 
 	override val initialCompletionElementList: Set<CompletionElement> = listOf(
-			"true",
-			"false",
-			"null",
-			"abstract",
-			"assert",
-			"boolean",
-			"break",
-			"byte",
-			"case",
-			"catch",
-			"char",
-			"class",
-			"const",
-			"continue",
-			"default",
-			"do",
-			"double",
-			"else",
-			"enum",
-			"extends",
-			"final",
-			"finally",
-			"float",
-			"for",
-			"goto",
-			"if",
-			"implements",
-			"import",
-			"instanceof",
-			"int",
-			"interface",
-			"long",
-			"native",
-			"new",
-			"package",
-			"private",
-			"public",
-			"short",
-			"super",
-			"switch",
-			"synchronized",
-			"this",
-			"throw",
-			"protected",
-			"transient",
-			"return",
-			"void",
-			"static",
-			"strictfp",
-			"while",
-			"try",
-			"volatile",
-			"throws"
-	).mapTo(HashSet()) {
-		CompletionElement(it, type = "Keyword")
-	} + listOf(
+			"true", "false", "null", "abstract", "assert", "boolean", "break",
+			"byte", "case", "catch", "char", "class", "const", "continue", "default",
+			"do", "double", "else", "enum", "extends", "final", "finally", "float",
+			"for", "goto", "if", "implements", "import", "instanceof", "int",
+			"interface", "long", "native", "new", "package", "private", "public",
+			"short", "super", "switch", "synchronized", "this", "throw", "protected",
+			"transient", "return", "void", "static", "strictfp", "while", "try",
+			"volatile", "throws"
+	).mapTo(hashSetOf(
 			object : CompletionElement("System.out.println", lookup = "sout") {
 				override fun afterInsert(documentHandler: DevKtDocumentHandler<*>) =
 						documentHandler.insert("(")
 			},
-			object : CompletionElement("public static void main(String... args) ", lookup = "psvm") {
+			object : CompletionElement("System.err.println", lookup = "serr") {
 				override fun afterInsert(documentHandler: DevKtDocumentHandler<*>) =
-						documentHandler.insert("{")
+						documentHandler.insert("(")
+			},
+			object : CompletionElement("public static void main(String... args) ", lookup = "psvm") {
+				override fun afterInsert(documentHandler: DevKtDocumentHandler<*>) {
+					documentHandler.insert("{")
+					documentHandler.insert("\n")
+				}
 			}
-	)
+	)) {
+		CompletionElement(it, type = "Keyword")
+	}
 }
 
 /**

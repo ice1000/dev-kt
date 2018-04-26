@@ -293,7 +293,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		val caretPosition = document.caretPosition
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
 		val completions = (initialCompletionList + lexicalCompletionList)
-				.filter { it.lookup.let { it.startsWith(currentText, true) && it != currentText } }
+				.filter { it.lookup.let { it.startsWith(currentText, true) } }
 		if (completions.isNotEmpty())
 			window.showCompletionPopup(completions).show()
 	}
