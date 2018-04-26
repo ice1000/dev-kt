@@ -122,6 +122,11 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		jList.focusTraversalKeysEnabled = false
 		if (completionList.isNotEmpty())
 			jList.selectedIndex = 0
+		jList.addMouseListener(object : MouseAdapter() {
+			override fun mouseClicked(e: MouseEvent) {
+				if (e.clickCount >= 2) enterCompletion(jList)
+			}
+		})
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
@@ -133,19 +138,13 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 					KeyEvent.VK_DOWN,
 					KeyEvent.VK_LEFT,
 					KeyEvent.VK_RIGHT -> return // skip
-					KeyEvent.VK_ENTER -> lastPopup?.apply {
-						val selectedValue = jList.selectedValue ?: return@apply
-						with(document) {
-							currentTypingNode?.let { delete(it.start, document.caretPosition - it.start) }
-							insert(selectedValue.text.toString())
-						}
-						hide()
-					}
+					KeyEvent.VK_ENTER -> enterCompletion(jList)
 					KeyEvent.VK_TAB -> lastPopup?.apply {
 						val selectedValue = jList.selectedValue ?: return@apply
 						with(document) {
 							currentTypingNode?.let { delete(it.start, it.textLength) }
 							insert(selectedValue.text.toString())
+							selectedValue.afterInsert(this)
 						}
 						hide()
 					}
@@ -168,6 +167,18 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				.getPopup(editor, jScrollPane, windowPoint.x + point.x - 20, windowPoint.y + point.y + 20)
 				.let { SwingPopup(it, jList) }
 				.also { lastPopup = it }
+	}
+
+	private fun enterCompletion(jList: JList<CompletionElement>) {
+		lastPopup?.apply {
+			val selectedValue = jList.selectedValue ?: return@apply
+			with(document) {
+				currentTypingNode?.let { delete(it.start, document.caretPosition - it.start) }
+				insert(selectedValue.text.toString())
+				selectedValue.afterInsert(this)
+			}
+			hide()
+		}
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {
