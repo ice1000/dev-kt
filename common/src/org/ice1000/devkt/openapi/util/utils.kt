@@ -66,3 +66,9 @@ val paired = mapOf(
 
 fun cutText(string: String, max: Int) =
 		if (string.length <= max) string else "${string.take(max)}…"
+
+fun isHex(c: Char): Boolean = isHex(c.toByte())
+
+fun isHex(c: Byte): Boolean {
+	return c in 48..57 || c in 97..102 || c in 65..70
+}

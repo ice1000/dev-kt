@@ -137,7 +137,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 						val selectedValue = jList.selectedValue ?: return@apply
 						with(document) {
 							currentTypingNode?.let { delete(it.start, document.caretPosition - it.start) }
-							insert(selectedValue.text)
+							insert(selectedValue.text.toString())
 						}
 						hide()
 					}
@@ -145,7 +145,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 						val selectedValue = jList.selectedValue ?: return@apply
 						with(document) {
 							currentTypingNode?.let { delete(it.start, it.textLength) }
-							insert(selectedValue.text)
+							insert(selectedValue.text.toString())
 						}
 						hide()
 					}
