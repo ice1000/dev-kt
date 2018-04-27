@@ -167,7 +167,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 						panelPoint.x + (point.x - 20)
 								.coerceAtLeast(5)
 								.coerceAtMost(mainPanel.width - preferredSize.width - 20),
-						panelPoint.y + (point.y + 20).coerceAtMost(mainPanel.height - preferredSize.height - 20))
+						panelPoint.y + (point.y + 20)
+								.coerceAtMost(mainPanel.height - preferredSize.height - 20))
 				.let { SwingPopup(it, jList) }
 				.also { lastPopup = it }
 	}
@@ -217,6 +218,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 	override fun doBrowse(url: String) = Desktop.getDesktop().browse(URL(url).toURI())
 	override fun doOpen(file: File) = Desktop.getDesktop().open(file)
 	override fun uiThread(lambda: () -> Unit) = SwingUtilities.invokeLater(lambda)
+	override fun doAsync(lambda: () -> Unit) = charlie.gensokyo.doAsync(block = lambda)
 	override fun dispose() = frame.dispose()
 	override fun createSelf() {
 		DevKtFrame()

@@ -10,6 +10,7 @@ interface DevKtWindow {
 	var edited: Boolean
 	fun refreshTitle()
 	fun uiThread(lambda: () -> Unit)
+	fun doAsync(lambda: () -> Unit)
 	fun message(text: String)
 	fun createCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup
 	fun chooseFile(from: File?, chooseFileType: ChooseFileType): File?

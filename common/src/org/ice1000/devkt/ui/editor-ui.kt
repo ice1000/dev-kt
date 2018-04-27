@@ -303,18 +303,17 @@ class DevKtDocumentHandler<TextAttributes>(
 	// TODO: make async
 	override fun reparse() {
 		while (highlightCache.size <= document.length) highlightCache.add(null)
-		// val time = System.currentTimeMillis()
-		if (GlobalSettings.highlightTokenBased) lex(currentLanguage)
-		// val time2 = System.currentTimeMillis()
-		if (GlobalSettings.highlightSemanticBased) parse(currentLanguage)
-		// val time3 = System.currentTimeMillis()
+		val collected = mutableListOf<CompletionElement>()
+		if (GlobalSettings.highlightTokenBased) lex(currentLanguage, collected)
+		if (GlobalSettings.highlightSemanticBased) parse(currentLanguage, collected)
+		lexicalCompletionList.clear()
+		lexicalCompletionList.addAll(collected)
 		rehighlight()
-		// benchmark
-		// println("${time2 - time}, ${time3 - time2}, ${System.currentTimeMillis() - time3}")
 	}
 
-	private fun lex(language: DevKtLanguage<TextAttributes>) {
-		val collected = mutableListOf<CompletionElement>()
+	private fun lex(
+			language: DevKtLanguage<TextAttributes>,
+			collected: MutableList<CompletionElement>) {
 		val caretPosition = document.caretPosition
 		Analyzer
 				.lex(text, language.createLexer(Analyzer.project))
@@ -327,8 +326,6 @@ class DevKtDocumentHandler<TextAttributes>(
 						collected += CompletionElement(text.trim(), type = "Token")
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)
 				}
-		lexicalCompletionList.clear()
-		lexicalCompletionList.addAll(collected)
 	}
 
 	/**
@@ -339,13 +336,15 @@ class DevKtDocumentHandler<TextAttributes>(
 		for (i in tokenStart until tokenEnd) highlightCache[i] = attributeSet
 	}
 
-	private fun parse(language: DevKtLanguage<TextAttributes>) {
+	private fun parse(
+			language: DevKtLanguage<TextAttributes>,
+			collected: MutableList<CompletionElement>) {
 		SyntaxTraverser
 				.psiTraverser(Analyzer.parse(text, language.language).also { psiFileCache = it })
 				.filter { it !is PsiWhiteSpace }
 				.forEach { psi ->
 					if (currentLanguage.shouldAddAsCompletion(psi))
-						lexicalCompletionList += CompletionElement(psi.text)
+						collected += CompletionElement(psi.text)
 					language.annotate(psi, this, colorScheme)
 				}
 	}
