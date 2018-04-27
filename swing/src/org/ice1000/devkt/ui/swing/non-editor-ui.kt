@@ -117,11 +117,6 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				if (e.clickCount >= 2) enterCompletion(jList)
 			}
 		})
-		jList.addFocusListener(object : FocusAdapter() {
-			override fun focusLost(e: FocusEvent?) {
-				hideLastPopup()
-			}
-		})
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
