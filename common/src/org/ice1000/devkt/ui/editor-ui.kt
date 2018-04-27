@@ -174,12 +174,10 @@ class DevKtDocumentHandler<TextAttributes>(
 	 */
 	override fun deleteDirectly(offset: Int, length: Int, reparse: Boolean) {
 		selfMaintainedString.delete(offset, offset + length)
-		with(document) {
-			delete(offset, length)
-			if (reparse) {
-				adjustFormat(offset, length)
-				reparse()
-			}
+		document.delete(offset, length)
+		if (reparse) {
+			adjustFormat(offset, length)
+			reparse()
 		}
 	}
 
@@ -226,9 +224,9 @@ class DevKtDocumentHandler<TextAttributes>(
 			caretPosition = 0
 			clear()
 			insert(0, string)
-			adjustFormat()
-			reparse()
 		}
+		adjustFormat()
+		reparse()
 	}
 
 	/**
@@ -243,10 +241,10 @@ class DevKtDocumentHandler<TextAttributes>(
 		with(document) {
 			insert(offset, string)
 			caretPosition += move
-			if (reparse) {
-				reparse()
-				adjustFormat(offset, string.length)
-			}
+		}
+		if (reparse) {
+			reparse()
+			adjustFormat(offset, string.length)
 		}
 	}
 
