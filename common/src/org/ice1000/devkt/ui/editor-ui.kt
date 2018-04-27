@@ -198,8 +198,12 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 		val char = delString[0]
 		if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
-			deleteDirectly(offs, 2)
-		} else deleteDirectly(offs, len)
+			deleteDirectly(offs, 2, reparse = false)
+		} else deleteDirectly(offs, len, reparse = false)
+		// window.doAsync {
+		reparse()
+		adjustFormat(offs, length)
+		// }
 	}
 
 	/**
@@ -246,9 +250,6 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 	}
 
-	@set:Synchronized
-	private var isDocumentLocked: Boolean = false
-
 	/**
 	 * Handles user input, insert with checks and undo recording
 	 *
@@ -286,20 +287,22 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 
 		//Completion
-		if (!isDocumentLocked) window.doAsync {
-			reparse(false)
-			val currentNode = currentTypingNode ?: return@doAsync
-			if (currentLanguage.invokeAutoPopup(currentNode, normalized) && GlobalSettings.useCompletion)
-				window.uiThread { showCompletion(currentNode) }
+		// window.doAsync {
+		reparse()
+		adjustFormat(offs, length)
+		val currentNode = currentTypingNode ?: return
+		if (currentLanguage.invokeAutoPopup(currentNode, normalized) && GlobalSettings.useCompletion) {
+			val caretPosition = document.caretPosition
+			window.uiThread { showCompletion(currentNode, caretPosition) }
 		}
+		// }
 	}
 
 	fun showCompletion() {
-		showCompletion(currentTypingNode ?: return)
+		showCompletion(currentTypingNode ?: return, document.caretPosition)
 	}
 
-	private fun showCompletion(currentNode: ASTToken) {
-		val caretPosition = document.caretPosition
+	private fun showCompletion(currentNode: ASTToken, caretPosition: Int) {
 		val currentText = currentNode.text.subSequence(0, caretPosition - currentNode.start)
 		val completions = (initialCompletionList + lexicalCompletionList)
 				.filter { it.lookup.startsWith(currentText, true) && it.text != currentText }
@@ -322,7 +325,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			collected: MutableList<CompletionElement>) {
 		val caretPosition = document.caretPosition
 		Analyzer
-				.lex(text, language.createLexer(Analyzer.project))
+				.lex(selfMaintainedString, language.createLexer(Analyzer.project))
 				.filter { it.type !in TokenSet.WHITE_SPACE }
 				.forEach { node ->
 					val (start, end, text, type) = node
@@ -358,7 +361,6 @@ class DevKtDocumentHandler<TextAttributes>(
 	private fun rehighlight() {
 		if (document.length > 1) try {
 			document.lockWrite()
-			isDocumentLocked = true
 			var tokenStart = 0
 			var attributeSet = highlightCache[0]
 			highlightCache[0] = null
@@ -373,7 +375,6 @@ class DevKtDocumentHandler<TextAttributes>(
 			}
 		} finally {
 			document.unlockWrite()
-			isDocumentLocked = false
 		}
 	}
 

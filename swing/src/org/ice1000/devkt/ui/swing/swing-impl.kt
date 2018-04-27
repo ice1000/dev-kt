@@ -14,6 +14,8 @@ import org.ice1000.devkt.ui.swing.dialogs.GoToLineDialog
 import org.ice1000.devkt.ui.swing.dialogs.ReplaceDialogImpl
 import org.jetbrains.kotlin.psi.KtFile
 import java.awt.Font
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.io.File
 import javax.swing.JMenu
 import javax.swing.JMenuItem
@@ -120,6 +122,12 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		val ktDocument = KtDocument()
 		editor.document = ktDocument
 		document = ktDocument.createHandler()
+		editor.addMouseListener(object : MouseAdapter() {
+			override fun mouseClicked(e: MouseEvent?) {
+				lastPopup?.hide()
+				lastPopup = null
+			}
+		})
 		mainMenu(menuBar)
 		FileDrop(mainPanel) {
 			it.firstOrNull { it.canRead() }?.let(::loadFile)

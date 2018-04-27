@@ -144,7 +144,7 @@ object Analyzer : Disposable {
 	}
 
 	// TODO incremental
-	fun lex(text: String, lexer: Lexer) = lexer.run {
+	fun lex(text: CharSequence, lexer: Lexer) = lexer.run {
 		start(text)
 		generateSequence {
 			tokenType
