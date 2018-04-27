@@ -294,8 +294,10 @@ class DevKtDocumentHandler<TextAttributes>(
 		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
 		val completions = (initialCompletionList + lexicalCompletionList)
 				.filter { it.lookup.startsWith(currentText, true) && it.text != currentText }
-		if (completions.isNotEmpty())
-			window.createCompletionPopup(completions).show()
+		if (completions.isNotEmpty()) {
+			val completionPopup = window.createCompletionPopup(completions)
+			window.uiThread { completionPopup.show() }
+		}
 	}
 
 	// TODO: make async

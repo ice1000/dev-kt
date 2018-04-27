@@ -107,7 +107,7 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 	override fun createCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup {
 		hideLastPopup()
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
-		val windowPoint = editor.locationOnScreen
+		val panelPoint = mainPanel.locationOnScreen
 		val jList = JList(ListListModel(completionList))
 		jList.selectionMode = ListSelectionModel.SINGLE_SELECTION
 		jList.focusTraversalKeysEnabled = false
@@ -158,8 +158,16 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 
 		val jScrollPane = JScrollPane(jList)
 		jScrollPane.focusTraversalKeysEnabled = false
-		return PopupFactory.getSharedInstance()
-				.getPopup(editor, jScrollPane, windowPoint.x + point.x - 20, windowPoint.y + point.y + 20)
+		val preferredSize = jScrollPane.preferredSize
+		return PopupFactory
+				.getSharedInstance()
+				.getPopup(
+						mainPanel,
+						jScrollPane,
+						panelPoint.x + (point.x - 20)
+								.coerceAtLeast(5)
+								.coerceAtMost(mainPanel.width - preferredSize.width - 20),
+						panelPoint.y + (point.y + 20).coerceAtMost(mainPanel.height - preferredSize.height - 20))
 				.let { SwingPopup(it, jList) }
 				.also { lastPopup = it }
 	}

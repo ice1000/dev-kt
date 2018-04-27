@@ -32,7 +32,7 @@ class SwingPopup(
 	override fun hide() = popup.hide()
 	override fun show() {
 		popup.show()
-		component.requestFocus(true)
+		component.requestFocusInWindow()
 	}
 
 	override fun updateItems(completionElement: Collection<CompletionElement>) {
