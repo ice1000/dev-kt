@@ -39,7 +39,7 @@ import java.io.File
 data class ASTToken(
 		val start: Int,
 		val end: Int,
-		val text: String,
+		val text: CharSequence,
 		val type: IElementType
 ) {
 	constructor(node: PsiElement) : this(node.startOffset, node.endOffset, node.text, node.nodeType)
@@ -148,7 +148,7 @@ object Analyzer : Disposable {
 		start(text)
 		generateSequence {
 			tokenType
-					?.let { ASTToken(tokenStart, tokenEnd, tokenText, it) }
+					?.let { ASTToken(tokenStart, tokenEnd, tokenSequence, it) }
 					?.also { advance() }
 		}
 	}

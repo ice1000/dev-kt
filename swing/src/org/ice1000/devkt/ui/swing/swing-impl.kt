@@ -77,7 +77,6 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 		override fun changeCharacterAttributes(offset: Int, length: Int, s: AttributeSet, replace: Boolean) {
 			val changes = DefaultDocumentEvent(offset, length, DocumentEvent.EventType.CHANGE)
 			buffer.change(offset, length, changes)
-			val sCopy = s.copyAttributes()
 			var lastEnd: Int
 			var pos = offset
 			while (pos < offset + length) {
@@ -85,7 +84,7 @@ class UIImpl(frame: DevKtFrame) : AbstractUI(frame) {
 				lastEnd = run.endOffset
 				if (pos == lastEnd) break
 				val attr = run.attributes as MutableAttributeSet
-				changes.addEdit(AttributeUndoableEdit(run, sCopy, replace))
+				changes.addEdit(AttributeUndoableEdit(run, s, replace))
 				if (replace) attr.removeAttributes(attr)
 				attr.addAttributes(s)
 				pos = lastEnd

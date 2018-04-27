@@ -103,7 +103,7 @@ interface IDevKtDocumentHandler<TextAttributes> : AnnotationHolder<TextAttribute
 	@JvmDefault
 	fun insert(str: String?) = insert(document.caretPosition, str)
 
-	fun reparse()
+	fun reparse(rehighlight: Boolean = true)
 }
 
 interface IDevKtDocument<TextAttributes> : LengthOwner {

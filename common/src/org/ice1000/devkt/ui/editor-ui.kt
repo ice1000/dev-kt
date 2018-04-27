@@ -246,6 +246,9 @@ class DevKtDocumentHandler<TextAttributes>(
 		}
 	}
 
+	@set:Synchronized
+	private var isDocumentLocked: Boolean = false
+
 	/**
 	 * Handles user input, insert with checks and undo recording
 	 *
@@ -268,21 +271,27 @@ class DevKtDocumentHandler<TextAttributes>(
 			insertDirectly(offs, normalized, 0)
 		else {
 			val char = normalized[0]
-			when (char) {
-				in paired.values -> if (offs != 0
+			if (char in paired.values) {
+				if (offs != 0
 						&& selfMaintainedString.getOrNull(offs) == char) {
-					insertDirectly(offs, "", 1)
-				} else insertDirectly(offs, normalized, 0)
-				in paired -> insertDirectly(offs, "$normalized${paired[char]}", -1)
-				in insteadPaired -> insertDirectly(offs, insteadPaired[char]?.value ?: return, 0)
-				else -> insertDirectly(offs, normalized, 0)
+					insertDirectly(offs, "", move = 1, reparse = false)
+				} else insertDirectly(offs, normalized, move = 0, reparse = false)
+			} else if (char in paired)
+				insertDirectly(offs, "$normalized${paired[char]}", move = -1, reparse = false)
+			else {
+				val value = insteadPaired[char]
+				if (value != null) insertDirectly(offs, value.value, move = 0, reparse = false)
+				else insertDirectly(offs, normalized, move = 0, reparse = false)
 			}
 		}
 
 		//Completion
-		val currentNode = currentTypingNode ?: return
-		if (currentLanguage.invokeAutoPopup(currentNode, normalized) && GlobalSettings.useCompletion)
-			showCompletion(currentNode)
+		if (!isDocumentLocked) window.doAsync {
+			reparse(false)
+			val currentNode = currentTypingNode ?: return@doAsync
+			if (currentLanguage.invokeAutoPopup(currentNode, normalized) && GlobalSettings.useCompletion)
+				window.uiThread { showCompletion(currentNode) }
+		}
 	}
 
 	fun showCompletion() {
@@ -291,21 +300,21 @@ class DevKtDocumentHandler<TextAttributes>(
 
 	private fun showCompletion(currentNode: ASTToken) {
 		val caretPosition = document.caretPosition
-		val currentText = currentNode.text.substring(0, caretPosition - currentNode.start)
+		val currentText = currentNode.text.subSequence(0, caretPosition - currentNode.start)
 		val completions = (initialCompletionList + lexicalCompletionList)
 				.filter { it.lookup.startsWith(currentText, true) && it.text != currentText }
 		if (completions.isNotEmpty()) window.createCompletionPopup(completions).show()
 	}
 
 	// TODO: make async
-	override fun reparse() {
+	override fun reparse(rehighlight: Boolean) {
 		while (highlightCache.size <= document.length) highlightCache.add(null)
 		val collected = mutableListOf<CompletionElement>()
 		if (GlobalSettings.highlightTokenBased) lex(currentLanguage, collected)
 		if (GlobalSettings.highlightSemanticBased) parse(currentLanguage, collected)
 		lexicalCompletionList.clear()
 		lexicalCompletionList.addAll(collected)
-		rehighlight()
+		if (rehighlight) rehighlight()
 	}
 
 	private fun lex(
@@ -349,6 +358,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	private fun rehighlight() {
 		if (document.length > 1) try {
 			document.lockWrite()
+			isDocumentLocked = true
 			var tokenStart = 0
 			var attributeSet = highlightCache[0]
 			highlightCache[0] = null
@@ -363,6 +373,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			}
 		} finally {
 			document.unlockWrite()
+			isDocumentLocked = false
 		}
 	}
 

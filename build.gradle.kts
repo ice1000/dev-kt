@@ -43,10 +43,13 @@ idea {
 				file("swing/src/org/ice1000/devkt/ui/swing/forms") +
 				file(".build-cache")
 	}
+	project {
+		vcs = "Git"
+	}
 }
 
 allprojects {
-	val shortVersion = "v1.4-SNAPSHOT"
+	val shortVersion = "v1.4"
 	val packageName = "org.ice1000.devkt"
 
 	group = packageName
