@@ -14,10 +14,7 @@ import org.ice1000.devkt.ui.UIBase
 import org.ice1000.devkt.ui.swing.dialogs.ConfigurationImpl
 import org.ice1000.devkt.ui.swing.dialogs.PsiViewerImpl
 import java.awt.*
-import java.awt.event.KeyAdapter
-import java.awt.event.KeyEvent
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+import java.awt.event.*
 import java.io.File
 import java.net.URL
 import javax.swing.*
@@ -107,8 +104,8 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 		messageLabel.text = text
 	}
 
-	override fun showCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup {
-		lastPopup?.hide()
+	override fun createCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup {
+		hideLastPopup()
 		val point = editor.ui.modelToView(editor, editor.caret.dot)
 		val windowPoint = editor.locationOnScreen
 		val jList = JList(ListListModel(completionList))
@@ -120,34 +117,39 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				if (e.clickCount >= 2) enterCompletion(jList)
 			}
 		})
+		jList.addFocusListener(object : FocusAdapter() {
+			override fun focusLost(e: FocusEvent?) {
+				hideLastPopup()
+			}
+		})
 		jList.addKeyListener(object : KeyAdapter() {
 			override fun keyPressed(e: KeyEvent) {
 				when (e.keyCode) {
 					KeyEvent.VK_ESCAPE,
 					KeyEvent.VK_CONTROL,
 					KeyEvent.VK_SHIFT,
-					KeyEvent.VK_ALT -> lastPopup?.hide()
+					KeyEvent.VK_ALT -> hideLastPopup()
 					KeyEvent.VK_UP,
 					KeyEvent.VK_DOWN,
 					KeyEvent.VK_LEFT,
 					KeyEvent.VK_RIGHT -> return // skip
 					KeyEvent.VK_ENTER -> enterCompletion(jList)
-					KeyEvent.VK_TAB -> lastPopup?.apply {
-						val selectedValue = jList.selectedValue ?: return@apply
+					KeyEvent.VK_TAB -> {
+						val selectedValue = jList.selectedValue ?: return
 						with(document) {
 							currentTypingNode?.let { delete(it.start, it.textLength) }
 							insert(selectedValue.text.toString())
 							selectedValue.afterInsert(this)
 						}
-						hide()
+						hideLastPopup()
 					}
 					KeyEvent.VK_BACK_SPACE -> {
 						document.backSpace(1)
-						lastPopup?.hide()
+						hideLastPopup()
 					}
 					KeyEvent.VK_DELETE -> {
 						document.delete(1)
-						lastPopup?.hide()
+						hideLastPopup()
 					}
 					else -> document.handleInsert(e.keyChar.toString())
 				}
@@ -162,36 +164,27 @@ abstract class AbstractUI(protected val frame: DevKtFrame) : UIBase<AttributeSet
 				.also { lastPopup = it }
 	}
 
+	private fun hideLastPopup() {
+		lastPopup?.hide()
+		lastPopup = null
+	}
+
 	private fun enterCompletion(jList: JList<CompletionElement>) {
-		lastPopup?.apply {
-			val selectedValue = jList.selectedValue ?: return@apply
-			with(document) {
-				currentTypingNode?.let { delete(it.start, document.caretPosition - it.start) }
-				insert(selectedValue.text.toString())
-				selectedValue.afterInsert(this)
-			}
-			hide()
+		val selectedValue = jList.selectedValue ?: return
+		with(document) {
+			currentTypingNode?.let { delete(it.start, document.caretPosition - it.start) }
+			insert(selectedValue.text.toString())
+			selectedValue.afterInsert(this)
 		}
+		hideLastPopup()
 	}
 
 	override fun dialog(text: String, messageType: MessageType, title: String) {
-		JOptionPane.showMessageDialog(mainPanel, text, title, when (messageType) {
-			MessageType.Error -> JOptionPane.ERROR_MESSAGE
-			MessageType.Information -> JOptionPane.INFORMATION_MESSAGE
-			MessageType.Plain -> JOptionPane.PLAIN_MESSAGE
-			MessageType.Question -> JOptionPane.QUESTION_MESSAGE
-			MessageType.Warning -> JOptionPane.WARNING_MESSAGE
-		})
+		JOptionPane.showMessageDialog(mainPanel, text, title, messageType.swing)
 	}
 
 	override fun dialogYesNo(text: String, messageType: MessageType, title: String) =
-			JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mainPanel, text, title, JOptionPane.YES_NO_OPTION, when (messageType) {
-				MessageType.Error -> JOptionPane.ERROR_MESSAGE
-				MessageType.Information -> JOptionPane.INFORMATION_MESSAGE
-				MessageType.Plain -> JOptionPane.PLAIN_MESSAGE
-				MessageType.Question -> JOptionPane.QUESTION_MESSAGE
-				MessageType.Warning -> JOptionPane.WARNING_MESSAGE
-			})
+			JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(mainPanel, text, title, JOptionPane.YES_NO_OPTION, messageType.swing)
 
 	override fun chooseFile(
 			from: File?, chooseFileType: ChooseFileType): File? =

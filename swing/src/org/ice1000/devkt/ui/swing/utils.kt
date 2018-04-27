@@ -4,6 +4,7 @@ import org.ice1000.devkt.config.Key
 import org.ice1000.devkt.config.ShortCut
 import org.ice1000.devkt.openapi.util.CompletionElement
 import org.ice1000.devkt.openapi.util.CompletionPopup
+import org.ice1000.devkt.ui.MessageType
 import java.awt.event.KeyEvent
 import javax.swing.*
 
@@ -31,7 +32,7 @@ class SwingPopup(
 	override fun hide() = popup.hide()
 	override fun show() {
 		popup.show()
-		component.requestFocus()
+		component.requestFocus(true)
 	}
 
 	override fun updateItems(completionElement: Collection<CompletionElement>) {
@@ -54,6 +55,19 @@ class ListListModel<E>(private val list: List<E>) : AbstractListModel<E>() {
 	override fun getSize() = list.size
 	override fun getElementAt(var1x: Int) = list[var1x]
 }
+
+/**
+ * @author ice1000
+ * @since v1.4
+ */
+val MessageType.swing
+	get() = when (this) {
+		MessageType.Error -> JOptionPane.ERROR_MESSAGE
+		MessageType.Information -> JOptionPane.INFORMATION_MESSAGE
+		MessageType.Plain -> JOptionPane.PLAIN_MESSAGE
+		MessageType.Question -> JOptionPane.QUESTION_MESSAGE
+		MessageType.Warning -> JOptionPane.WARNING_MESSAGE
+	}
 
 /**
  * @author ice1000

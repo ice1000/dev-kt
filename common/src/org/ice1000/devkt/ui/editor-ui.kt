@@ -295,7 +295,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		val completions = (initialCompletionList + lexicalCompletionList)
 				.filter { it.lookup.startsWith(currentText, true) && it.text != currentText }
 		if (completions.isNotEmpty())
-			window.showCompletionPopup(completions).show()
+			window.createCompletionPopup(completions).show()
 	}
 
 	// TODO: make async
@@ -320,7 +320,7 @@ class DevKtDocumentHandler<TextAttributes>(
 				.forEach { node ->
 					val (start, end, text, type) = node
 					// println("$text in ($start, $end)")
-					if (end == caretPosition) currentTypingNodeCache = node
+					if (start < caretPosition) currentTypingNodeCache = node
 					if (text.isNotBlank() && text.length > 1)
 						collected += CompletionElement(text.trim(), type = "Token")
 					highlight(start, end, language.attributesOf(type, colorScheme) ?: colorScheme.default)

@@ -11,7 +11,7 @@ interface DevKtWindow {
 	fun refreshTitle()
 	fun uiThread(lambda: () -> Unit)
 	fun message(text: String)
-	fun showCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup
+	fun createCompletionPopup(completionList: Collection<CompletionElement>): CompletionPopup
 	fun chooseFile(from: File?, chooseFileType: ChooseFileType): File?
 	fun chooseDir(from: File?, chooseFileType: ChooseFileType): File?
 	fun dialogYesNo(
