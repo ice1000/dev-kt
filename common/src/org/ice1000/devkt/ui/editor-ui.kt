@@ -190,14 +190,15 @@ class DevKtDocumentHandler<TextAttributes>(
 	override fun delete(offs: Int, len: Int) {
 		val delString = selfMaintainedString.substring(offs, offs + len)
 		if (delString.isEmpty()) return
+		val char = delString[0]
+		val (offset, length) = if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
+			Pair(offs, 2)
+		} else Pair(offs, len)
 		with(undoManager) {
-			addEdit(offs, delString, false)
+			addEdit(offset, selfMaintainedString.subSequence(offset, offset + length), false)
+			deleteDirectly(offset, length)
 			done()
 		}
-		val char = delString[0]
-		if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
-			deleteDirectly(offs, 2, reparse = false)
-		} else deleteDirectly(offs, len, reparse = false)
 		// window.doAsync {
 		reparse()
 		adjustFormat(offs, length)
