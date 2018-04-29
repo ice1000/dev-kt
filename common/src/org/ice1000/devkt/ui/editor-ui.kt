@@ -259,29 +259,29 @@ class DevKtDocumentHandler<TextAttributes>(
 
 		val normalized = str?.filterNot { it == '\r' } ?: return
 
-		//Undo manager
-		with(undoManager) {
-			addEdit(offs, normalized, true)
-			done()
-		}
-
 		//Pairs of character completion
-		if (normalized.length > 1)
-			insertDirectly(offs, normalized, 0)
+		val (offset, text, move) = if (normalized.length > 1)
+			Triple(offs, normalized, 0)
 		else {
 			val char = normalized[0]
 			if (char in paired.values) {
 				if (offs != 0
 						&& selfMaintainedString.getOrNull(offs) == char) {
-					insertDirectly(offs, "", move = 1, reparse = false)
-				} else insertDirectly(offs, normalized, move = 0, reparse = false)
+					Triple(offs, "", 1)
+				} else Triple(offs, normalized, 0)
 			} else if (char in paired)
-				insertDirectly(offs, "$normalized${paired[char]}", move = -1, reparse = false)
+				Triple(offs, "$normalized${paired[char]}", -1)
 			else {
 				val value = insteadPaired[char]
-				if (value != null) insertDirectly(offs, value.value, move = 0, reparse = false)
-				else insertDirectly(offs, normalized, move = 0, reparse = false)
+				if (value != null) Triple(offs, value.value, 0)
+				else Triple(offs, normalized, 0)
 			}
+		}
+
+		with(undoManager) {
+			insertDirectly(offset, text, move, reparse = false)
+			addEdit(offset, text, true)
+			done()
 		}
 
 		//Completion
