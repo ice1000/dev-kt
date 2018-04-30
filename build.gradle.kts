@@ -21,10 +21,10 @@ var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
 var kotlinVersion: String by extra
-val kotlinEAP = "1.2.50-dev-971"
+val kotlinEAP = "1.2.50-dev-1018"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
-kotlinStable = "1.2.40"
+kotlinStable = "1.2.41"
 kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {
@@ -49,7 +49,7 @@ idea {
 }
 
 allprojects {
-	val shortVersion = "v1.5-SNAPSHOT"
+	val shortVersion = "v1.4.1"
 	val packageName = "org.ice1000.devkt"
 
 	group = packageName
