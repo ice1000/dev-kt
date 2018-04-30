@@ -1,9 +1,13 @@
-sudo: required
 language: java
 language: kotlin
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 jdk:
-- oraclejdk8
+  - oraclejdk8
 script:
-- ./gradlew test --info --warning-mode=all
-before_install:
-- chmod a+x gradlew
+  - bash gradlew test --info --warning-mode=all
