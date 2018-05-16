@@ -31,13 +31,14 @@
 		+ [ ] Prioritized
 		+ [ ] Incremental
 	+ [ ] Highlight selected token
+	+ [X] Completions based on tokens
 	+ Kotlin
 		+ [X] Lexer based highlights
 		+ [X] Semantic-based highlights
 	+ Java
 		+ [X] Lexer based highlights
 		+ [X] Semantic-based highlights
-	+ [ ] Auto indent
+	+ [X] Auto indent
 		+ [ ] Smart indent
 		+ [ ] Indent with spaces
 + Plugin system
