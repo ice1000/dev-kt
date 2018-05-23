@@ -1,1 +1,1 @@
-include("common", "swing", "jfx")
+include("common", "swing", "jfx", "imgui")

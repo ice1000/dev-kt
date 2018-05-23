@@ -22,7 +22,7 @@ task<Jar>("fatJar") {
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
 	group = "build"
 	from(Callable {
-		configurations.compile.filter { it.parentFile.name != "plugins" }.map {
+		configurations.compile.map {
 			@Suppress("IMPLICIT_CAST_TO_ANY")
 			if (it.isDirectory) it else zipTree(it)
 		}
@@ -33,7 +33,7 @@ task<Jar>("fatJar") {
 tasks.withType<Jar> {
 	manifest {
 		attributes(mapOf("Main-Class" to application.mainClassName,
-				"SplashScreen-Image" to "icon/Icon.png"))
+				"SplashScreen-Image" to "icon/kotlin@288x288.png"))
 	}
 }
 
@@ -47,8 +47,8 @@ java.sourceSets {
 	}
 
 	"test" {
-		resources.setSrcDirs(emptyList<Any>())
-		java.setSrcDirs(emptyList<Any>())
+		resources.setSrcDirs(listOf("testRes"))
+		java.setSrcDirs(listOf("test"))
 		withConvention(KotlinSourceSet::class) {
 			kotlin.setSrcDirs(listOf("test"))
 		}
@@ -57,10 +57,9 @@ java.sourceSets {
 
 dependencies {
 	compile(project(":common"))
-	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
-	compile(group = "com.github.ice1k", name = "filedrop", version = "2018.1")
-	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
-	configurations.runtime.extendsFrom(configurations.testCompileOnly)
+	val jimguiVersion = "v0.1"
+	compile(group = "org.ice1000.jimgui", name = "core", version = jimguiVersion)
+	compile(group = "org.ice1000.jimgui", name = "kotlin-dsl", version = jimguiVersion)
 	testCompile(project(":common"))
 	testCompile("junit", "junit", "4.12")
 	testCompile(kotlin("test-junit", kotlinStable))

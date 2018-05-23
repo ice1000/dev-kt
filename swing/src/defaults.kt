@@ -6,6 +6,7 @@ package org.ice1000.devkt
 
 import com.bulenkov.darcula.DarculaLaf
 import org.ice1000.devkt.config.GlobalSettings
+import org.ice1000.devkt.ui.Edit
 import org.ice1000.devkt.ui.swing.DevKtFrame
 import java.awt.Font
 import java.awt.GraphicsEnvironment
@@ -57,7 +58,7 @@ object DevKtFontManager {
 		if (mono.isEmpty() or
 				mono.equals(defaultFontName, true)) {
 			val monoFontInputStream = javaClass.getResourceAsStream("/font/sarasa-mono-sc-regular.ttf")
-					?: javaClass.getResourceAsStream("/font/FiraCode-Regular.ttf")
+					?: LaunchInfo::class.java.getResourceAsStream("/font/FiraCode-Regular.ttf")
 			if (null != monoFontInputStream)
 				monoFont = Font
 						.createFont(Font.TRUETYPE_FONT, monoFontInputStream)

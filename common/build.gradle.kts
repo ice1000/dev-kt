@@ -1,28 +1,34 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import de.undercouch.gradle.tasks.download.Download
 
 plugins {
 	java
 	maven
+	id("de.undercouch.download") version "3.4.2"
 	kotlin("jvm")
 }
 
 java.sourceSets {
 	"main" {
-		resources.setSrcDirs(listOf("res"))
-		java.setSrcDirs(listOf("src"))
-		withConvention(KotlinSourceSet::class) {
-			kotlin.setSrcDirs(listOf("src"))
-		}
+		resources.srcDir("res")
+		java.srcDir("src")
+		withConvention(KotlinSourceSet::class) { kotlin.srcDir("src") }
 	}
 
 	"test" {
-		resources.setSrcDirs(listOf("testRes"))
-		java.setSrcDirs(listOf("test"))
-		withConvention(KotlinSourceSet::class) {
-			kotlin.setSrcDirs(listOf("test"))
-		}
+		resources.srcDir("testRes")
+		java.srcDir("test")
+		withConvention(KotlinSourceSet::class) { kotlin.srcDir("test") }
 	}
 }
+
+val downloadFiraCode = task<Download>("downloadFiraCode") {
+	src("https://raw.githubusercontent.com/tonsky/FiraCode/master/distr/ttf/FiraCode-Regular.ttf")
+	dest(file("res/font"))
+	overwrite(false)
+}
+
+tasks["processResources"].dependsOn(downloadFiraCode)
 
 dependencies {
 	val kotlinStable: String by rootProject.extra
@@ -33,7 +39,7 @@ dependencies {
 	compile(kotlin("script-util", kotlinVersion))
 
 	// for the icon loader
-	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
+	compile(group = "com.bulenkov", name = "darcula", version = "2018.2")
 	compile(group = "com.bennyhuo.kotlin", name = "opd", version = "1.0-rc-2")
 	compileOnly(files(*file("lib").listFiles().orEmpty()))
 	val plugins = file("plugins").listFiles().orEmpty().filterNot { it.isDirectory }
