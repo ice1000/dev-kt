@@ -9,6 +9,7 @@ import org.ice1000.devkt.openapi.ColorScheme
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.ui.*
 import org.ice1000.devkt.openapi.util.*
+import org.ice1000.textseq.impl.GapBuffer
 import org.jetbrains.kotlin.com.intellij.psi.*
 import org.jetbrains.kotlin.com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -36,7 +37,7 @@ class DevKtDocumentHandler<TextAttributes>(
 		private val colorScheme: ColorScheme<TextAttributes>) :
 		IDevKtDocumentHandler<TextAttributes> {
 	private val undoManager = DevKtUndoManager()
-	private var selfMaintainedString = StringBuilder()
+	private var selfMaintainedString = GapBuffer()
 	override fun startOffsetOf(line: Int) = document.startOffsetOf(line)
 	override fun endOffsetOf(line: Int) = document.endOffsetOf(line)
 	override fun lineOf(offset: Int) = document.lineOf(offset)
@@ -218,7 +219,7 @@ class DevKtDocumentHandler<TextAttributes>(
 			done()
 		}
 		with(selfMaintainedString) {
-			setLength(0)
+			clear()
 			append(string)
 		}
 		with(document) {

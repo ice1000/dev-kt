@@ -63,10 +63,12 @@ java.sourceSets {
 	}
 }
 
+repositories { maven("https://jitpack.io") }
+
 dependencies {
 	compile(project(":common"))
 	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
-	compile(group = "com.github.ice1k", name = "filedrop", version = "2018.1")
+	compile(group = "net.iharder.dnd", name = "filedrop", version = "2018.1")
 	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
 	configurations.runtime.extendsFrom(configurations.testCompileOnly)
 	testCompile(project(":common"))

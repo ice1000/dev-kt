@@ -33,7 +33,8 @@ dependencies {
 	compile(kotlin("script-util", kotlinVersion))
 
 	// for the icon loader
-	compile(group = "com.github.ice1k", name = "darcula", version = "2018.2")
+	compile(group = "org.ice1000.textseq", name = "impl-gap", version = "v0.3")
+	compile(group = "com.bulenkov", name = "darcula", version = "2018.2")
 	compile(group = "com.bennyhuo.kotlin", name = "opd", version = "1.0-rc-2")
 	compileOnly(files(*file("lib").listFiles().orEmpty()))
 	val plugins = file("plugins").listFiles().orEmpty().filterNot { it.isDirectory }
