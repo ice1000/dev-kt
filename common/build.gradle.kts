@@ -1,8 +1,10 @@
+import de.undercouch.gradle.tasks.download.Download
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
 	java
 	maven
+	id("de.undercouch.download") version "3.4.2"
 	kotlin("jvm")
 }
 
