@@ -3,7 +3,7 @@ environment:
 #
 
 build_script:
-  - gradlew :swing:downloadFiraCode --info --warning-mode=all
+  - gradlew :common:downloadFiraCode --info --warning-mode=all
   - gradlew :swing:fatJar --info --warning-mode=all
 #
 

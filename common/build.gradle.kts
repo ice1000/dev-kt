@@ -8,21 +8,25 @@ plugins {
 
 java.sourceSets {
 	"main" {
-		resources.setSrcDirs(listOf("res"))
-		java.setSrcDirs(listOf("src"))
-		withConvention(KotlinSourceSet::class) {
-			kotlin.setSrcDirs(listOf("src"))
-		}
+		resources.srcDir("res")
+		java.srcDir("src")
+		withConvention(KotlinSourceSet::class) { kotlin.srcDir("src") }
 	}
 
 	"test" {
-		resources.setSrcDirs(listOf("testRes"))
-		java.setSrcDirs(listOf("test"))
-		withConvention(KotlinSourceSet::class) {
-			kotlin.setSrcDirs(listOf("test"))
-		}
+		resources.srcDir("testRes")
+		java.srcDir("test")
+		withConvention(KotlinSourceSet::class) { kotlin.srcDir("test") }
 	}
 }
+
+val downloadFiraCode = task<Download>("downloadFiraCode") {
+	src("https://raw.githubusercontent.com/tonsky/FiraCode/master/distr/ttf/FiraCode-Regular.ttf")
+	dest(file("res/font"))
+	overwrite(false)
+}
+
+tasks["processResources"].dependsOn(downloadFiraCode)
 
 dependencies {
 	val kotlinStable: String by rootProject.extra
