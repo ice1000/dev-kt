@@ -24,14 +24,14 @@ var kotlinVersion: String by extra
 val kotlinEAP = "1.2.70-eap-4"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
-kotlinStable = "1.2.41"
+kotlinStable = "1.2.60"
 kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {
 	base
 	idea
 	java
-	kotlin("jvm") version "1.2.41" apply false
+	kotlin("jvm") version "1.2.60" apply false
 }
 
 idea {
@@ -70,7 +70,7 @@ allprojects {
 	tasks.withType<KotlinCompile> {
 		kotlinOptions {
 			jvmTarget = "1.8"
-			freeCompilerArgs = listOf("-Xenable-jvm-default")
+			freeCompilerArgs = listOf("-Xjvm-default", "enable")
 			suppressWarnings = false
 			verbose = isCI
 		}
@@ -88,7 +88,7 @@ allprojects {
 	}
 
 	val sourcesJar = task<Jar>("sourcesJar") {
-		group = tasks["jar"].group
+		group = tasks["jar"].group.orEmpty()
 		from(java.sourceSets["main"].allSource)
 		classifier = "sources"
 	}

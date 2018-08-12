@@ -1,9 +1,7 @@
 package org.ice1000.devkt.kts
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.config.*
 import org.junit.Assert
 import java.io.ByteArrayOutputStream
@@ -74,6 +72,8 @@ data class CompilerTestLanguageVersionSettings(
 ) : LanguageVersionSettings {
 	private val languageFeatures = initialLanguageFeatures + specificFeaturesForTests()
 	private val delegate = LanguageVersionSettingsImpl(languageVersion, apiVersion)
+
+	override fun isPreRelease() = true
 
 	override fun getFeatureSupport(feature: LanguageFeature): LanguageFeature.State =
 			languageFeatures[feature] ?: delegate.getFeatureSupport(feature)

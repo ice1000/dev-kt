@@ -57,7 +57,7 @@ java.sourceSets {
 
 dependencies {
 	compile(project(":common"))
-	val jimguiVersion = "v0.1"
+	val jimguiVersion = "v0.5"
 	compile(group = "org.ice1000.jimgui", name = "core", version = jimguiVersion)
 	compile(group = "org.ice1000.jimgui", name = "kotlin-dsl", version = jimguiVersion)
 	testCompile(project(":common"))
