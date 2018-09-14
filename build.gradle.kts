@@ -21,17 +21,17 @@ var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
 var kotlinVersion: String by extra
-val kotlinEAP = "1.2.70-eap-4"
+val kotlinEAP = "1.2.70"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
-kotlinStable = "1.2.60"
+kotlinStable = "1.2.70"
 kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {
 	base
 	idea
 	java
-	kotlin("jvm") version "1.2.60" apply false
+	kotlin("jvm") version "1.2.70" apply false
 }
 
 idea {
@@ -70,7 +70,7 @@ allprojects {
 	tasks.withType<KotlinCompile> {
 		kotlinOptions {
 			jvmTarget = "1.8"
-			freeCompilerArgs = listOf("-Xjvm-default", "enable")
+			freeCompilerArgs = listOf("-Xjvm-default=enable")
 			suppressWarnings = false
 			verbose = isCI
 		}
