@@ -15,7 +15,8 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	override fun annotate(
 			element: PsiElement,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		when (element) {
 			is PsiAnnotation -> annotation(element, document, colorScheme)
 			is PsiTypeElement -> typeElement(element, document, colorScheme)
@@ -29,28 +30,32 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	private fun variable(
 			element: PsiVariable,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		element.nameIdentifier?.let { document.highlight(it, colorScheme.variable) }
 	}
 
 	private fun method(
 			element: PsiMethod,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		element.nameIdentifier?.let { document.highlight(it, colorScheme.function) }
 	}
 
 	private fun field(
 			element: PsiField,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		document.highlight(element.nameIdentifier, colorScheme.property)
 	}
 
 	private fun typeElement(
 			element: PsiElement,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		if (element.firstChild !is PsiKeyword)
 			document.highlight(element, colorScheme.userTypeRef)
 	}
@@ -58,7 +63,8 @@ class JavaAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	private fun annotation(
 			element: PsiAnnotation,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		val start = element.startOffset
 		val end = element.nameReferenceElement?.endOffset ?: element.firstChild?.endOffset ?: start
 		document.highlight(start, end, colorScheme.annotations)
@@ -73,7 +79,8 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	override fun annotate(
 			element: PsiElement,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		if (element.nodeType in KtTokens.SOFT_KEYWORDS) {
 			document.highlight(element, colorScheme.keywords)
 			return
@@ -91,7 +98,8 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	private fun property(
 			element: KtProperty,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		element.nameIdentifier?.let {
 			document.highlight(it, colorScheme.property)
 		}
@@ -100,7 +108,8 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	private fun typeReference(
 			element: KtTypeReference,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		if (element.parent !is KtConstructorCalleeExpression)
 			document.highlight(element.firstChild
 					?.takeIf { it is KtUserType || it is KtNullableType }
@@ -110,7 +119,8 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	private fun namedFunction(
 			element: KtNamedFunction,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		element.nameIdentifier?.let {
 			document.highlight(it, colorScheme.function)
 		}
@@ -119,18 +129,19 @@ class KotlinAnnotator<TextAttributes> : Annotator<TextAttributes> {
 	private fun typeParameter(
 			element: KtTypeParameter,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		document.highlight(element, colorScheme.typeParam)
 		element.references.forEach {
-			val refTo = it.element ?: return@forEach
-			document.highlight(refTo, colorScheme.typeParam)
+			document.highlight(it.element, colorScheme.typeParam)
 		}
 	}
 
 	private fun annotationEntry(
 			element: KtAnnotationEntry,
 			document: AnnotationHolder<TextAttributes>,
-			colorScheme: ColorScheme<TextAttributes>) {
+			colorScheme: ColorScheme<TextAttributes>
+	) {
 		val start = element.startOffset
 		val end = element.typeReference?.endOffset ?: element.atSymbol?.endOffset ?: start
 		document.highlight(start, end, colorScheme.annotations)

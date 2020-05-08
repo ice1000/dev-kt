@@ -21,7 +21,7 @@ repositories { maven("https://jitpack.io") }
 
 dependencies {
 	implementation(project(":common"))
-	implementation(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.2")
+	implementation(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.2.2")
 	implementation(group = "net.iharder.dnd", name = "filedrop", version = "2018.1")
 	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
 	// configurations.runtimeClasspath.extendsFrom(configurations.testCompileOnly)
