@@ -86,7 +86,7 @@ subprojects {
 
 	tasks.withType<KotlinCompile> {
 		kotlinOptions {
-			jvmTarget = "1.8"
+			jvmTarget = "11"
 			freeCompilerArgs = listOf("-Xjvm-default=enable")
 			suppressWarnings = false
 			verbose = isCI
@@ -94,8 +94,8 @@ subprojects {
 	}
 
 	tasks.withType<JavaCompile> {
-		sourceCompatibility = "1.8"
-		targetCompatibility = "1.8"
+		sourceCompatibility = "11"
+		targetCompatibility = "11"
 		options.apply {
 			isDeprecation = true
 			isWarnings = true

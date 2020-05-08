@@ -8,6 +8,6 @@ cache:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
 jdk:
-  - oraclejdk8
+  - openjdk11
 script:
   - bash gradlew test --info --warning-mode=all
