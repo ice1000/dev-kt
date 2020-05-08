@@ -4,7 +4,7 @@ import org.ice1000.devkt.config.GlobalSettings
 import org.ice1000.devkt.lang.DevKtLanguage
 import org.ice1000.devkt.openapi.ExtendedDevKtLanguage
 import org.ice1000.devkt.openapi.nodeType
-import org.ice1000.devkt.openapi.util.selfLocation
+import org.ice1000.devkt.openapi.util.selfLocationFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
@@ -70,9 +70,9 @@ object Analyzer : Disposable {
 		compilerConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_JAR, targetJar)
 		compilerConfiguration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, targetDir)
-		compilerConfiguration.addJvmClasspathRoot(File(selfLocation))
+		// compilerConfiguration.addJvmClasspathRoot(selfLocationFile)
 		// compilerConfiguration.put(JVMConfigurationKeys.IR, true)
-		jvmEnvironment = KotlinCoreEnvironment.createForProduction(this,
+		jvmEnvironment = KotlinCoreEnvironment.createForTests(this,
 				compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 		val jsCompilerConfiguration = CompilerConfiguration()
 		jsCompilerConfiguration.put(JSConfigurationKeys.OUTPUT_DIR, targetDir)
@@ -85,7 +85,8 @@ object Analyzer : Disposable {
 	private fun <Extension> registerExtensionPoint(
 			extensionPoint: LanguageExtension<Extension>,
 			language: Language,
-			instance: Extension) {
+			instance: Extension
+	) {
 		extensionPoint.addExplicitExtension(language, instance)
 		Disposer.register(project, Disposable {
 			extensionPoint.removeExplicitExtension(language, instance)
@@ -97,7 +98,8 @@ object Analyzer : Disposable {
 //			clazz: Class<Extension>) = registerExtensionPoint(extensionPoint, clazz.newInstance())
 
 	fun registerLanguage(
-			language: Language, parserDefinition: ParserDefinition) {
+			language: Language, parserDefinition: ParserDefinition
+	) {
 		LanguageParserDefinitions.INSTANCE.addExplicitExtension(language, parserDefinition)
 		Disposer.register(project, Disposable {
 			LanguageParserDefinitions.INSTANCE.removeExplicitExtension(language, parserDefinition)
@@ -140,7 +142,7 @@ object Analyzer : Disposable {
 
 	private fun ensureTargetDirExists() {
 		if (!targetDir.isDirectory) targetDir.mkdirs()
-		targetDir.listFiles().forEach { it.deleteRecursively() }
+		targetDir.listFiles().orEmpty().forEach { it.deleteRecursively() }
 	}
 
 	// TODO incremental

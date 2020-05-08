@@ -70,7 +70,11 @@ subprojects {
 		implementation(kotlin("reflect", kotlinVersion))
 		implementation(kotlin("compiler-embeddable", kotlinVersion))
 		implementation(kotlin("script-util", kotlinVersion))
-		implementation(group = "org.ice1000.textseq", name = "impl-gap", version = "v0.3")
+		implementation(kotlin("script-runtime", kotlinVersion))
+		implementation(kotlin("scripting-jsr223-embeddable", kotlinVersion))
+		val textSeqVersion = "v0.4"
+		implementation(group = "org.ice1000.textseq", name = "impl-gap", version = textSeqVersion)
+		implementation(group = "org.ice1000.textseq", name = "common", version = textSeqVersion)
 		// for the icon loader
 		implementation(group = "com.bulenkov", name = "darcula", version = "2018.2")
 		implementation(group = "com.bennyhuo.kotlin", name = "opd", version = "1.0-rc-2")
@@ -103,7 +107,7 @@ subprojects {
 	val sourcesJar = task<Jar>("sourcesJar") {
 		group = tasks["jar"].group.orEmpty()
 		from(sourceSets["main"].allSource)
-		classifier = "sources"
+		archiveClassifier.set("sources")
 	}
 
 	artifacts {

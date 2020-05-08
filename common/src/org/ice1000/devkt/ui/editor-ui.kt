@@ -189,7 +189,7 @@ class DevKtDocumentHandler<TextAttributes>(
 	 * @param len Int length of deletion
 	 */
 	override fun delete(offs: Int, len: Int) {
-		val delString = selfMaintainedString.substring(offs, offs + len)
+		val delString = selfMaintainedString.subSequence(offs, offs + len)
 		if (delString.isEmpty()) return
 		val char = delString[0]
 		val (offset, length) = if (char in paired && selfMaintainedString.getOrNull(offs + 1) == paired[char]) {
