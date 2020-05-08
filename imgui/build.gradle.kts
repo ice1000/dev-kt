@@ -17,16 +17,22 @@ application {
 	mainClassName = "org.ice1000.devkt.Main"
 }
 
+dependencies {
+	implementation(project(":common"))
+	val jimguiVersion = "v0.9"
+	implementation(group = "org.ice1000.jimgui", name = "core", version = jimguiVersion)
+	implementation(group = "org.ice1000.jimgui", name = "kotlin-dsl", version = jimguiVersion)
+	testImplementation(project(":common"))
+	testImplementation("junit", "junit", "4.12")
+	testImplementation(kotlin("test-junit", kotlinStable))
+	testImplementation(kotlin("stdlib-jdk8", kotlinStable))
+}
+
 task<Jar>("fatJar") {
 	classifier = "all"
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
 	group = "build"
-	from(Callable {
-		configurations.compile.map {
-			@Suppress("IMPLICIT_CAST_TO_ANY")
-			if (it.isDirectory) it else zipTree(it)
-		}
-	})
+	from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it as Any else zipTree(it) })
 	with(tasks["jar"] as Jar)
 }
 
@@ -37,8 +43,8 @@ tasks.withType<Jar> {
 	}
 }
 
-java.sourceSets {
-	"main" {
+sourceSets {
+	main {
 		resources.setSrcDirs(listOf("res"))
 		java.setSrcDirs(listOf("src"))
 		withConvention(KotlinSourceSet::class) {
@@ -46,22 +52,11 @@ java.sourceSets {
 		}
 	}
 
-	"test" {
+	test {
 		resources.setSrcDirs(listOf("testRes"))
 		java.setSrcDirs(listOf("test"))
 		withConvention(KotlinSourceSet::class) {
 			kotlin.setSrcDirs(listOf("test"))
 		}
 	}
-}
-
-dependencies {
-	compile(project(":common"))
-	val jimguiVersion = "v0.5"
-	compile(group = "org.ice1000.jimgui", name = "core", version = jimguiVersion)
-	compile(group = "org.ice1000.jimgui", name = "kotlin-dsl", version = jimguiVersion)
-	testCompile(project(":common"))
-	testCompile("junit", "junit", "4.12")
-	testCompile(kotlin("test-junit", kotlinStable))
-	testCompile(kotlin("stdlib-jdk8", kotlinStable))
 }

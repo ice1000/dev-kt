@@ -17,16 +17,27 @@ application {
 	mainClassName = "org.ice1000.devkt.Main"
 }
 
+repositories { maven("https://jitpack.io") }
+
+dependencies {
+	implementation(project(":common"))
+	implementation(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.2")
+	implementation(group = "net.iharder.dnd", name = "filedrop", version = "2018.1")
+	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
+	// configurations.runtimeClasspath.extendsFrom(configurations.testCompileOnly)
+	testImplementation(project(":common"))
+	testImplementation("junit", "junit", "4.12")
+	testImplementation(kotlin("test-junit", kotlinStable))
+	testImplementation(kotlin("stdlib-jdk8", kotlinStable))
+}
+
 task<Jar>("fatJar") {
 	classifier = "all"
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
 	group = "build"
-	from(Callable {
-		configurations.compile.filter { it.parentFile.name != "plugins" }.map {
-			@Suppress("IMPLICIT_CAST_TO_ANY")
-			if (it.isDirectory) it else zipTree(it)
-		}
-	})
+	from(configurations.runtimeClasspath.get()
+			.filter { it.parentFile.name != "plugins" }
+			.map { if (it.isDirectory) it as Any else zipTree(it) })
 	with(tasks["jar"] as Jar)
 }
 
@@ -37,8 +48,8 @@ tasks.withType<Jar> {
 	}
 }
 
-java.sourceSets {
-	"main" {
+sourceSets {
+	main {
 		resources.setSrcDirs(listOf("res"))
 		java.setSrcDirs(listOf("src"))
 		withConvention(KotlinSourceSet::class) {
@@ -46,25 +57,11 @@ java.sourceSets {
 		}
 	}
 
-	"test" {
+	test {
 		resources.setSrcDirs(emptyList<Any>())
 		java.setSrcDirs(emptyList<Any>())
 		withConvention(KotlinSourceSet::class) {
 			kotlin.setSrcDirs(listOf("test"))
 		}
 	}
-}
-
-repositories { maven("https://jitpack.io") }
-
-dependencies {
-	compile(project(":common"))
-	compile(group = "com.github.cqjjjzr", name = "Gensokyo", version = "1.1")
-	compile(group = "net.iharder.dnd", name = "filedrop", version = "2018.1")
-	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
-	configurations.runtime.extendsFrom(configurations.testCompileOnly)
-	testCompile(project(":common"))
-	testCompile("junit", "junit", "4.12")
-	testCompile(kotlin("test-junit", kotlinStable))
-	testCompile(kotlin("stdlib-jdk8", kotlinStable))
 }

@@ -8,7 +8,7 @@ var commitHash: String by extra
 commitHash = Runtime
 		.getRuntime()
 		.exec("git rev-parse --short HEAD")
-		.let<Process, String> { process ->
+		.let { process ->
 			process.waitFor()
 			val output = process.inputStream.use {
 				it.bufferedReader().use(BufferedReader::readText)
@@ -21,17 +21,17 @@ var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
 var kotlinVersion: String by extra
-val kotlinEAP = "1.2.70"
+val kotlinEAP = "1.4-M1"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
-kotlinStable = "1.3.30"
+kotlinStable = "1.3.72"
 kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {
 	base
 	idea
 	java
-	kotlin("jvm") version "1.3.30" apply false
+	kotlin("jvm") version "1.3.72" apply false
 }
 
 idea {
@@ -48,7 +48,7 @@ idea {
 	}
 }
 
-allprojects {
+subprojects {
 	val shortVersion = "v1.5-SNAPSHOT"
 	val packageName = "org.ice1000.devkt"
 
@@ -89,7 +89,7 @@ allprojects {
 
 	val sourcesJar = task<Jar>("sourcesJar") {
 		group = tasks["jar"].group.orEmpty()
-		from(java.sourceSets["main"].allSource)
+		from(sourceSets["main"].allSource)
 		classifier = "sources"
 	}
 
