@@ -1,6 +1,4 @@
-import org.gradle.api.internal.HasConvention
 import org.jetbrains.kotlin.com.intellij.openapi.util.SystemInfo
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.*
 
@@ -21,7 +19,7 @@ var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
 var kotlinVersion: String by extra
-val kotlinEAP = "1.4-M1"
+val kotlinEAP = "1.4.0-dev-8214"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
 kotlinStable = "1.3.72"
@@ -65,6 +63,21 @@ subprojects {
 	apply {
 		plugin("java")
 		plugin("maven")
+	}
+
+	dependencies {
+		implementation(kotlin("stdlib-jdk8", kotlinVersion))
+		implementation(kotlin("reflect", kotlinVersion))
+		implementation(kotlin("compiler-embeddable", kotlinVersion))
+		implementation(kotlin("script-util", kotlinVersion))
+		implementation(group = "org.ice1000.textseq", name = "impl-gap", version = "v0.3")
+		// for the icon loader
+		implementation(group = "com.bulenkov", name = "darcula", version = "2018.2")
+		implementation(group = "com.bennyhuo.kotlin", name = "opd", version = "1.0-rc-2")
+
+		testImplementation(group = "junit", name = "junit", version = "4.12")
+		testImplementation(kotlin("test-junit", kotlinStable))
+		testImplementation(kotlin("stdlib-jdk8", kotlinStable))
 	}
 
 	tasks.withType<KotlinCompile> {

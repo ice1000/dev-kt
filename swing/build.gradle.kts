@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import java.util.concurrent.*
 
 val commitHash: String by rootProject.extra
 val isCI: Boolean by rootProject.extra
@@ -26,13 +25,10 @@ dependencies {
 	compileOnly(files("lib/AppleJavaExtensions-1.6.jar"))
 	// configurations.runtimeClasspath.extendsFrom(configurations.testCompileOnly)
 	testImplementation(project(":common"))
-	testImplementation("junit", "junit", "4.12")
-	testImplementation(kotlin("test-junit", kotlinStable))
-	testImplementation(kotlin("stdlib-jdk8", kotlinStable))
 }
 
 task<Jar>("fatJar") {
-	classifier = "all"
+	archiveClassifier.set("all")
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
 	group = "build"
 	from(configurations.runtimeClasspath.get()

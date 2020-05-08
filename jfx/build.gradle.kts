@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import java.util.concurrent.*
 
 val commitHash: String by rootProject.extra
 val isCI: Boolean by rootProject.extra
@@ -10,6 +9,7 @@ plugins {
 	java
 	application
 	kotlin("jvm")
+	id ("org.openjfx.javafxplugin") version "0.0.8"
 }
 
 application {
@@ -20,13 +20,14 @@ application {
 dependencies {
 	implementation(project(":common"))
 	testImplementation(project(":common"))
-	testImplementation("junit", "junit", "4.12")
-	testImplementation(kotlin("test-junit", kotlinStable))
-	testImplementation(kotlin("stdlib-jdk8", kotlinStable))
+}
+
+javafx {
+	modules("javafx.controls", "javafx.fxml")
 }
 
 task<Jar>("fatJar") {
-	classifier = "all"
+	archiveClassifier.set("all")
 	description = "Assembles a jar archive containing the main classes and all the dependencies."
 	group = "build"
 	from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it as Any else zipTree(it) })

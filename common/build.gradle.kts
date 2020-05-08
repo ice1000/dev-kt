@@ -32,22 +32,10 @@ tasks["processResources"].dependsOn(downloadFiraCode)
 
 dependencies {
 	val kotlinStable: String by rootProject.extra
-	val kotlinVersion: String by rootProject.extra
-	implementation(kotlin("stdlib-jdk8", kotlinVersion))
-	implementation(kotlin("reflect", kotlinVersion))
-	implementation(kotlin("compiler-embeddable", kotlinVersion))
-	implementation(kotlin("script-util", kotlinVersion))
 
-	// for the icon loader
-	implementation(group = "org.ice1000.textseq", name = "impl-gap", version = "v0.3")
-	implementation(group = "com.bulenkov", name = "darcula", version = "2018.2")
-	implementation(group = "com.bennyhuo.kotlin", name = "opd", version = "1.0-rc-2")
 	compileOnly(files(*file("lib").listFiles().orEmpty()))
 	val plugins = file("plugins").listFiles().orEmpty().filterNot { it.isDirectory }
-	runtimeClasspath(files(*plugins.toTypedArray()))
-	testImplementation(group = "junit", name = "junit", version = "4.12")
-	testImplementation(kotlin("test-junit", kotlinStable))
-	testImplementation(kotlin("stdlib-jdk8", kotlinStable))
+	runtimeOnly(files(*plugins.toTypedArray()))
 	testImplementation(kotlin("reflect", kotlinStable))
-	// configurations.runtimeClasspath.extendsFrom(configurations.testCompileOnly)
+	// configurations.runtimeOnly.extendsFrom(configurations.testCompileOnly)
 }
