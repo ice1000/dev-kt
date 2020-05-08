@@ -6,26 +6,31 @@ package org.ice1000.devkt
 
 import org.ice1000.devkt.openapi.util.selfLocationFile
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.common.repl.KotlinJsr223JvmScriptEngineFactoryBase
 import org.jetbrains.kotlin.cli.common.repl.ScriptArgsWithTypes
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.kotlin.*
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngine
 import org.jetbrains.kotlin.script.jsr223.KotlinStandardJsr223ScriptTemplate
 import java.io.File
-import javax.script.*
+import javax.script.Bindings
+import javax.script.ScriptContext
+import javax.script.ScriptEngine
 
 fun analyzeAndCheckForErrors(file: KtFile, environment: KotlinCoreEnvironment): AnalysisResult =
 		analyzeAndCheckForErrors(setOf(file), environment)
@@ -98,10 +103,12 @@ fun compileFiles(
 			files.first().project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
 			files, configuration
 	).codegenFactory(
-			if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory else DefaultCodegenFactory
+			if (configuration.getBoolean(JVMConfigurationKeys.IR))
+				JvmIrCodegenFactory(PhaseConfig(jvmPhases))
+			else DefaultCodegenFactory
 	).build()
 	if (analysisResult.shouldGenerateCode)
-		KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
+		KotlinCodegenFacade.compileCorrectFiles(state)
 
 	// For JVM-specific errors
 	AnalyzingUtils.throwExceptionOnErrors(state.collectedExtraJvmDiagnostics)
