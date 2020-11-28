@@ -19,17 +19,17 @@ var isCI: Boolean by extra
 var isMac: Boolean by extra
 var kotlinStable: String by extra
 var kotlinVersion: String by extra
-val kotlinEAP = "1.4.0-dev-8214"
+val kotlinEAP = "1.4.20"
 isCI = !System.getenv("CI").isNullOrBlank()
 isMac = SystemInfo.isMac
-kotlinStable = "1.3.72"
+kotlinStable = "1.4.20"
 kotlinVersion = if (isCI) kotlinEAP else kotlinStable
 
 plugins {
 	base
 	idea
 	java
-	kotlin("jvm") version "1.3.72" apply false
+	kotlin("jvm") version "1.4.20" apply false
 }
 
 idea {
