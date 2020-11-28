@@ -12,8 +12,11 @@ This is a DevCpp-like cross-platform Kotlin (and Java, experimental) IDE feature
 
 You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-kt/build/artifacts), the one ends with "-all.jar" is an executable jar.
 
-Here's a screenshot:
+Here are some screenshots:
+
 ![devkt-2](https://user-images.githubusercontent.com/16398479/39244656-e0537d3a-48c3-11e8-8c52-301e11dd204d.gif)
+<img src="https://user-images.githubusercontent.com/16398479/38440232-5ab4d282-3a13-11e8-9b00-5d199d687f8f.png">
+<img src="https://user-images.githubusercontent.com/16398479/38440305-983541b4-3a13-11e8-9651-25e9a61a9b9a.png">
 
 # Features
 
@@ -50,8 +53,3 @@ $ sudo apt-get install oracle-java8-installer
 See https://devkt-plugins.github.io
 
 To install a plugin, just add the jar in the classpath, and you don't need to do anything else.
-
-# Screenshots
-
-<img src="https://user-images.githubusercontent.com/16398479/38440232-5ab4d282-3a13-11e8-9b00-5d199d687f8f.png">
-<img src="https://user-images.githubusercontent.com/16398479/38440305-983541b4-3a13-11e8-9651-25e9a61a9b9a.png">
