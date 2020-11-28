@@ -12,6 +12,9 @@ This is a DevCpp-like cross-platform Kotlin (and Java, experimental) IDE feature
 
 You can download a snapshot [here](https://ci.appveyor.com/project/ice1000/dev-kt/build/artifacts), the one ends with "-all.jar" is an executable jar.
 
+Here's a screenshot:
+![devkt-2](https://user-images.githubusercontent.com/16398479/39244656-e0537d3a-48c3-11e8-8c52-301e11dd204d.gif)
+
 # Features
 
 + Fast (at least faster than Emacs/Eclipse/IntelliJ/CLion/VSCode/Atom)
