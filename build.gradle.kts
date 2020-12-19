@@ -71,7 +71,7 @@ subprojects {
 		implementation(kotlin("compiler-embeddable", kotlinVersion))
 		implementation(kotlin("script-util", kotlinVersion))
 		implementation(kotlin("script-runtime", kotlinVersion))
-		implementation(kotlin("scripting-jsr223-embeddable", kotlinVersion))
+		implementation(kotlin("scripting-jsr223", kotlinVersion))
 		val textSeqVersion = "v0.4"
 		implementation(group = "org.ice1000.textseq", name = "impl-gap", version = textSeqVersion)
 		implementation(group = "org.ice1000.textseq", name = "common", version = textSeqVersion)
