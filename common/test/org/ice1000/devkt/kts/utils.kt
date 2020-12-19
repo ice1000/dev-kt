@@ -35,7 +35,7 @@ fun newConfiguration(): CompilerConfiguration {
 	configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, object : MessageCollector {
 		override fun clear() = Unit
 		override fun hasErrors() = false
-		override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+		override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
 			if (severity == CompilerMessageSeverity.ERROR) {
 				val prefix = if (location == null) "" else "(${location.path}:${location.line}:${location.column}) "
 				throw AssertionError(prefix + message)

@@ -18,7 +18,7 @@ application {
 
 dependencies {
 	implementation(project(":common"))
-	val jimguiVersion = "v0.9"
+	val jimguiVersion = "v0.14.0"
 	implementation(group = "org.ice1000.jimgui", name = "core", version = jimguiVersion)
 	implementation(group = "org.ice1000.jimgui", name = "kotlin-dsl", version = jimguiVersion)
 	testImplementation(project(":common"))
